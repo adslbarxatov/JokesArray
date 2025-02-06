@@ -403,11 +403,11 @@ namespace RD_AAOW
 			// Подсказки
 			if (!NotificationsSupport.TipsState.HasFlag (NSTipTypes.StartupTips))
 				{
-				await RDInterface.ShowMessage ("Добро пожаловать в мини-клиент Grammar must joy!" + RDLocale.RNRN +
+				await RDInterface.ShowMessage ("Добро пожаловать в мини-клиент канала JokesArray!" + RDLocale.RNRN +
 					"• На этой странице Вы можете настроить поведение приложения." + RDLocale.RNRN +
 					"• Используйте системную кнопку «Назад», чтобы вернуться к журналу записей " +
 					"из любого раздела." + RDLocale.RNRN +
-					"• Используйте кнопку с семафором для получения случайных записей из сообщества GMJ",
+					"• Используйте кнопку с семафором для получения случайных записей из архива",
 					RDLocale.GetDefaultText (RDLDefaultTexts.Button_Next));
 
 				if (RDGenerics.IsTV)
@@ -448,7 +448,7 @@ namespace RD_AAOW
 					if (GMJ.EnableCopySubscription)
 						msg += ("." + RDLocale.RNRN +
 							"Обратите внимание, что приложение добавляет к текстам, которыми Вы делитесь, " +
-							"ссылку на сообщество Grammar must joy");
+							"ссылку на канал JokesArray");
 					break;
 
 				case NSTipTypes.ShareImageButton:
@@ -784,7 +784,7 @@ namespace RD_AAOW
 							break;
 						}
 
-					var pict = GMJPicture.CreateGMJPicture (notItem.Header, notItem.Text,
+					var pict = GMJPicture.CreateRecordPicture (notItem.Header, notItem.Text,
 						notItem.SeparatorIsSign ? notItem.Separator.Replace (RDLocale.RN, "") : "",
 						pta, NotificationsSupport.PictureColors.GetColor ((uint)pbk));
 					if (pict == null)
@@ -793,7 +793,7 @@ namespace RD_AAOW
 						return;
 						}
 
-					await GMJPicture.SaveGMJPictureToFile (pict, notItem.Header);
+					await GMJPicture.SaveRecordPictureToFile (pict, notItem.Header);
 					break;
 
 				// Удаление из журнала
@@ -848,10 +848,10 @@ namespace RD_AAOW
 				return;
 				}
 
-			GetGMJ ();
+			GetRecord ();
 			}
 
-		private async void GetGMJ ()
+		private async void GetRecord ()
 			{
 			// Блокировка на время опроса
 			SetLogState (false);
@@ -869,7 +869,7 @@ namespace RD_AAOW
 				if (i > 0)
 					Thread.Sleep (1000);
 
-				newText = await Task.Run<string> (GMJ.GetRandomGMJ);
+				newText = await Task.Run<string> (GMJ.GetRandomRecord);
 				if (newText == "")
 					{
 					RDInterface.ShowBalloon (GMJ.NoConnectionPattern, false);

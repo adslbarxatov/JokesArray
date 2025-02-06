@@ -9,7 +9,7 @@ namespace RD_AAOW
 	/// <summary>
 	/// Класс описывает загрузчик приложения
 	/// </summary>
-	[Activity (Label = "Grammar must joy",
+	[Activity (Label = "JokesArray",
 		Icon = "@drawable/icon",
 		Theme = "@style/SplashTheme",
 		MainLauncher = true,

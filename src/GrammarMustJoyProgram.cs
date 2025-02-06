@@ -30,6 +30,12 @@ namespace RD_AAOW
 			if (!RDGenerics.AppHasAccessRights (true, false))
 				return;
 
+			// !!! Миграция из GMJ
+			string gmjExists = RDGenerics.GetDPArrayRegistryValue ("GrammarMustJoy");
+			string jaVersion = RDGenerics.GetSettings (AboutForm.LastShownVersionKey, "");
+			if (!string.IsNullOrWhiteSpace (gmjExists) && string.IsNullOrWhiteSpace (jaVersion))
+				NotificationsSupport.MigrateSettingsFromGMJ ();
+
 			// Отображение справки и запроса на принятие Политики
 			if (!RDInterface.AcceptEULA ())
 				return;

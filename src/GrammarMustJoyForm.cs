@@ -66,7 +66,7 @@ namespace RD_AAOW
 			ApplyColorsAndFonts ();
 
 			// Настройка иконки в трее
-			ni.Icon = Properties.GrammarMustJoy.GMJNotifier16;
+			ni.Icon = Properties.JokesArray.TrayIcon;
 			ni.Text = ProgramDescription.AssemblyVisibleName;
 			ni.Visible = true;
 
@@ -206,8 +206,8 @@ namespace RD_AAOW
 				}
 			}
 
-		// Запрос сообщения от GMJ
-		private void GetGMJExecutor (object sender, DoWorkEventArgs e)
+		// Запрос сообщения от JokesArray
+		private void GetJokeExecutor (object sender, DoWorkEventArgs e)
 			{
 			uint group = NotificationsSupport.GroupSize;
 			BackgroundWorker bw = (BackgroundWorker)sender;
@@ -221,7 +221,7 @@ namespace RD_AAOW
 				if (i > 0)
 					Thread.Sleep (1000);
 
-				res += (GMJ.GetRandomGMJ () + sp);
+				res += (GMJ.GetRandomRecord () + sp);
 				bw.ReportProgress ((int)(HardWorkExecutor.ProgressBarSize * (i + 1) / group),
 					"Запрошено " + (i + 1).ToString () + limit);
 				}
@@ -229,10 +229,10 @@ namespace RD_AAOW
 			e.Result = res;
 			}
 
-		private void GetGMJ_Click (object sender, EventArgs e)
+		private void GetJoke_Click (object sender, EventArgs e)
 			{
 			// Запрос записи
-			RDInterface.RunWork (GetGMJExecutor, null, "Запрос случайной записи...",
+			RDInterface.RunWork (GetJokeExecutor, null, "Запрос случайной записи...",
 				RDRunWorkFlags.CaptionInTheMiddle);
 
 			string[] values = RDInterface.WorkResultAsString.Split (groupSplitter,
@@ -361,7 +361,7 @@ namespace RD_AAOW
 						}
 
 					// Создание изображения
-					Bitmap b = GMJPicture.CreateGMJPicture (header, text, sub,
+					Bitmap b = GMJPicture.CreateRecordPicture (header, text, sub,
 						NotificationsSupport.PicturesTextAlignment,
 						NotificationsSupport.PictureColors.GetColor ((uint)pbk));
 
@@ -369,7 +369,7 @@ namespace RD_AAOW
 					SFDialog.FileName = GMJPicture.GetFileNameFromCode (header);
 
 					if (SFDialog.ShowDialog () == DialogResult.OK)
-						GMJPicture.SaveGMJPictureToFile (b, SFDialog.FileName);
+						GMJPicture.SaveRecordPictureToFile (b, SFDialog.FileName);
 
 					b.Dispose ();
 					break;

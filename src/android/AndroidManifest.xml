@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.RD_AAOW.GrammarMustJoy"
-	android:installLocation="internalOnly" android:versionCode="600215" android:versionName="2.1.9">
+	android:installLocation="internalOnly" android:versionCode="600301" android:versionName="3.0">
 
 	<uses-sdk android:minSdkVersion="21" android:targetSdkVersion="35" />
 
@@ -12,10 +12,10 @@
 	<uses-feature android:name="android.software.leanback" android:required="false" />
 	<uses-feature android:name="android.hardware.touchscreen" android:required="false" />
 
-	<application android:label="Grammar must joy" android:icon="@drawable/icon"
+	<application android:label="JokesArray" android:icon="@drawable/icon"
 		android:banner="@drawable/banner">
 
-		<activity android:name="com.RD_AAOW.MainActivity" android:label="Grammar must joy"
+		<activity android:name="com.RD_AAOW.MainActivity" android:label="JokesArray"
 			android:theme="@style/SplashTheme" android:icon="@drawable/icon"
 			android:exported="true" android:configChanges="screenSize|orientation">
 
