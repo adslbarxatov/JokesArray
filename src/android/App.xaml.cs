@@ -281,10 +281,23 @@ namespace RD_AAOW
 			GroupSizeChanged (null, null);
 
 			// Цензурирование
-			RDInterface.ApplyLabelSettings (settingsPage, "CensorshipLabel",
-				"Цензурирование:", RDLabelTypes.DefaultLeft);
 			censorshipButton = RDInterface.ApplyButtonSettings (settingsPage, "CensorshipButton",
 				" ", settingsFieldBackColor, Censorship_Clicked, false);
+
+			if (flags.HasFlag (RDAppStartupFlags.DisableXPUN))
+				{
+				RDInterface.ApplyLabelSettings (settingsPage, "CensorshipLabel",
+					"Цензурирование: включено", RDLabelTypes.DefaultLeft);
+
+				censorshipButton.IsEnabled = censorshipButton.IsVisible = false;
+				if (!GMJ.EnableCensorship)
+					GMJ.EnableCensorship = true;
+				}
+			else
+				{
+				RDInterface.ApplyLabelSettings (settingsPage, "CensorshipLabel",
+					"Цензурирование:", RDLabelTypes.DefaultLeft);
+				}
 			RDInterface.ApplyLabelSettings (settingsPage, "CensorshipTip",
 				GMJ.CensorshipTip, RDLabelTypes.TipLeft);
 
@@ -643,15 +656,15 @@ namespace RD_AAOW
 					secondMenuName,
 					});
 				tapMenuItems2.Add (new List<string> {
-					"▷\tПерейти к источнику",
+					"▷\tПерейти к оригиналу",
 					"☍\tПоделиться текстом",
 					"❏\tСкопировать текст",
 					secondMenuName,
 					});
 				tapMenuItems2.Add (new List<string> {
-					"▷\tПерейти к источнику",
+					"▷\tПерейти к оригиналу",
 					"☍\tПоделиться текстом",
-					"🖼\tПоделиться картинкой",		// ▒
+					"🖼\tПоделиться картинкой",
 					"❏\tСкопировать текст",
 					secondMenuName,
 					});
