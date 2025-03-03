@@ -31,7 +31,7 @@ namespace RD_AAOW
 		private const int manualScrollModeDown = -3;
 
 		// Сформированные контекстные меню
-		private List<List<string>> tapMenuItems2 = new List<List<string>> ();
+		private List<List<string>> tapMenuItems = new List<List<string>> ();
 		private List<string> specialOptions = new List<string> ();
 
 		// Цветовая схема
@@ -453,7 +453,8 @@ namespace RD_AAOW
 			switch (Type)
 				{
 				case NSTipTypes.GoToButton:
-					msg = "Эта опция позволяет открыть выбранную запись в Telegram или в браузере";
+					msg = "Эта опция позволяет перейти к оригиналу выбранной записи " +
+						"на нашем Telegram-канале";
 					break;
 
 				case NSTipTypes.ShareTextButton:
@@ -648,27 +649,27 @@ namespace RD_AAOW
 
 			// Формирование меню
 			const string secondMenuName = "Ещё...";
-			if (tapMenuItems2.Count < 1)
+			if (tapMenuItems.Count < 1)
 				{
-				tapMenuItems2.Add (new List<string> {
+				tapMenuItems.Add (new List<string> {
 					"☍\tПоделиться текстом",
 					"❏\tСкопировать текст",
 					secondMenuName,
 					});
-				tapMenuItems2.Add (new List<string> {
+				tapMenuItems.Add (new List<string> {
 					"▷\tПерейти к оригиналу",
 					"☍\tПоделиться текстом",
 					"❏\tСкопировать текст",
 					secondMenuName,
 					});
-				tapMenuItems2.Add (new List<string> {
+				tapMenuItems.Add (new List<string> {
 					"▷\tПерейти к оригиналу",
 					"☍\tПоделиться текстом",
 					"🖼\tПоделиться картинкой",
 					"❏\tСкопировать текст",
 					secondMenuName,
 					});
-				tapMenuItems2.Add (new List<string> {
+				tapMenuItems.Add (new List<string> {
 					"✕\tУдалить из журнала",
 					});
 				}
@@ -684,25 +685,29 @@ namespace RD_AAOW
 
 			int menuItem = await RDInterface.ShowList ("Выберите действие:",
 				RDLocale.GetDefaultText (RDLDefaultTexts.Button_Cancel),
-				tapMenuItems2[menuVariant]);
+				tapMenuItems[menuVariant]);
 
 			if (menuItem < 0)
 				return;
 
-			bool secondMenu = (tapMenuItems2[menuVariant][menuItem] == secondMenuName);
-			menuVariant = menuItem + 10 * (menuVariant + 1);
+			bool secondMenu = (tapMenuItems[menuVariant][menuItem] == secondMenuName);
+			/*menuVariant = menuItem + 10 * (menuVariant + 1);*/
 
 			// Контроль второго набора
 			if (secondMenu)
 				{
 				menuVariant = 3;
+
 				menuItem = await RDInterface.ShowList ("Выберите действие:",
-					RDLocale.GetDefaultText (RDLDefaultTexts.Button_Cancel), tapMenuItems2[menuVariant]);
+					RDLocale.GetDefaultText (RDLDefaultTexts.Button_Cancel), tapMenuItems[menuVariant]);
 				if (menuItem < 0)
 					return;
 
-				menuVariant = menuItem + 10 * (menuVariant + 1);
+				/*menuVariant = menuItem + 10 * (menuVariant + 1);*/
 				}
+
+			// Окончательный выбор варианта действия
+			menuVariant = menuItem + 10 * (menuVariant + 1);
 
 			// Полный текст поста
 			string notText = notItem.Header + RDLocale.RNRN + notItem.Text;
@@ -721,15 +726,20 @@ namespace RD_AAOW
 					if (!NotificationsSupport.TipsState.HasFlag (NSTipTypes.GoToButton))
 						await ShowTips (NSTipTypes.GoToButton);
 
-					try
+					if (GMJ.EnableCensorship)
+						await RDInterface.ShowMessage (GMJ.CensorshipGoToChannelMessage,
+							RDLocale.GetDefaultText (RDLDefaultTexts.Button_OK));
+
+					/*try
 						{
-						await Launcher.OpenAsync (notLink);
+						await Launcher. OpenAsync (notLink);
 						}
 					catch
 						{
 						RDInterface.ShowBalloon
 							(RDLocale.GetDefaultText (RDLDefaultTexts.Message_BrowserNotAvailable), true);
-						}
+						}*/
+					await RDGenerics.RunURL (notLink, true);
 					break;
 
 				// Поделиться
@@ -1230,7 +1240,7 @@ namespace RD_AAOW
 				return;
 
 			// Контроль
-			string msg = (res > 0) ? GMJ.CensorshipEnableMessage2 : GMJ.CensorshipDisableMessage2;
+			string msg = (res > 0) ? GMJ.CensorshipEnableMessage : GMJ.CensorshipDisableMessage;
 			bool doReset = false;
 			if (await RDInterface.ShowMessage (msg, RDLocale.GetDefaultText (RDLDefaultTexts.Button_Yes),
 				RDLocale.GetDefaultText (RDLDefaultTexts.Button_Cancel)))
