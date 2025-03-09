@@ -32,38 +32,7 @@ namespace RD_AAOW
 
 		// Сформированные контекстные меню
 		private List<List<string>> tapMenuItems = new List<List<string>> ();
-		private List<string> specialOptions = new List<string> ();
-
-		// Цветовая схема
-		private readonly Color
-			logMasterBackColor = Color.FromArgb ("#F0F0F0"),
-			logFieldBackColor = Color.FromArgb ("#80808080"),
-
-			settingsMasterBackColor = Color.FromArgb ("#FFF8F0"),
-			settingsFieldBackColor = Color.FromArgb ("#FFE8D0"),
-
-			solutionLockedBackColor = Color.FromArgb ("#F0F0F0"),
-
-			aboutMasterBackColor = Color.FromArgb ("#F0FFF0"),
-			aboutFieldBackColor = Color.FromArgb ("#D0FFD0");
-
-		#endregion
-
-		#region Переменные страниц
-
-		private ContentPage settingsPage, aboutPage, logPage;
-
-		private Label aboutLabel, fontSizeFieldLabel, groupSizeFieldLabel, aboutFontSizeField;
-
-		private Switch newsAtTheEndSwitch, keepScreenOnSwitch, enableCopySubscriptionSwitch,
-			translucencySwitch;
-
-		private Button centerButton, scrollUpButton, scrollDownButton, menuButton, addButton,
-			pictureBackButton, pTextOnTheLeftButton, censorshipButton, logColorButton,
-			pSubsButton, logFontFamilyButton;
-
-		private ListView mainLog;
-
+		/*private List<string> specialOptions = new List<string> ();*/
 		private List<string> pageVariants = new List<string> ();
 		private List<string> pictureBKVariants = new List<string> ();
 		private List<string> pictureBKSelectionVariants = new List<string> ();
@@ -72,6 +41,49 @@ namespace RD_AAOW
 		private List<string> censorshipVariants = new List<string> ();
 		private List<string> logColorVariants = new List<string> ();
 		private List<string> logFontFamilyVariants = new List<string> ();
+
+		// Последняя использованная категория
+		private string lastCategory = "";
+		private uint lastCategoryIndex = 0;
+		private int lastTopCategoryIndex = -1;
+
+		// Цветовая схема
+		private readonly Color logMasterBackColor = Color.FromArgb ("#F0F0F0");
+		private readonly Color logFieldBackColor = Color.FromArgb ("#80808080");
+
+		private readonly Color settingsMasterBackColor = Color.FromArgb ("#FFF8F0");
+		private readonly Color settingsFieldBackColor = Color.FromArgb ("#FFE8D0");
+
+		/*solutionLockedBackColor = Color.FromArgb ("#F0F0F0"),*/
+
+		private readonly Color aboutMasterBackColor = Color.FromArgb ("#F0FFF0");
+		private readonly Color aboutFieldBackColor = Color.FromArgb ("#D0FFD0");
+
+		private readonly Color categoryMasterBackColor = Color.FromArgb ("#F8FFF0");
+		private readonly Color categoryFieldBackColor = Color.FromArgb("#E8FFD0");
+
+		#endregion
+
+		#region Переменные страниц
+
+		private ContentPage settingsPage, aboutPage, logPage, categoryPage;
+
+		private Label /*aboutLabel,*/ fontSizeFieldLabel, groupSizeFieldLabel, aboutFontSizeField,
+			genCategoryEmpty, genCategoryLabel;
+
+		private Switch newsAtTheEndSwitch, keepScreenOnSwitch, enableCopySubscriptionSwitch,
+			translucencySwitch;
+
+		private Button centerButton, scrollUpButton, scrollDownButton, menuButton, addButton,
+			pictureBackButton, pTextOnTheLeftButton, censorshipButton, logColorButton,
+			pSubsButton, logFontFamilyButton, lastUsedCategory;
+
+		private List<Button> topCategories = new List<Button> ();
+		private List<Button> genCategories = new List<Button> ();
+
+		private FlexLayout topCategorySection, genCategorySection;
+
+		private ListView mainLog;
 
 		#endregion
 
@@ -98,13 +110,16 @@ namespace RD_AAOW
 				RDLocale.GetDefaultText (RDLDefaultTexts.Control_AppAbout), aboutMasterBackColor);
 			logPage = RDInterface.ApplyPageSettings (new LogPage (), "LogPage",
 				"Журнал", logMasterBackColor);
+			categoryPage = RDInterface.ApplyPageSettings (new CategoryPage (), "CategoryPage",
+				"Категории", categoryMasterBackColor);
 
 			RDInterface.SetMasterPage (MainPage, logPage, logMasterBackColor);
 
 			if (!NotificationsSupport.TipsState.HasFlag (NSTipTypes.PolicyTip))
 				RDInterface.SetCurrentPage (settingsPage, settingsMasterBackColor);
 
-			// Настройки просмотра
+			#region Страница настроек
+
 			RDInterface.ApplyLabelSettings (settingsPage, "AppSettingsLabel",
 				"Просмотр", RDLabelTypes.HeaderLeft);
 
@@ -133,9 +148,12 @@ namespace RD_AAOW
 				eps1.IsVisible = eps2.IsVisible = enableCopySubscriptionSwitch.IsVisible = false;
 				}
 
+			#endregion
+
 			#region Страница "О программе"
 
-			aboutLabel = RDInterface.ApplyLabelSettings (aboutPage, "AboutLabel",
+			/*aboutLabel =*/
+			RDInterface.ApplyLabelSettings (aboutPage, "AboutLabel",
 				RDGenerics.AppAboutLabelText, RDLabelTypes.AppAbout);
 
 			RDInterface.ApplyButtonSettings (aboutPage, "ManualsButton",
@@ -183,7 +201,8 @@ namespace RD_AAOW
 
 			#endregion
 
-			// Страница журнала приложения
+			#region Страницы журнала и настроек приложения
+
 			mainLog = (ListView)logPage.FindByName ("MainLog");
 			mainLog.BackgroundColor = logFieldBackColor;
 			mainLog.HasUnevenRows = true;
@@ -299,7 +318,10 @@ namespace RD_AAOW
 					"Цензурирование:", RDLabelTypes.DefaultLeft);
 				}
 			RDInterface.ApplyLabelSettings (settingsPage, "CensorshipTip",
-				GMJ.CensorshipTip, RDLabelTypes.TipLeft);
+				GMJ.CensorshipTip + (flags.HasFlag (RDAppStartupFlags.DisableXPUN) ?
+				". В данной версии приложения опция заблокирована в положении «включена» " +
+				"в связи с возрастным рейтингом, предоставленным магазином приложений" : ""),
+				RDLabelTypes.TipLeft);
 
 			Censorship_Clicked (null, null);
 
@@ -360,6 +382,51 @@ namespace RD_AAOW
 				PSubs_Clicked (null, null);
 				}
 
+			#endregion
+
+			#region Страница категорий
+
+			// Категории верхнего уровня
+			RDInterface.ApplyLabelSettings (categoryPage, "TopCategoryLabel",
+				"Группы категорий:", RDLabelTypes.HeaderLeft);
+			topCategorySection = (FlexLayout)categoryPage.FindByName ("TopCategorySection");
+
+			string[] topCat = GMJ.GetTopCategories ();  // Активация списка
+			for (int i = 0; i < topCat.Length; i++)
+				{
+				Button b = new Button ();
+				b.BackgroundColor = categoryFieldBackColor;
+				b.FontAttributes = FontAttributes.None;
+				b.FontSize = 5 * RDInterface.MasterFontSize / 4;
+				b.TextColor = RDInterface.GetInterfaceColor (RDInterfaceColors.AndroidTextColor);
+				b.WidthRequest = b.HeightRequest = RDInterface.MasterFontSize * 2.75;
+				b.Padding = Thickness.Zero;
+				b.Margin = new Thickness (3);
+				b.Text = topCat[i];
+				b.TextTransform = TextTransform.None;
+				b.Clicked += SelectTopCategory;
+
+				topCategories.Add (b);
+				topCategorySection.Add (b);
+				}
+
+			genCategoryLabel = RDInterface.ApplyLabelSettings (categoryPage, "GenCategoryLabel",
+				"Категории:", RDLabelTypes.HeaderLeft);
+			genCategoryLabel.IsVisible = false;
+
+			genCategorySection = (FlexLayout)categoryPage.FindByName ("GenCategorySection");
+			genCategorySection.IsVisible = false;
+
+			genCategoryEmpty = RDInterface.ApplyLabelSettings (categoryPage, "GenCategoryEmpty",
+				"(все записи из этой категории уже просмотрены)", RDLabelTypes.TipCenter);
+			genCategoryEmpty.IsVisible = false;
+
+			lastUsedCategory = RDInterface.ApplyButtonSettings (categoryPage, "LastUsedCategory",
+				"Последняя выбранная категория", categoryFieldBackColor, LastUsedCategory_Clicked, false);
+			lastUsedCategory.IsVisible = false;
+
+			#endregion
+
 			// Запуск цикла обратной связи (без ожидания)
 			FinishBackgroundRequest ();
 
@@ -370,11 +437,12 @@ namespace RD_AAOW
 		// Исправление для сброса текущей позиции журнала
 		private async void CurrentPageChanged (object sender, EventArgs e)
 			{
-			if (RDInterface.MasterPage.CurrentPage != logPage)
-				return;
-
-			needsScroll = true;
-			await ScrollMainLog (autoScrollMode);
+			// Автопрокрутка при возврате на главную страницу (только если не выполняются фоновые процессы)
+			if ((RDInterface.MasterPage.CurrentPage == logPage) && centerButtonEnabled)
+				{
+				needsScroll = true;
+				await ScrollMainLog (autoScrollMode);
+				}
 			}
 
 		// Цикл обратной связи для загрузки текущего журнала, если фоновая служба не успела завершить работу
@@ -871,14 +939,17 @@ namespace RD_AAOW
 				return;
 				}
 
-			GetRecord ();
+			GetRecord (false);
 			}
 
-		private async void GetRecord ()
+		private async void GetRecord (bool FromCategory)
 			{
 			// Блокировка на время опроса
 			SetLogState (false);
-			RDInterface.ShowBalloon ("Запрос случайной записи...", false);
+			if (FromCategory)
+				RDInterface.ShowBalloon ("Запрос записи...", false);
+			else
+				RDInterface.ShowBalloon ("Запрос случайной записи...", false);
 
 			// Запуск и разбор
 			RDGenerics.StopRequested = false; // Разблокировка метода GetHTML
@@ -1002,6 +1073,7 @@ namespace RD_AAOW
 				{
 				pageVariants = new List<string> ()
 					{
+					"Категории записей",
 					"Настройки приложения",
 					RDLocale.GetDefaultText (RDLDefaultTexts.Control_AppAbout),
 					};
@@ -1016,10 +1088,17 @@ namespace RD_AAOW
 			switch (res)
 				{
 				case 0:
-					RDInterface.SetCurrentPage (settingsPage, settingsMasterBackColor);
+					RDInterface.SetCurrentPage (categoryPage, categoryMasterBackColor);
+
+					if (lastTopCategoryIndex >= 0)
+						SelectTopCategory (topCategories[lastTopCategoryIndex], null);
 					break;
 
 				case 1:
+					RDInterface.SetCurrentPage (settingsPage, settingsMasterBackColor);
+					break;
+
+				case 2:
 					RDInterface.SetCurrentPage (aboutPage, aboutMasterBackColor);
 					break;
 				}
@@ -1412,6 +1491,109 @@ namespace RD_AAOW
 		private async void StatsButton_Click (object sender, EventArgs e)
 			{
 			await RDInterface.ShowMessage (GMJ.GMJStats, RDLocale.GetDefaultText (RDLDefaultTexts.Button_OK));
+			}
+
+		#endregion
+
+		#region Категории
+
+		// Метод выполняет выбор категории верхнего уровня
+		private async void SelectTopCategory (object sender, EventArgs e)
+			{
+			// Сброс списков
+			genCategories.Clear ();
+			genCategorySection.Clear ();
+
+			// Запрос доступных категорий
+			int idx = topCategories.IndexOf ((Button)sender);
+			if (idx < 0)
+				return;
+
+			// Блокировка
+			topCategorySection.IsEnabled = false;
+			lastUsedCategory.IsVisible = false;
+			RDInterface.ShowBalloon ("Загрузка категорий...", false);
+
+			// Запрос
+			lastTopCategoryIndex = idx;
+			await Task.Run (CategoriesRequest);
+
+			// Отображение кнопки последней категории, если возможно
+			if (lastCategoryIndex < cats.Length)
+				lastUsedCategory.IsVisible = (cats[lastCategoryIndex] == lastCategory);
+
+			// Отображение полей
+			if (!genCategoryLabel.IsVisible)
+				genCategoryLabel.IsVisible = true;
+
+			genCategoryEmpty.IsVisible = (cats.Length < 1);
+			genCategorySection.IsVisible = !genCategoryEmpty.IsVisible;
+			if (genCategoryEmpty.IsVisible)
+				{
+				topCategorySection.IsEnabled = true;
+				return;
+				}
+
+			// Загрузка
+			genCategorySection.IsVisible = true;
+			genCategoryEmpty.IsVisible = false;
+			for (int i = 0; i < cats.Length; i++)
+				{
+				Button b = new Button ();
+				b.BackgroundColor = categoryFieldBackColor;
+				b.FontAttributes = FontAttributes.None;
+				b.FontSize = RDInterface.MasterFontSize;
+				b.HeightRequest = RDInterface.MasterFontSize * 2.75;
+				b.TextColor = RDInterface.GetInterfaceColor (RDInterfaceColors.AndroidTextColor);
+				b.Margin = b.Padding = new Thickness (3);
+				b.Text = cats[i];
+				b.TextTransform = TextTransform.None;
+				b.Clicked += SelectCategory;
+
+				genCategories.Add (b);
+				genCategorySection.Add (b);
+				}
+
+			// Разблокировка
+			topCategorySection.IsEnabled = true;
+			}
+
+		private void CategoriesRequest ()
+			{
+			cats = GMJ.GetCategories ((uint)lastTopCategoryIndex);
+			}
+		private string[] cats;
+
+		// Метод выполняет выбор категории и запрос записи, если возможно
+		private void SelectCategory (object sender, EventArgs e)
+			{
+			// Контроль
+			Button b = (Button)sender;
+			int idx = genCategories.IndexOf (b);
+			if (idx < 0)
+				return;
+
+			// Получение номера записи
+			lastCategoryIndex = (uint)idx;
+			lastCategory = b.Text;
+
+			// Запуск
+			LastUsedCategory_Clicked (null, null);
+			}
+
+		// Метод запрашивает случайную запись из последней выбранной категории
+		private void LastUsedCategory_Clicked (object sender, EventArgs e)
+			{
+			// Номер поста
+			int post = GMJ.GetRandomFromCategory (lastCategoryIndex);
+			if (post < 0)
+				return;
+
+			// Запуск
+			SetLogState (false);    // Блокировка автопрокрутки журнала
+			RDInterface.MasterPage.PopToRootAsync (true);
+			GMJ.RequestRecord ((uint)post);
+			GetRecord (true);
 			}
 
 		#endregion

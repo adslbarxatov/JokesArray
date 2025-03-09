@@ -231,6 +231,22 @@ namespace RD_AAOW
 
 		private void GetJoke_Click (object sender, EventArgs e)
 			{
+			/* !!! временно !!! */
+/*#if !TGB
+			string[] tc = GMJ.GetTopCategories ();
+			int tcn = RDGenerics.RND.Next (tc.Length);
+			string ret = tc[tcn] + RDLocale.RN;
+
+			string[] ct = GMJ.GetCategories ((uint)tcn);
+			int ctn = RDGenerics.RND.Next (ct.Length);
+			ret += ct[ctn] + RDLocale.RN;
+
+			int rc = GMJ.GetRandomFromCategory ((uint)ctn);
+			ret += rc.ToString ();
+			AddTextToLayout (ret);
+			return;
+#endif*/
+
 			// Запрос записи
 			RDInterface.RunWork (GetJokeExecutor, null, "Запрос случайной записи...",
 				RDRunWorkFlags.CaptionInTheMiddle);
