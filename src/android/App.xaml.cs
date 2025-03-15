@@ -32,7 +32,6 @@ namespace RD_AAOW
 
 		// Сформированные контекстные меню
 		private List<List<string>> tapMenuItems = new List<List<string>> ();
-		/*private List<string> specialOptions = new List<string> ();*/
 		private List<string> pageVariants = new List<string> ();
 		private List<string> pictureBKVariants = new List<string> ();
 		private List<string> pictureBKSelectionVariants = new List<string> ();
@@ -44,8 +43,11 @@ namespace RD_AAOW
 
 		// Последняя использованная категория
 		private string lastCategory = "";
-		private uint lastCategoryIndex = 0;
+		private int lastCategoryIndex = -1;
 		private int lastTopCategoryIndex = -1;
+
+		// Список полученных категорий
+		private string[] categoriesReqResult;
 
 		// Цветовая схема
 		private readonly Color logMasterBackColor = Color.FromArgb ("#F0F0F0");
@@ -53,8 +55,6 @@ namespace RD_AAOW
 
 		private readonly Color settingsMasterBackColor = Color.FromArgb ("#FFF8F0");
 		private readonly Color settingsFieldBackColor = Color.FromArgb ("#FFE8D0");
-
-		/*solutionLockedBackColor = Color.FromArgb ("#F0F0F0"),*/
 
 		private readonly Color aboutMasterBackColor = Color.FromArgb ("#F0FFF0");
 		private readonly Color aboutFieldBackColor = Color.FromArgb ("#D0FFD0");
@@ -68,7 +68,7 @@ namespace RD_AAOW
 
 		private ContentPage settingsPage, aboutPage, logPage, categoryPage;
 
-		private Label /*aboutLabel,*/ fontSizeFieldLabel, groupSizeFieldLabel, aboutFontSizeField,
+		private Label fontSizeFieldLabel, groupSizeFieldLabel, aboutFontSizeField,
 			genCategoryEmpty, genCategoryLabel;
 
 		private Switch newsAtTheEndSwitch, keepScreenOnSwitch, enableCopySubscriptionSwitch,
@@ -1073,9 +1073,10 @@ namespace RD_AAOW
 				{
 				pageVariants = new List<string> ()
 					{
-					"Категории записей",
-					"Настройки приложения",
-					RDLocale.GetDefaultText (RDLDefaultTexts.Control_AppAbout),
+					"↺\tПоследняя категория",
+					"🔍\tВсе категории",
+					"⚙️\tНастройки приложения",
+					"…\t" + RDLocale.GetDefaultText (RDLDefaultTexts.Control_AppAbout),
 					};
 				}
 
@@ -1088,17 +1089,21 @@ namespace RD_AAOW
 			switch (res)
 				{
 				case 0:
+					LastUsedCategory_Clicked (null, null);
+					break;
+
+				case 1:
 					RDInterface.SetCurrentPage (categoryPage, categoryMasterBackColor);
 
 					if (lastTopCategoryIndex >= 0)
 						SelectTopCategory (topCategories[lastTopCategoryIndex], null);
 					break;
 
-				case 1:
+				case 2:
 					RDInterface.SetCurrentPage (settingsPage, settingsMasterBackColor);
 					break;
 
-				case 2:
+				case 3:
 					RDInterface.SetCurrentPage (aboutPage, aboutMasterBackColor);
 					break;
 				}
@@ -1519,14 +1524,14 @@ namespace RD_AAOW
 			await Task.Run (CategoriesRequest);
 
 			// Отображение кнопки последней категории, если возможно
-			if (lastCategoryIndex < cats.Length)
-				lastUsedCategory.IsVisible = (cats[lastCategoryIndex] == lastCategory);
+			if ((lastCategoryIndex >= 0) && (lastCategoryIndex < categoriesReqResult.Length))
+				lastUsedCategory.IsVisible = (categoriesReqResult[lastCategoryIndex] == lastCategory);
 
 			// Отображение полей
 			if (!genCategoryLabel.IsVisible)
 				genCategoryLabel.IsVisible = true;
 
-			genCategoryEmpty.IsVisible = (cats.Length < 1);
+			genCategoryEmpty.IsVisible = (categoriesReqResult.Length < 1);
 			genCategorySection.IsVisible = !genCategoryEmpty.IsVisible;
 			if (genCategoryEmpty.IsVisible)
 				{
@@ -1537,7 +1542,7 @@ namespace RD_AAOW
 			// Загрузка
 			genCategorySection.IsVisible = true;
 			genCategoryEmpty.IsVisible = false;
-			for (int i = 0; i < cats.Length; i++)
+			for (int i = 0; i < categoriesReqResult.Length; i++)
 				{
 				Button b = new Button ();
 				b.BackgroundColor = categoryFieldBackColor;
@@ -1546,7 +1551,7 @@ namespace RD_AAOW
 				b.HeightRequest = RDInterface.MasterFontSize * 2.75;
 				b.TextColor = RDInterface.GetInterfaceColor (RDInterfaceColors.AndroidTextColor);
 				b.Margin = b.Padding = new Thickness (3);
-				b.Text = cats[i];
+				b.Text = categoriesReqResult[i];
 				b.TextTransform = TextTransform.None;
 				b.Clicked += SelectCategory;
 
@@ -1560,9 +1565,8 @@ namespace RD_AAOW
 
 		private void CategoriesRequest ()
 			{
-			cats = GMJ.GetCategories ((uint)lastTopCategoryIndex);
+			categoriesReqResult = GMJ.GetCategories ((uint)lastTopCategoryIndex);
 			}
-		private string[] cats;
 
 		// Метод выполняет выбор категории и запрос записи, если возможно
 		private void SelectCategory (object sender, EventArgs e)
@@ -1574,7 +1578,7 @@ namespace RD_AAOW
 				return;
 
 			// Получение номера записи
-			lastCategoryIndex = (uint)idx;
+			lastCategoryIndex = idx;
 			lastCategory = b.Text;
 
 			// Запуск
@@ -1585,9 +1589,15 @@ namespace RD_AAOW
 		private void LastUsedCategory_Clicked (object sender, EventArgs e)
 			{
 			// Номер поста
-			int post = GMJ.GetRandomFromCategory (lastCategoryIndex);
+			int post = GMJ.GetRandomFromCategory ((uint)lastCategoryIndex);
 			if (post < 0)
+				{
+				if (lastCategoryIndex < 0)
+					RDInterface.ShowBalloon ("Не выбрана категория для просмотра", true);
+				else
+					RDInterface.ShowBalloon ("Все записи из выбранной категории уже просмотрены", true);
 				return;
+				}
 
 			// Запуск
 			SetLogState (false);    // Блокировка автопрокрутки журнала
