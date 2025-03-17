@@ -24,6 +24,19 @@ namespace RD_AAOW
 		private const string fontFamily = "Calibri";
 		private const int translucencyAmount = 15;
 
+		// Контекстные меню категорий
+		private ContextMenu topCategories;
+		private ContextMenu genCategories;
+
+		// Последняя использованная категория
+		private int lastCategoryIndex = -1;
+		private int lastTopCategoryIndex = -1;
+		private bool fromCategory = false;
+		private const int categoriesPerMenu = 20;
+
+		// Список полученных категорий
+		private string[] categoriesReqResult;
+
 		// Динамическое ограничение ширины элементов журнала
 		private Size LogSizeLimit
 			{
@@ -96,8 +109,18 @@ namespace RD_AAOW
 			SFDialog.Title = "Укажите расположение для сохраняемой картинки";
 			SFDialog.Filter = "Portable network graphics (*.png)|*.png";
 
-			/* !!! временно !!! */
-			GMJ.GetTopCategories ();
+			// Загрузка категорий верхнего уровня
+#if TGB
+			LastCategoryButton.Enabled = AllCategoriesButton.Enabled = false;
+#else
+			string[] topCat = GMJ.GetTopCategories ();
+			topCategories = new ContextMenu ();
+			genCategories = new ContextMenu ();
+
+			for (int i = 0; i < topCat.Length; i++)
+				topCategories.MenuItems.Add (new MenuItem (topCat[i].ToUpper (), SelectTopCategory));
+
+#endif
 			}
 
 		private void GrammarMustJoyForm_Shown (object sender, EventArgs e)
@@ -292,8 +315,9 @@ namespace RD_AAOW
 			#endif*/
 
 			// Запрос записи
-			RDInterface.RunWork (GetJokeExecutor, null, "Запрос случайной записи...",
+			RDInterface.RunWork (GetJokeExecutor, null, fromCategory ? "Запрос записи..." : "Запрос случайной записи...",
 				RDRunWorkFlags.CaptionInTheMiddle);
+			fromCategory = false;
 
 			string[] values = RDInterface.WorkResultAsString.Split (groupSplitter,
 				StringSplitOptions.RemoveEmptyEntries);
@@ -482,6 +506,126 @@ namespace RD_AAOW
 			gmjsf.Dispose ();
 
 			ApplyColorsAndFonts ();
+			}
+
+		// Метод выполняет выбор категории верхнего уровня
+		private void SelectTopCategory_Clicked (object sender, EventArgs e)
+			{
+			topCategories.Show (LastCategoryButton, Point.Empty);
+			}
+
+		private void SelectTopCategory (object sender, EventArgs e)
+			{
+			// Сброс списков
+			genCategories.MenuItems.Clear ();
+
+			// Запрос доступных категорий
+			int idx = topCategories.MenuItems.IndexOf ((MenuItem)sender);
+			if (idx < 0)
+				return;
+
+			// Запрос
+			lastTopCategoryIndex = idx;
+			RDInterface.RunWork (CategoriesRequest, null, "Загрузка категорий...", RDRunWorkFlags.CaptionInTheMiddle);
+
+			// Контроль
+			if (categoriesReqResult.Length < 1)
+				{
+				RDInterface.MessageBox (RDMessageTypes.Information_Center,
+					"Все записи из этой категории уже просмотрены", 1000);
+				return;
+				}
+
+			// Загрузка
+			if (categoriesReqResult.Length <= categoriesPerMenu)
+				{
+				for (int i = 0; i < categoriesReqResult.Length; i++)
+					genCategories.MenuItems.Add (new MenuItem (categoriesReqResult[i], SelectCategory));
+				genCategories.Tag = (int)0;
+				}
+			else
+				{
+				for (int i = 0; i < categoriesReqResult.Length; i += categoriesPerMenu)
+					{
+					string left = (i < categoriesReqResult.Length) ? categoriesReqResult[i] :
+						categoriesReqResult[categoriesReqResult.Length - 1];
+					string right = (i + categoriesPerMenu - 1 < categoriesReqResult.Length) ?
+						categoriesReqResult[i + categoriesPerMenu - 1] :
+						categoriesReqResult[categoriesReqResult.Length - 1];
+					if (left != right)
+						left += (" – " + right);
+
+					genCategories.MenuItems.Add (new MenuItem (left, SelectCategoryGroup));
+					}
+				}
+
+			// Запуск второго меню
+			genCategories.Show (LastCategoryButton, Point.Empty);
+			}
+
+		private void CategoriesRequest (object sender, DoWorkEventArgs e)
+			{
+#if !TGB
+			categoriesReqResult = GMJ.GetCategories ((uint)lastTopCategoryIndex);
+#endif
+			}
+
+		// Метод выполняет выбор категории и запрос записи, если возможно
+		private void SelectCategoryGroup (object sender, EventArgs e)
+			{
+			// Контроль
+			MenuItem b = (MenuItem)sender;
+			int offset = genCategories.MenuItems.IndexOf (b) * categoriesPerMenu;
+			if (offset < 0)
+				return;
+
+			genCategories.MenuItems.Clear ();
+			for (int i = offset; (i < offset + categoriesPerMenu) && (i < categoriesReqResult.Length); i++)
+				genCategories.MenuItems.Add (new MenuItem (categoriesReqResult[i], SelectCategory));
+
+			// Запуск третьего меню
+			genCategories.Tag = offset;
+
+			if (genCategories.MenuItems.Count < 2)
+				SelectCategory (genCategories.MenuItems[0], null);	// Напрямую, т.к. остался один вариант
+			else
+				genCategories.Show (LastCategoryButton, Point.Empty);
+			}
+
+		private void SelectCategory (object sender, EventArgs e)
+			{
+			// Контроль
+			MenuItem b = (MenuItem)sender;
+			int idx = genCategories.MenuItems.IndexOf (b) + (int)genCategories.Tag;
+			if (idx < 0)
+				return;
+
+			// Получение номера записи
+			lastCategoryIndex = idx;
+
+			// Запуск
+			LastUsedCategory_Clicked (null, null);
+			}
+
+		// Метод запрашивает случайную запись из последней выбранной категории
+		private void LastUsedCategory_Clicked (object sender, EventArgs e)
+			{
+#if !TGB
+			// Номер поста
+			int post = GMJ.GetRandomFromCategory ((uint)lastCategoryIndex);
+			if (post < 0)
+				{
+				RDInterface.MessageBox (RDMessageTypes.Information_Center,
+					(lastCategoryIndex < 0) ? "Не выбрана категория для просмотра" :
+					"Все записи из выбранной категории уже просмотрены", 1000);
+				return;
+				}
+
+			// Запуск
+			GMJ.RequestRecord ((uint)post);
+			fromCategory = true;
+			GetJoke_Click (null, null);
+#endif
 			}
 		}
 	}
