@@ -1076,7 +1076,7 @@ namespace RD_AAOW
 					"↺\tПоследняя категория",
 					"🔍\tВсе категории",
 					"⚙️\tНастройки приложения",
-					"…\t" + RDLocale.GetDefaultText (RDLDefaultTexts.Control_AppAbout),
+					"…\t\t" + RDLocale.GetDefaultText (RDLDefaultTexts.Control_AppAbout),
 					};
 				}
 
