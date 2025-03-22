@@ -46,6 +46,10 @@ namespace RD_AAOW
 		private int lastCategoryIndex = -1;
 		private int lastTopCategoryIndex = -1;
 
+		private const uint categoriesPerPage = 20;
+		private uint currentCategoriesPage = 0;
+		private uint categoriesPagesCount = 0;
+
 		// Список полученных категорий
 		private string[] categoriesReqResult;
 
@@ -69,14 +73,14 @@ namespace RD_AAOW
 		private ContentPage settingsPage, aboutPage, logPage, categoryPage;
 
 		private Label fontSizeFieldLabel, groupSizeFieldLabel, aboutFontSizeField,
-			genCategoryEmpty, genCategoryLabel;
+			genCategoryEmpty, genCategoryLabel, genCatCurrentPage;
 
 		private Switch newsAtTheEndSwitch, keepScreenOnSwitch, enableCopySubscriptionSwitch,
 			translucencySwitch;
 
 		private Button centerButton, scrollUpButton, scrollDownButton, menuButton, addButton,
 			pictureBackButton, pTextOnTheLeftButton, censorshipButton, logColorButton,
-			pSubsButton, logFontFamilyButton, lastUsedCategory;
+			pSubsButton, logFontFamilyButton, lastUsedCategory, genCatPrevPage, genCatNextPage;
 
 		private List<Button> topCategories = new List<Button> ();
 		private List<Button> genCategories = new List<Button> ();
@@ -414,6 +418,14 @@ namespace RD_AAOW
 				"Категории:", RDLabelTypes.HeaderLeft);
 			genCategoryLabel.IsVisible = false;
 
+			genCatPrevPage = RDInterface.ApplyButtonSettings (categoryPage, "GenCatPrevPage",
+				RDDefaultButtons.Backward, categoryFieldBackColor, ChangeCatPage_Clicked);
+			genCatCurrentPage = RDInterface.ApplyLabelSettings (categoryPage, "GenCatCurrentPage",
+				" ", RDLabelTypes.HeaderCenter);
+			genCatNextPage = RDInterface.ApplyButtonSettings (categoryPage, "GenCatNextPage",
+				RDDefaultButtons.Start, categoryFieldBackColor, ChangeCatPage_Clicked);
+			genCatPrevPage.IsVisible = genCatNextPage.IsVisible = genCatCurrentPage.IsVisible = false;
+
 			genCategorySection = (FlexLayout)categoryPage.FindByName ("GenCategorySection");
 			genCategorySection.IsVisible = false;
 
@@ -716,29 +728,29 @@ namespace RD_AAOW
 				}
 
 			// Формирование меню
-			const string secondMenuName = "Ещё...";
+			const string secondMenuName = "🔣\t Ещё";
 			if (tapMenuItems.Count < 1)
 				{
 				tapMenuItems.Add (new List<string> {
-					"☍\tПоделиться текстом",
-					"❏\tСкопировать текст",
+					"📣\t Поделиться текстом",
+					"📑\t Скопировать текст",
 					secondMenuName,
 					});
 				tapMenuItems.Add (new List<string> {
-					"▷\tПерейти к оригиналу",
-					"☍\tПоделиться текстом",
-					"❏\tСкопировать текст",
+					"➡️\t Перейти к оригиналу",
+					"📣\t Поделиться текстом",
+					"📑\t Скопировать текст",
 					secondMenuName,
 					});
 				tapMenuItems.Add (new List<string> {
-					"▷\tПерейти к оригиналу",
-					"☍\tПоделиться текстом",
-					"🖼\tПоделиться картинкой",
-					"❏\tСкопировать текст",
+					"➡️\t Перейти к оригиналу",
+					"📣\t Поделиться текстом",
+					"🌅\t Поделиться картинкой",
+					"📑\t Скопировать текст",
 					secondMenuName,
 					});
 				tapMenuItems.Add (new List<string> {
-					"✕\tУдалить из журнала",
+					"❌\t Удалить из журнала",
 					});
 				}
 
@@ -1073,10 +1085,10 @@ namespace RD_AAOW
 				{
 				pageVariants = new List<string> ()
 					{
-					"↺\tПоследняя категория",
-					"🔍\tВсе категории",
-					"⚙️\tНастройки приложения",
-					"…\t\t" + RDLocale.GetDefaultText (RDLDefaultTexts.Control_AppAbout),
+					"🔄\t Та же категория",
+					"🔍\t Все категории",
+					"⚙️\t Настройки приложения",
+					"ℹ️\t " + RDLocale.GetDefaultText (RDLDefaultTexts.Control_AppAbout),
 					};
 				}
 
@@ -1093,6 +1105,14 @@ namespace RD_AAOW
 					break;
 
 				case 1:
+					if (GMJ.RecordsLeft < 1)
+						{
+						await RDInterface.ShowMessage ("Архив записей ещё не обновлялся." + RDLocale.RNRN +
+							"Нажмите кнопку с семафором, чтобы запросить первую запись из архива",
+							RDLocale.GetDefaultText (RDLDefaultTexts.Button_OK));
+						return;
+						}
+
 					RDInterface.SetCurrentPage (categoryPage, categoryMasterBackColor);
 
 					if (lastTopCategoryIndex >= 0)
@@ -1517,7 +1537,8 @@ namespace RD_AAOW
 			// Блокировка
 			topCategorySection.IsEnabled = false;
 			lastUsedCategory.IsVisible = false;
-			RDInterface.ShowBalloon ("Загрузка категорий...", false);
+			genCatPrevPage.IsVisible = genCatNextPage.IsVisible = false;
+			/*RDInterface.ShowBalloon ("Загрузка категорий...", false);*/
 
 			// Запрос
 			lastTopCategoryIndex = idx;
@@ -1529,7 +1550,7 @@ namespace RD_AAOW
 
 			// Отображение полей
 			if (!genCategoryLabel.IsVisible)
-				genCategoryLabel.IsVisible = true;
+				genCategoryLabel.IsVisible = genCatCurrentPage.IsVisible = true;
 
 			genCategoryEmpty.IsVisible = (categoriesReqResult.Length < 1);
 			genCategorySection.IsVisible = !genCategoryEmpty.IsVisible;
@@ -1542,7 +1563,18 @@ namespace RD_AAOW
 			// Загрузка
 			genCategorySection.IsVisible = true;
 			genCategoryEmpty.IsVisible = false;
-			for (int i = 0; i < categoriesReqResult.Length; i++)
+
+			categoriesPagesCount = (uint)categoriesReqResult.Length / categoriesPerPage;
+			if (categoriesReqResult.Length % categoriesPerPage != 0)
+				categoriesPagesCount++;
+			if (currentCategoriesPage >= categoriesPagesCount)
+				currentCategoriesPage = 0;
+			ChangeCatPage_Clicked (null, null);
+
+			genCatPrevPage.IsVisible = genCatNextPage.IsVisible = (categoriesPagesCount > 1);
+
+			for (int i = (int)(currentCategoriesPage * categoriesPerPage);
+				(i < (currentCategoriesPage + 1) * categoriesPerPage) && (i < categoriesReqResult.Length); i++)
 				{
 				Button b = new Button ();
 				b.BackgroundColor = categoryFieldBackColor;
@@ -1578,7 +1610,7 @@ namespace RD_AAOW
 				return;
 
 			// Получение номера записи
-			lastCategoryIndex = idx;
+			lastCategoryIndex = idx + (int)(currentCategoriesPage * categoriesPerPage);
 			lastCategory = b.Text;
 
 			// Запуск
@@ -1604,6 +1636,46 @@ namespace RD_AAOW
 			RDInterface.MasterPage.PopToRootAsync (true);
 			GMJ.RequestRecord ((uint)post);
 			GetRecord (true);
+			}
+
+		// Выбор страницы подкатегорий
+		private void ChangeCatPage_Clicked (object sender, EventArgs e)
+			{
+			if (sender != null)
+				{
+				// Изменение значения
+				Button b = (Button)sender;
+				bool decrease = RDInterface.IsNameDefault (b.Text, RDDefaultButtons.Backward);
+
+				if (decrease)
+					{
+					if (currentCategoriesPage > 0)
+						currentCategoriesPage--;
+					else
+						return;
+					}
+				else
+					{
+					if (currentCategoriesPage < categoriesPagesCount - 1)
+						currentCategoriesPage++;
+					else
+						return;
+					}
+
+				// Перезагрузка списка
+				if (lastTopCategoryIndex >= 0)
+					SelectTopCategory (topCategories[lastTopCategoryIndex], null);
+				}
+
+			// Отображение
+			uint end;
+			if ((currentCategoriesPage + 1) * categoriesPerPage < categoriesReqResult.Length)
+				end = (currentCategoriesPage + 1) * categoriesPerPage;
+			else
+				end = (uint)categoriesReqResult.Length;
+
+			genCatCurrentPage.Text = (currentCategoriesPage * categoriesPerPage + 1).ToString () + " – " +
+				end.ToString () + " из " + categoriesReqResult.Length.ToString ();
 			}
 
 		#endregion

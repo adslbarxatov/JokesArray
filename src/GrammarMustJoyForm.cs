@@ -111,7 +111,7 @@ namespace RD_AAOW
 
 			// Загрузка категорий верхнего уровня
 #if TGB
-			LastCategoryButton.Enabled = AllCategoriesButton.Enabled = false;
+			LastCategoryButton.Enabled = /*AllCategoriesButton.Enabled =*/ false;
 #else
 			string[] topCat = GMJ.GetTopCategories ();
 			topCategories = new ContextMenu ();
@@ -511,7 +511,101 @@ namespace RD_AAOW
 		// Метод выполняет выбор категории верхнего уровня
 		private void SelectTopCategory_Clicked (object sender, EventArgs e)
 			{
+#if TGB
+			// Выбор варианта действий
+			RDMessageButtons mode = RDInterface.MessageBox (RDMessageTypes.Warning_Center,
+				"Выберите требуемое действие",
+				"Пост",
+				"Исключение",
+				RDLocale.GetDefaultText (RDLDefaultTexts.Button_Cancel));
+
+			if (mode == RDMessageButtons.ButtonThree)
+				return;
+
+			// Добавление исключения
+			string post;
+			string path = RDGenerics.AppStartupPath + "..\\" +
+				ProgramDescription.AssemblyMainName + "\\" + "GMJ.rnw";
+
+			if (mode == RDMessageButtons.ButtonTwo)
+				{
+				mode = RDInterface.MessageBox (RDMessageTypes.Warning_Center,
+					"Выберите тип исключения",
+					"Номер TG",
+					"Номер VK");
+
+				post = RDInterface.MessageBox ("Требуется номер поста", true, 50);
+				if (string.IsNullOrWhiteSpace (post) || (post.Length < 4))
+					{
+					RDInterface.MessageBox (RDMessageTypes.Error_Center, "Номер не указан", 1500);
+					return;
+					}
+
+				System.IO.File.AppendAllText (path,
+					RDLocale.RN + (mode == RDMessageButtons.ButtonOne ? ">t>" : ">v>") +
+					post + RDLocale.RNRN,
+					RDGenerics.GetEncoding (RDEncodings.Unicode16));
+				RDInterface.MessageBox (RDMessageTypes.Success_Center, "Успешно добавлено", 1500);
+
+				return;
+				}
+
+			// Добавление поста
+			RDInterface.MessageBox (RDMessageTypes.Warning_Center, "Требуется копия поста в буфере обмена");
+			post = RDGenerics.GetFromClipboard ();
+			if (string.IsNullOrWhiteSpace (post))
+				{
+				RDInterface.MessageBox (RDMessageTypes.Error_Center,
+					"Пост не найден в буфере обмена", 1500);
+				return;
+				}
+
+			// Запрос ссылки с индексом
+			RDInterface.MessageBox (RDMessageTypes.Warning_Center, "Требуется копия ссылки на пост");
+			string number = RDGenerics.GetFromClipboard ();
+			if (string.IsNullOrWhiteSpace (number) || (number.Length < 4))
+				{
+				RDInterface.MessageBox (RDMessageTypes.Error_Center,
+					"Ссылка на пост не найдена в буфере обмена", 1500);
+				return;
+				}
+
+			// Обработка
+			number = number.Substring (number.Length - 4, 4);
+			
+			int idx = post.IndexOf ("⁂");
+			if (idx >= 0)
+				post = post.Substring (0, idx);
+
+			string lastVKNumber = "";
+			if (post.StartsWith ("- №"))
+				{
+				lastVKNumber = post.Substring (3, 4);
+
+				idx = post.IndexOf ("\n");
+				if (idx >= 0)
+					post = post.Substring (idx);
+				}
+			while (post.EndsWith ("\r") || post.EndsWith ("\n"))
+				post = post.Substring (0, post.Length - 1);
+			while (post.StartsWith ("\r") || post.StartsWith ("\n"))
+				post = post.Substring (1);
+
+			// Добавление
+			System.IO.File.AppendAllText (path,
+				RDLocale.RN + ">>>" + number + RDLocale.RNRN + post + RDLocale.RNRN + "<<<" + RDLocale.RNRN,
+				RDGenerics.GetEncoding (RDEncodings.Unicode16));
+
+			if (!string.IsNullOrWhiteSpace (lastVKNumber))
+				System.IO.File.AppendAllText (path,
+					RDLocale.RN + ">#>" + lastVKNumber + RDLocale.RNRN,
+					RDGenerics.GetEncoding (RDEncodings.Unicode16));
+
+			RDInterface.MessageBox (RDMessageTypes.Success_Center, "Успешно добавлено", 1500);
+
+#else
 			topCategories.Show (LastCategoryButton, Point.Empty);
+#endif
 			}
 
 		private void SelectTopCategory (object sender, EventArgs e)
