@@ -35,6 +35,15 @@
 			</StackLayout>
 			<Label x:Name="GroupSizeFieldTip" />
 
+			<BoxView VerticalOptions="Center" HorizontalOptions="Center" HeightRequest="1" 
+					WidthRequest="100" Color="#505050" Margin="12" />
+
+			<StackLayout Orientation="Horizontal">
+				<Switch x:Name="OfflineModeSwitch" VerticalOptions="Center" />
+				<Label x:Name="OfflineModeLabel" VerticalOptions="Center" />
+			</StackLayout>
+			<Label x:Name="OfflineModeTip" />
+
 			<!-- Настройки журнала -->
 			<BoxView VerticalOptions="Center" HorizontalOptions="Center" HeightRequest="1" 
 					WidthRequest="200" Color="#505050" Margin="12" />

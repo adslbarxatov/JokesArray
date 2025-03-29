@@ -76,7 +76,7 @@ namespace RD_AAOW
 			genCategoryEmpty, genCategoryLabel, genCatCurrentPage;
 
 		private Switch newsAtTheEndSwitch, keepScreenOnSwitch, enableCopySubscriptionSwitch,
-			translucencySwitch;
+			translucencySwitch, offlineModeSwitch;
 
 		private Button centerButton, scrollUpButton, scrollDownButton, menuButton, addButton,
 			pictureBackButton, pTextOnTheLeftButton, censorshipButton, logColorButton,
@@ -136,6 +136,15 @@ namespace RD_AAOW
 				"Опция запрещает переход устройства в спящий режим, пока приложение открыто, " +
 				"позволяя экрану оставаться активным, пока Вы читаете тексты записей",
 				RDLabelTypes.TipLeft);
+
+			// Оффлайн-режим
+			RDInterface.ApplyLabelSettings (settingsPage, "OfflineModeLabel",
+				"Оффлайн-режим", RDLabelTypes.DefaultLeft);
+			offlineModeSwitch = RDInterface.ApplySwitchSettings (settingsPage,
+				"OfflineModeSwitch", false, settingsFieldBackColor,
+				OfflineMode_Toggled, GMJ.EnableOfflineMode);
+			RDInterface.ApplyLabelSettings (settingsPage, "OfflineModeTip",
+				GMJ.OfflineModeTip, RDLabelTypes.TipLeft);
 
 			// Ссылка на оригинал
 			Label eps1 = RDInterface.ApplyLabelSettings (settingsPage, "EnablePostSubscriptionLabel",
@@ -1216,6 +1225,12 @@ namespace RD_AAOW
 				await ShowTips (NSTipTypes.PostSubscriptions);
 
 			GMJ.EnableCopySubscription = enableCopySubscriptionSwitch.IsToggled;
+			}
+
+		// Включение / выключение оффлайн-режима
+		private void OfflineMode_Toggled (object sender, ToggledEventArgs e)
+			{
+			GMJ.EnableOfflineMode = offlineModeSwitch.IsToggled;
 			}
 
 		// Выбор фона картинок
