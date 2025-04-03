@@ -78,7 +78,7 @@ namespace RD_AAOW
 		private Switch newsAtTheEndSwitch, keepScreenOnSwitch, enableCopySubscriptionSwitch,
 			translucencySwitch, offlineModeSwitch;
 
-		private Button centerButton, scrollUpButton, scrollDownButton, menuButton, addButton,
+		private Button centerButton, scrollUpButton, scrollDownButton, menuButton, sameCatButton,
 			pictureBackButton, pTextOnTheLeftButton, censorshipButton, logColorButton,
 			pSubsButton, logFontFamilyButton, lastUsedCategory, genCatPrevPage, genCatNextPage;
 
@@ -268,9 +268,10 @@ namespace RD_AAOW
 			// Кнопки меню и предложения в журнале
 			menuButton = RDInterface.ApplyButtonSettings (logPage, "MenuButton",
 				RDDefaultButtons.Menu, logFieldBackColor, SelectPage);
-			addButton = RDInterface.ApplyButtonSettings (logPage, "AddButton",
-				RDDefaultButtons.Increase, logFieldBackColor, OfferTheRecord);
-			addButton.IsVisible = !RDGenerics.IsTV;
+			sameCatButton = RDInterface.ApplyButtonSettings (logPage, "SameCatButton",
+				RDDefaultButtons.Refresh, logFieldBackColor, /*OfferTheRecord*/ LastUsedCategory_Clicked);
+			/*addButton.IsVisible = !RDGenerics.IsTV;*/
+			scrollUpButton.IsVisible = scrollDownButton.IsVisible = RDGenerics.IsTV;
 
 			// Режим полупрозрачности
 			RDInterface.ApplyLabelSettings (settingsPage, "TranslucencyLabel",
@@ -924,7 +925,8 @@ namespace RD_AAOW
 			// Переключение состояния кнопок и свичей
 			centerButtonEnabled = State;
 			menuButton.IsVisible = scrollDownButton.IsVisible = scrollUpButton.IsVisible = State;
-			addButton.IsVisible = State && !RDGenerics.IsTV;
+			/*addButton.IsVisible = State && !RDGenerics.IsTV;*/
+			scrollUpButton.IsVisible = scrollDownButton.IsVisible = State && RDGenerics.IsTV;
 
 			// Обновление статуса
 			UpdateLogButton (!State, false);
@@ -1098,6 +1100,7 @@ namespace RD_AAOW
 					"🔍\t Все категории",
 					"⚙️\t Настройки приложения",
 					"ℹ️\t " + RDLocale.GetDefaultText (RDLDefaultTexts.Control_AppAbout),
+					"🆕\t Предложить запись"
 					};
 				}
 
@@ -1135,10 +1138,20 @@ namespace RD_AAOW
 				case 3:
 					RDInterface.SetCurrentPage (aboutPage, aboutMasterBackColor);
 					break;
+
+				case 4:
+					/*await OfferTheRecord ();*/
+					if (!await RDInterface.ShowMessage (GMJ.SuggestionMessage,
+						RDLocale.GetDefaultText (RDLDefaultTexts.Button_Yes),
+						RDLocale.GetDefaultText (RDLDefaultTexts.Button_No)))
+						return;
+
+					await RDInterface.AskDeveloper ();
+					break;
 				}
 			}
 
-		// Предложение записи сообществу
+		/*// Предложение записи сообществу
 		private async void OfferTheRecord (object sender, EventArgs e)
 			{
 			if (!await RDInterface.ShowMessage (GMJ.SuggestionMessage,
@@ -1147,7 +1160,7 @@ namespace RD_AAOW
 				return;
 
 			await RDInterface.AskDeveloper ();
-			}
+			}*/
 
 		#endregion
 
@@ -1405,9 +1418,9 @@ namespace RD_AAOW
 
 			logPage.BackgroundColor = mainLog.BackgroundColor = centerButton.BackgroundColor =
 				scrollUpButton.BackgroundColor = scrollDownButton.BackgroundColor =
-				menuButton.BackgroundColor = addButton.BackgroundColor = currentLogColor.BackColor;
+				menuButton.BackgroundColor = sameCatButton.BackgroundColor = currentLogColor.BackColor;
 			scrollUpButton.TextColor = scrollDownButton.TextColor = menuButton.TextColor =
-				addButton.TextColor = currentLogColor.MainTextColor;
+				sameCatButton.TextColor = currentLogColor.MainTextColor;
 
 			NavigationPage np = (NavigationPage)MainPage;
 			if (currentLogColor.IsBright)
