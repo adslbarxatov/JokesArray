@@ -111,7 +111,7 @@ namespace RD_AAOW
 
 			// Загрузка категорий верхнего уровня
 #if TGB
-			LastCategoryButton.Enabled = /*AllCategoriesButton.Enabled =*/ false;
+			LastCategoryButton.Enabled = false;
 #else
 			string[] topCat = GMJ.GetTopCategories ();
 			topCategories = new ContextMenu ();
@@ -257,63 +257,6 @@ namespace RD_AAOW
 
 		private void GetJoke_Click (object sender, EventArgs e)
 			{
-			/*#if !TGB
-						string[] tc = GMJ.GetTopCategories ();
-						int tcn = RDGenerics.RND.Next (tc.Length);
-						string ret = tc[tcn] + RDLocale.RN;
-
-						string[] ct = GMJ.GetCategories ((uint)tcn);
-						int ctn = RDGenerics.RND.Next (ct.Length);
-						ret += ct[ctn] + RDLocale.RN;
-
-						int rc = GMJ.GetRandomFromCategory ((uint)ctn);
-						ret += rc.ToString ();
-						AddTextToLayout (ret);
-						return;
-			#endif*/
-
-			/* !!! временно !!! */
-			/*#if !TGB
-			RDInterface.RunWork (GetJokeExecutor, null, "Запрос случайной записи...",
-				RDRunWorkFlags.CaptionInTheMiddle);
-			
-			System.Collections.Generic.List<string> tc =
-				new System.Collections.Generic.List<string> (GMJ.GetTopCategories ());
-
-			string req = RDInterface.MessageBox ("Введите категорию", true, 20);
-
-			int ridx = tc.IndexOf (req.Substring (0, 1));
-			if (ridx < 0)
-				{
-				RDInterface.MessageBox (RDMessageTypes.Error_Center, "Категория не найдена", 1000);
-				return;
-				}
-
-			System.Collections.Generic.List<string> ct =
-				new System.Collections.Generic.List<string> (GMJ.GetCategories ((uint)ridx));
-
-			int cat = ct.IndexOf (req);
-			if (cat < 0)
-				{
-				RDInterface.MessageBox (RDMessageTypes.Error_Center, "Категория не найдена", 1000);
-				return;
-				}
-
-			for (int i = 0; (i < GMJ.genCatIndexes[cat].Count) && (i < NotificationsSupport.MasterLogMaxItems); i++)
-				{
-				GMJ.RequestRecord (GMJ.genCatIndexes[cat][i]);
-				RDInterface.RunWork (GetJokeExecutor, null, "Запрос записи...",
-					RDRunWorkFlags.CaptionInTheMiddle);
-
-				string ret = RDInterface.WorkResultAsString.Replace (groupSplitter[0].ToString (), "");
-				AddTextToLayout (ret);
-
-				Thread.Sleep (2000);
-				}
-
-			return;
-			#endif*/
-
 			// Запрос записи
 			RDInterface.RunWork (GetJokeExecutor, null, fromCategory ? "Запрос записи..." : "Запрос случайной записи...",
 				RDRunWorkFlags.CaptionInTheMiddle);

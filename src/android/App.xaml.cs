@@ -165,7 +165,6 @@ namespace RD_AAOW
 
 			#region Страница "О программе"
 
-			/*aboutLabel =*/
 			RDInterface.ApplyLabelSettings (aboutPage, "AboutLabel",
 				RDGenerics.AppAboutLabelText, RDLabelTypes.AppAbout);
 
@@ -269,8 +268,7 @@ namespace RD_AAOW
 			menuButton = RDInterface.ApplyButtonSettings (logPage, "MenuButton",
 				RDDefaultButtons.Menu, logFieldBackColor, SelectPage);
 			sameCatButton = RDInterface.ApplyButtonSettings (logPage, "SameCatButton",
-				RDDefaultButtons.Refresh, logFieldBackColor, /*OfferTheRecord*/ LastUsedCategory_Clicked);
-			/*addButton.IsVisible = !RDGenerics.IsTV;*/
+				RDDefaultButtons.Refresh, logFieldBackColor, LastUsedCategory_Clicked);
 			scrollUpButton.IsVisible = scrollDownButton.IsVisible = RDGenerics.IsTV;
 
 			// Режим полупрозрачности
@@ -761,6 +759,7 @@ namespace RD_AAOW
 					});
 				tapMenuItems.Add (new List<string> {
 					"❌\t Удалить из журнала",
+					"❌\t Очистить журнал",
 					});
 				}
 
@@ -781,7 +780,6 @@ namespace RD_AAOW
 				return;
 
 			bool secondMenu = (tapMenuItems[menuVariant][menuItem] == secondMenuName);
-			/*menuVariant = menuItem + 10 * (menuVariant + 1);*/
 
 			// Контроль второго набора
 			if (secondMenu)
@@ -792,8 +790,6 @@ namespace RD_AAOW
 					RDLocale.GetDefaultText (RDLDefaultTexts.Button_Cancel), tapMenuItems[menuVariant]);
 				if (menuItem < 0)
 					return;
-
-				/*menuVariant = menuItem + 10 * (menuVariant + 1);*/
 				}
 
 			// Окончательный выбор варианта действия
@@ -820,15 +816,6 @@ namespace RD_AAOW
 						await RDInterface.ShowMessage (GMJ.CensorshipGoToChannelMessage,
 							RDLocale.GetDefaultText (RDLDefaultTexts.Button_OK));
 
-					/*try
-						{
-						await Launcher. OpenAsync (notLink);
-						}
-					catch
-						{
-						RDInterface.ShowBalloon
-							(RDLocale.GetDefaultText (RDLDefaultTexts.Message_BrowserNotAvailable), true);
-						}*/
 					await RDGenerics.RunURL (notLink, true);
 					break;
 
@@ -914,6 +901,12 @@ namespace RD_AAOW
 					masterLog.RemoveAt (e.ItemIndex);
 					UpdateLog ();
 					break;
+
+				// Очистка журнала
+				case 41:
+					masterLog.Clear ();
+					UpdateLog ();
+					break;
 				}
 
 			// Завершено
@@ -925,7 +918,6 @@ namespace RD_AAOW
 			// Переключение состояния кнопок и свичей
 			centerButtonEnabled = State;
 			menuButton.IsVisible = scrollDownButton.IsVisible = scrollUpButton.IsVisible = State;
-			/*addButton.IsVisible = State && !RDGenerics.IsTV;*/
 			scrollUpButton.IsVisible = scrollDownButton.IsVisible = State && RDGenerics.IsTV;
 
 			// Обновление статуса
@@ -1140,7 +1132,6 @@ namespace RD_AAOW
 					break;
 
 				case 4:
-					/*await OfferTheRecord ();*/
 					if (!await RDInterface.ShowMessage (GMJ.SuggestionMessage,
 						RDLocale.GetDefaultText (RDLDefaultTexts.Button_Yes),
 						RDLocale.GetDefaultText (RDLDefaultTexts.Button_No)))
@@ -1150,17 +1141,6 @@ namespace RD_AAOW
 					break;
 				}
 			}
-
-		/*// Предложение записи сообществу
-		private async void OfferTheRecord (object sender, EventArgs e)
-			{
-			if (!await RDInterface.ShowMessage (GMJ.SuggestionMessage,
-				RDLocale.GetDefaultText (RDLDefaultTexts.Button_Yes),
-				RDLocale.GetDefaultText (RDLDefaultTexts.Button_No)))
-				return;
-
-			await RDInterface.AskDeveloper ();
-			}*/
 
 		#endregion
 
@@ -1566,7 +1546,6 @@ namespace RD_AAOW
 			topCategorySection.IsEnabled = false;
 			lastUsedCategory.IsVisible = false;
 			genCatPrevPage.IsVisible = genCatNextPage.IsVisible = false;
-			/*RDInterface.ShowBalloon ("Загрузка категорий...", false);*/
 
 			// Запрос
 			lastTopCategoryIndex = idx;
@@ -1577,11 +1556,12 @@ namespace RD_AAOW
 				lastUsedCategory.IsVisible = (categoriesReqResult[lastCategoryIndex] == lastCategory);
 
 			// Отображение полей
-			if (!genCategoryLabel.IsVisible)
-				genCategoryLabel.IsVisible = genCatCurrentPage.IsVisible = true;
+			/*if (!genCategoryLabel.IsVisible)
+				genCategoryLabel.IsVisible = genCatCurrentPage.IsVisible = true;*/
 
 			genCategoryEmpty.IsVisible = (categoriesReqResult.Length < 1);
-			genCategorySection.IsVisible = !genCategoryEmpty.IsVisible;
+			genCategoryLabel.IsVisible = genCatCurrentPage.IsVisible = genCategorySection.IsVisible =
+				!genCategoryEmpty.IsVisible;
 			if (genCategoryEmpty.IsVisible)
 				{
 				topCategorySection.IsEnabled = true;
