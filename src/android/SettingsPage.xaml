@@ -10,15 +10,6 @@
 			<Label x:Name="AppSettingsLabel" />
 
 			<StackLayout Orientation="Horizontal">
-				<Switch x:Name="KeepScreenOnSwitch" VerticalOptions="Center" />
-				<Label x:Name="KeepScreenOnLabel" VerticalOptions="Center" />
-			</StackLayout>
-			<Label x:Name="KeepScreenOnTip" />
-
-			<BoxView VerticalOptions="Center" HorizontalOptions="Center" HeightRequest="1" 
-					WidthRequest="100" Color="#505050" Margin="12" />
-
-			<StackLayout Orientation="Horizontal">
 				<Switch x:Name="EnablePostSubscriptionSwitch" VerticalOptions="Center" />
 				<Label x:Name="EnablePostSubscriptionLabel" VerticalOptions="Center" />
 			</StackLayout>
@@ -43,6 +34,32 @@
 				<Label x:Name="OfflineModeLabel" VerticalOptions="Center" />
 			</StackLayout>
 			<Label x:Name="OfflineModeTip" />
+
+			<!-- Общие интерфейсные настройки -->
+			<BoxView VerticalOptions="Center" HorizontalOptions="Center" HeightRequest="1" 
+					WidthRequest="200" Color="#505050" Margin="9" />
+
+			<Label />
+			<Label x:Name="GenericSettingsLabel" />
+			<Label x:Name="RestartTipLabel" />
+
+			<StackLayout Orientation="Horizontal" HorizontalOptions="Start" >
+				<Label x:Name="FontSizeLabel" VerticalOptions="Center" />
+
+				<Button x:Name="FontSizeInc" VerticalOptions="Center" />
+				<Label x:Name="FontSizeField" VerticalOptions="Center" />
+				<Button x:Name="FontSizeDec" VerticalOptions="Center" />
+			</StackLayout>
+			<Label x:Name="FontSizeTipLabel" />
+
+			<BoxView VerticalOptions="Center" HorizontalOptions="Center" HeightRequest="1" 
+					WidthRequest="100" Color="#505050" Margin="12" />
+
+			<StackLayout Orientation="Horizontal">
+				<Switch x:Name="KeepScreenOnSwitch" VerticalOptions="Center" />
+				<Label x:Name="KeepScreenOnLabel" VerticalOptions="Center" />
+			</StackLayout>
+			<Label x:Name="KeepScreenOnTip" />
 
 			<!-- Настройки журнала -->
 			<BoxView VerticalOptions="Center" HorizontalOptions="Center" HeightRequest="1" 

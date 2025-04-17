@@ -31,15 +31,15 @@ namespace RD_AAOW
 		private const int manualScrollModeDown = -3;
 
 		// Сформированные контекстные меню
-		private List<List<string>> tapMenuItems = new List<List<string>> ();
-		private List<string> pageVariants = new List<string> ();
-		private List<string> pictureBKVariants = new List<string> ();
-		private List<string> pictureBKSelectionVariants = new List<string> ();
-		private List<string> pictureTAVariants = new List<string> ();
-		private List<string> pictureTASelectionVariants = new List<string> ();
-		private List<string> censorshipVariants = new List<string> ();
-		private List<string> logColorVariants = new List<string> ();
-		private List<string> logFontFamilyVariants = new List<string> ();
+		private List<List<string>> tapMenuItems = [];
+		private List<string> pageVariants = [];
+		private List<string> pictureBKVariants = [];
+		private List<string> pictureBKSelectionVariants = [];
+		private List<string> pictureTAVariants = [];
+		private List<string> pictureTASelectionVariants = [];
+		private List<string> censorshipVariants = [];
+		private List<string> logColorVariants = [];
+		private List<string> logFontFamilyVariants = [];
 
 		// Последняя использованная категория
 		private string lastCategory = "";
@@ -82,8 +82,8 @@ namespace RD_AAOW
 			pictureBackButton, pTextOnTheLeftButton, censorshipButton, logColorButton,
 			pSubsButton, logFontFamilyButton, lastUsedCategory, genCatPrevPage, genCatNextPage;
 
-		private List<Button> topCategories = new List<Button> ();
-		private List<Button> genCategories = new List<Button> ();
+		private List<Button> topCategories = [];
+		private List<Button> genCategories = [];
 
 		private FlexLayout topCategorySection, genCategorySection;
 
@@ -100,13 +100,25 @@ namespace RD_AAOW
 			{
 			// Инициализация
 			InitializeComponent ();
+			}
+
+		// Замена определению MainPage = new MasterPage ()
+		protected override Window CreateWindow (IActivationState activationState)
+			{
+			return new Window (AppShell ());
+			}
+
+		// Настройка страниц приложения
+		private Page AppShell ()
+			{
+			Page mainPage = new MasterPage ();
 			flags = RDGenerics.GetAppStartupFlags (RDAppStartupFlags.DisableXPUN | RDAppStartupFlags.CanWriteFiles);
 
 			if (!RDLocale.IsCurrentLanguageRuRu)
 				RDLocale.CurrentLanguage = RDLanguages.ru_ru;
 
 			// Общая конструкция страниц приложения
-			MainPage = new MasterPage ();
+			/*MainPage = new MasterPage ();*/
 
 			settingsPage = RDInterface.ApplyPageSettings (new SettingsPage (), "SettingsPage",
 				"Настройки приложения", settingsMasterBackColor);
@@ -117,9 +129,10 @@ namespace RD_AAOW
 			categoryPage = RDInterface.ApplyPageSettings (new CategoryPage (), "CategoryPage",
 				"Категории", categoryMasterBackColor);
 
-			RDInterface.SetMasterPage (MainPage, logPage, logMasterBackColor);
+			/*RDInterface.SetMasterPage (MainPage, logPage, logMasterBackColor);*/
+			RDInterface.SetMasterPage (mainPage, logPage, logMasterBackColor);
 
-			if (!NotificationsSupport.TipsState.HasFlag (NSTipTypes.PolicyTip))
+			if (!((NSTipTypes)RDGenerics.TipsState).HasFlag (NSTipTypes.StartupTips))
 				RDInterface.SetCurrentPage (settingsPage, settingsMasterBackColor);
 
 			#region Страница настроек
@@ -135,7 +148,28 @@ namespace RD_AAOW
 			RDInterface.ApplyLabelSettings (settingsPage, "KeepScreenOnTip",
 				"Опция запрещает переход устройства в спящий режим, пока приложение открыто, " +
 				"позволяя экрану оставаться активным, пока Вы читаете тексты записей",
-				RDLabelTypes.TipLeft);
+				RDLabelTypes.TipJustify);
+
+			RDInterface.ApplyLabelSettings (settingsPage, "GenericSettingsLabel",
+				"Интерфейс", RDLabelTypes.HeaderLeft);
+
+			RDInterface.ApplyLabelSettings (settingsPage, "RestartTipLabel",
+				RDLocale.GetDefaultText (RDLDefaultTexts.Message_RestartRequired),
+				RDLabelTypes.TipCenter);
+
+			RDInterface.ApplyLabelSettings (settingsPage, "FontSizeLabel",
+				RDLocale.GetDefaultText (RDLDefaultTexts.Control_InterfaceFontSize),
+				RDLabelTypes.DefaultLeft);
+			RDInterface.ApplyButtonSettings (settingsPage, "FontSizeInc",
+				RDDefaultButtons.Increase, settingsFieldBackColor, FontSizeButton_Clicked);
+			RDInterface.ApplyButtonSettings (settingsPage, "FontSizeDec",
+				RDDefaultButtons.Decrease, settingsFieldBackColor, FontSizeButton_Clicked);
+			aboutFontSizeField = RDInterface.ApplyLabelSettings (settingsPage, "FontSizeField",
+				" ", RDLabelTypes.DefaultCenter);
+			RDInterface.ApplyLabelSettings (settingsPage, "FontSizeTipLabel",
+				"Эта настройка задаёт размер шрифта во всех разделах приложения, кроме журнала. " +
+				"Измените её, если она не соответствует Вашему устройству",
+				RDLabelTypes.TipJustify);
 
 			// Оффлайн-режим
 			RDInterface.ApplyLabelSettings (settingsPage, "OfflineModeLabel",
@@ -144,7 +178,7 @@ namespace RD_AAOW
 				"OfflineModeSwitch", false, settingsFieldBackColor,
 				OfflineMode_Toggled, GMJ.EnableOfflineMode);
 			RDInterface.ApplyLabelSettings (settingsPage, "OfflineModeTip",
-				GMJ.OfflineModeTip, RDLabelTypes.TipLeft);
+				GMJ.OfflineModeTip, RDLabelTypes.TipJustify);
 
 			// Ссылка на оригинал
 			Label eps1 = RDInterface.ApplyLabelSettings (settingsPage, "EnablePostSubscriptionLabel",
@@ -153,7 +187,7 @@ namespace RD_AAOW
 				"EnablePostSubscriptionSwitch", false, settingsFieldBackColor,
 				EnablePostSubscription_Toggled, GMJ.EnableCopySubscription);
 			Label eps2 = RDInterface.ApplyLabelSettings (settingsPage, "EnablePostSubscriptionTip",
-				GMJ.EnablePostSubscriptionTip, RDLabelTypes.TipLeft);
+				GMJ.EnablePostSubscriptionTip, RDLabelTypes.TipJustify);
 
 			if (RDGenerics.IsTV)
 				{
@@ -184,30 +218,13 @@ namespace RD_AAOW
 				GMJ.GMJStatsMenuItem,
 				aboutFieldBackColor, StatsButton_Click, false);
 
-			RDInterface.ApplyLabelSettings (aboutPage, "GenericSettingsLabel",
-				RDLocale.GetDefaultText (RDLDefaultTexts.Control_GenericSettings),
-				RDLabelTypes.HeaderLeft);
-
-			RDInterface.ApplyLabelSettings (aboutPage, "RestartTipLabel",
-				RDLocale.GetDefaultText (RDLDefaultTexts.Message_RestartRequired),
-				RDLabelTypes.TipCenter);
-
-			RDInterface.ApplyLabelSettings (aboutPage, "FontSizeLabel",
-				RDLocale.GetDefaultText (RDLDefaultTexts.Control_InterfaceFontSize),
-				RDLabelTypes.DefaultLeft);
-			RDInterface.ApplyButtonSettings (aboutPage, "FontSizeInc",
-				RDDefaultButtons.Increase, aboutFieldBackColor, FontSizeButton_Clicked);
-			RDInterface.ApplyButtonSettings (aboutPage, "FontSizeDec",
-				RDDefaultButtons.Decrease, aboutFieldBackColor, FontSizeButton_Clicked);
-			aboutFontSizeField = RDInterface.ApplyLabelSettings (aboutPage, "FontSizeField",
-				" ", RDLabelTypes.DefaultCenter);
-
 			RDInterface.ApplyLabelSettings (aboutPage, "HelpHeaderLabel",
 				RDLocale.GetDefaultText (RDLDefaultTexts.Control_AppAbout),
 				RDLabelTypes.HeaderLeft);
 			Label htl = RDInterface.ApplyLabelSettings (aboutPage, "HelpTextLabel",
 				RDGenerics.GetAppHelpText (), RDLabelTypes.SmallLeft);
 			htl.TextType = TextType.Html;
+			/*htl.HorizontalTextAlignment = TextAlignment.Justify;*/ // Пока не работает
 
 			FontSizeButton_Clicked (null, null);
 
@@ -247,7 +264,7 @@ namespace RD_AAOW
 				false, settingsFieldBackColor, NewsAtTheEndSwitch_Toggled, NotificationsSupport.LogNewsItemsAtTheEnd);
 			Label nates2 = RDInterface.ApplyLabelSettings (settingsPage, "NewsAtTheEndTip",
 				"Опция позволяет добавлять новые записи в конец журнала (снизу). Если выключена, " +
-				"записи добавляются в начало журнала (сверху)", RDLabelTypes.TipLeft);
+				"записи добавляются в начало журнала (сверху)", RDLabelTypes.TipJustify);
 
 			if (RDGenerics.IsTV)
 				{
@@ -262,7 +279,7 @@ namespace RD_AAOW
 			logColorButton = RDInterface.ApplyButtonSettings (settingsPage, "LogColorButton",
 				" ", settingsFieldBackColor, LogColor_Clicked, false);
 			RDInterface.ApplyLabelSettings (settingsPage, "LogColorTip",
-				NotificationsSupport.LogColorTip, RDLabelTypes.TipLeft);
+				NotificationsSupport.LogColorTip, RDLabelTypes.TipJustify);
 
 			// Кнопки меню и предложения в журнале
 			menuButton = RDInterface.ApplyButtonSettings (logPage, "MenuButton",
@@ -278,7 +295,7 @@ namespace RD_AAOW
 				"TranslucencySwitch", false, settingsFieldBackColor,
 				Translucency_Toggled, NotificationsSupport.TranslucentLogItems);
 			RDInterface.ApplyLabelSettings (settingsPage, "TranslucencyTip",
-				NotificationsSupport.TranslucencyTip, RDLabelTypes.TipLeft);
+				NotificationsSupport.TranslucencyTip, RDLabelTypes.TipJustify);
 
 			LogColor_Clicked (null, null);
 
@@ -293,7 +310,7 @@ namespace RD_AAOW
 				RDDefaultButtons.Decrease, settingsFieldBackColor, FontSizeChanged);
 
 			RDInterface.ApplyLabelSettings (settingsPage, "FontSizeFieldTip",
-				NotificationsSupport.FontSizeFieldTip, RDLabelTypes.TipLeft);
+				NotificationsSupport.FontSizeFieldTip, RDLabelTypes.TipJustify);
 
 			FontSizeChanged (null, null);
 
@@ -307,7 +324,7 @@ namespace RD_AAOW
 			RDInterface.ApplyButtonSettings (settingsPage, "GroupSizeDecButton",
 				RDDefaultButtons.Decrease, settingsFieldBackColor, GroupSizeChanged);
 			RDInterface.ApplyLabelSettings (settingsPage, "GroupSizeFieldTip",
-				NotificationsSupport.GroupSizeFieldTip, RDLabelTypes.TipLeft);
+				NotificationsSupport.GroupSizeFieldTip, RDLabelTypes.TipJustify);
 
 			GroupSizeChanged (null, null);
 
@@ -333,7 +350,7 @@ namespace RD_AAOW
 				GMJ.CensorshipTip + (flags.HasFlag (RDAppStartupFlags.DisableXPUN) ?
 				". В данной версии приложения опция заблокирована в положении «включена» " +
 				"в связи с возрастным рейтингом, предоставленным магазином приложений" : ""),
-				RDLabelTypes.TipLeft);
+				RDLabelTypes.TipJustify);
 
 			Censorship_Clicked (null, null);
 
@@ -348,7 +365,7 @@ namespace RD_AAOW
 				"Condensed – без засечек узкий (несколько яркостей), " +
 				"Noto – с засечками, " +
 				"Droid Sans – без засечек моноширинный",
-				RDLabelTypes.TipLeft);
+				RDLabelTypes.TipJustify);
 
 			LogFontFamily_Clicked (null, null);
 
@@ -362,7 +379,7 @@ namespace RD_AAOW
 			pictureBackButton = RDInterface.ApplyButtonSettings (settingsPage, "PicturesBackButton",
 				" ", settingsFieldBackColor, PictureBack_Clicked, false);
 			Label pictBackLabel2 = RDInterface.ApplyLabelSettings (settingsPage, "PicturesBackTip",
-				NotificationsSupport.PicturesBackTip, RDLabelTypes.TipLeft);
+				NotificationsSupport.PicturesBackTip, RDLabelTypes.TipJustify);
 
 			// Выравнивание текста
 			Label pictTextLabel1 = RDInterface.ApplyLabelSettings (settingsPage, "PTextLeftLabel",
@@ -370,7 +387,7 @@ namespace RD_AAOW
 			pTextOnTheLeftButton = RDInterface.ApplyButtonSettings (settingsPage, "PTextLeftButton",
 				" ", settingsFieldBackColor, PTextOnTheLeft_Toggled, false);
 			Label pictTextLabel2 = RDInterface.ApplyLabelSettings (settingsPage, "PTextLeftTip",
-				NotificationsSupport.PicturesTextAlignmentTip, RDLabelTypes.TipLeft);
+				NotificationsSupport.PicturesTextAlignmentTip, RDLabelTypes.TipJustify);
 
 			// Подпись картинок
 			Label pictSubsLabel1 = RDInterface.ApplyLabelSettings (settingsPage, "PSubsLabel",
@@ -378,7 +395,7 @@ namespace RD_AAOW
 			pSubsButton = RDInterface.ApplyButtonSettings (settingsPage, "PSubsButton",
 				" ", settingsFieldBackColor, PSubs_Clicked, false);
 			Label pictSubsLabel2 = RDInterface.ApplyLabelSettings (settingsPage, "PSubsTip",
-				NotificationsSupport.PicturesSubscriptionTip, RDLabelTypes.TipLeft);
+				NotificationsSupport.PicturesSubscriptionTip, RDLabelTypes.TipJustify);
 
 			if (RDGenerics.IsTV)
 				{
@@ -452,6 +469,7 @@ namespace RD_AAOW
 
 			// Принятие соглашений
 			ShowStartupTips ();
+			return mainPage;
 			}
 
 		// Исправление для сброса текущей позиции журнала
@@ -494,15 +512,17 @@ namespace RD_AAOW
 				await RDInterface.XPUNLoop ();
 
 			// Требование принятия Политики
-			if (!NotificationsSupport.TipsState.HasFlag (NSTipTypes.PolicyTip))
+			/*if (!((NSTipTypes)RDGenerics.TipsState).HasFlag (NSTipTypes.PolicyTip))
 				{
 				if (!RDGenerics.IsTV)
 					await RDInterface.PolicyLoop ();
-				NotificationsSupport.TipsState |= NSTipTypes.PolicyTip;
-				}
+				RDGenerics.TipsState |= (uint)NSTipTypes.PolicyTip;
+				}*/
+			if (!RDGenerics.IsTV)
+				await RDInterface.PolicyLoop ();	// Выставляет бит 0 в TipsState автоматически
 
 			// Подсказки
-			if (!NotificationsSupport.TipsState.HasFlag (NSTipTypes.StartupTips))
+			if (!((NSTipTypes)RDGenerics.TipsState).HasFlag (NSTipTypes.StartupTips))
 				{
 				await RDInterface.ShowMessage ("Добро пожаловать в мини-клиент канала JokesArray!" + RDLocale.RNRN +
 					"• На этой странице Вы можете настроить поведение приложения." + RDLocale.RNRN +
@@ -514,10 +534,10 @@ namespace RD_AAOW
 				if (RDGenerics.IsTV)
 					{
 					await RDInterface.ShowMessage ("Внимание!" + RDLocale.RNRN +
-						"• Убедитесь, что данное устройство имеет выход в интернет. Без него " +
-						"приложение не сможет продолжить работу." + RDLocale.RNRN +
+						"• Убедитесь, что данное устройство имеет выход в интернет. Если такой возможности нет, " +
+						"не забудьте включить оффлайн-режим в настройках приложения." + RDLocale.RNRN +
 						"• Ознакомьтесь с описанием проекта в разделе «О приложении» (кнопка ≡). Убедитесь, " +
-						"что Вы согласны с Политикой сообщества и Политикой разработки продукта",
+						"что Вы согласны с Политикой Лаборатории",
 						RDLocale.GetDefaultText (RDLDefaultTexts.Button_OK));
 					}
 				else
@@ -525,16 +545,16 @@ namespace RD_AAOW
 					await RDInterface.ShowMessage ("Внимание!" + RDLocale.RNRN +
 						"Некоторые устройства требуют ручного разрешения на доступ в интернет " +
 						"(например, если активен режим экономии интернет-трафика). Проверьте его, " +
-						"если запросы не будут работать правильно",
+						"если онлайн-запросы не будут работать правильно",
 						RDLocale.GetDefaultText (RDLDefaultTexts.Button_OK));
 					}
 
-				NotificationsSupport.TipsState |= NSTipTypes.StartupTips;
+				RDGenerics.TipsState |= (uint)NSTipTypes.StartupTips;
 				}
 			}
 
 		// Метод отображает остальные подсказки
-		private async Task<bool> ShowTips (NSTipTypes Type)
+		private static async Task<bool> ShowTips (NSTipTypes Type)
 			{
 			// Подсказки
 			string msg = "";
@@ -567,7 +587,7 @@ namespace RD_AAOW
 				}
 
 			await RDInterface.ShowMessage (msg, RDLocale.GetDefaultText (RDLDefaultTexts.Button_OK));
-			NotificationsSupport.TipsState |= Type;
+			RDGenerics.TipsState |= (uint)Type;
 			return true;
 			}
 
@@ -737,30 +757,33 @@ namespace RD_AAOW
 
 			// Формирование меню
 			const string secondMenuName = "🔣\t Ещё";
+			const string copyTextName = "📑\t Скопировать текст";
+			const string shareTextName = "📣\t Поделиться текстом";
+			const string originalName = "➡️\t Перейти к оригиналу";
 			if (tapMenuItems.Count < 1)
 				{
-				tapMenuItems.Add (new List<string> {
-					"📣\t Поделиться текстом",
-					"📑\t Скопировать текст",
+				tapMenuItems.Add ([
+					shareTextName,
+					copyTextName,
 					secondMenuName,
-					});
-				tapMenuItems.Add (new List<string> {
-					"➡️\t Перейти к оригиналу",
-					"📣\t Поделиться текстом",
-					"📑\t Скопировать текст",
+					]);
+				tapMenuItems.Add ([
+					originalName,
+					shareTextName,
+					copyTextName,
 					secondMenuName,
-					});
-				tapMenuItems.Add (new List<string> {
-					"➡️\t Перейти к оригиналу",
-					"📣\t Поделиться текстом",
+					]);
+				tapMenuItems.Add ([
+					originalName,
+					shareTextName,
 					"🌅\t Поделиться картинкой",
-					"📑\t Скопировать текст",
+					copyTextName,
 					secondMenuName,
-					});
-				tapMenuItems.Add (new List<string> {
+					]);
+				tapMenuItems.Add ([
 					"❌\t Удалить из журнала",
 					"❌\t Очистить журнал",
-					});
+					]);
 				}
 
 			// Запрос варианта использования
@@ -809,7 +832,7 @@ namespace RD_AAOW
 				// Переход по ссылке
 				case 20:
 				case 30:
-					if (!NotificationsSupport.TipsState.HasFlag (NSTipTypes.GoToButton))
+					if (!((NSTipTypes)RDGenerics.TipsState).HasFlag (NSTipTypes.GoToButton))
 						await ShowTips (NSTipTypes.GoToButton);
 
 					if (GMJ.EnableCensorship)
@@ -823,7 +846,7 @@ namespace RD_AAOW
 				case 10:
 				case 21:
 				case 31:
-					if (!NotificationsSupport.TipsState.HasFlag (NSTipTypes.ShareTextButton))
+					if (!((NSTipTypes)RDGenerics.TipsState).HasFlag (NSTipTypes.ShareTextButton))
 						await ShowTips (NSTipTypes.ShareTextButton);
 
 					await Share.RequestAsync (notText, ProgramDescription.AssemblyVisibleName);
@@ -838,7 +861,7 @@ namespace RD_AAOW
 
 				// Поделиться картинкой
 				case 32:
-					if (!NotificationsSupport.TipsState.HasFlag (NSTipTypes.ShareImageButton))
+					if (!((NSTipTypes)RDGenerics.TipsState).HasFlag (NSTipTypes.ShareImageButton))
 						await ShowTips (NSTipTypes.ShareImageButton);
 
 					if (!flags.HasFlag (RDAppStartupFlags.CanWriteFiles))
@@ -904,8 +927,13 @@ namespace RD_AAOW
 
 				// Очистка журнала
 				case 41:
-					masterLog.Clear ();
-					UpdateLog ();
+					if (await RDInterface.ShowMessage ("Очистить журнал?",
+						RDLocale.GetDefaultText (RDLDefaultTexts.Button_Yes),
+						RDLocale.GetDefaultText (RDLDefaultTexts.Button_No)))
+						{
+						masterLog.Clear ();
+						UpdateLog ();
+						}
 					break;
 				}
 
@@ -1063,7 +1091,7 @@ namespace RD_AAOW
 			// Разблокировка
 			SetLogState (true);
 			UpdateLogButton (!success, !success);
-			if (!NotificationsSupport.TipsState.HasFlag (NSTipTypes.MainLogClickMenuTip))
+			if (!((NSTipTypes)RDGenerics.TipsState).HasFlag (NSTipTypes.MainLogClickMenuTip))
 				await ShowTips (NSTipTypes.MainLogClickMenuTip);
 			}
 
@@ -1086,14 +1114,13 @@ namespace RD_AAOW
 			// Запрос варианта
 			if (pageVariants.Count < 1)
 				{
-				pageVariants = new List<string> ()
-					{
+				pageVariants = [
 					"🔄\t Та же категория",
 					"🔍\t Все категории",
 					"⚙️\t Настройки приложения",
 					"ℹ️\t " + RDLocale.GetDefaultText (RDLDefaultTexts.Control_AppAbout),
-					"🆕\t Предложить запись"
-					};
+					"🆕\t Предложить запись",
+					];
 				}
 
 			int res = await RDInterface.ShowList (RDLocale.GetDefaultText (RDLDefaultTexts.Button_GoTo),
@@ -1214,7 +1241,7 @@ namespace RD_AAOW
 		private async void EnablePostSubscription_Toggled (object sender, ToggledEventArgs e)
 			{
 			// Подсказки
-			if (!NotificationsSupport.TipsState.HasFlag (NSTipTypes.PostSubscriptions))
+			if (!((NSTipTypes)RDGenerics.TipsState).HasFlag (NSTipTypes.PostSubscriptions))
 				await ShowTips (NSTipTypes.PostSubscriptions);
 
 			GMJ.EnableCopySubscription = enableCopySubscriptionSwitch.IsToggled;
@@ -1262,16 +1289,16 @@ namespace RD_AAOW
 			// Запрос варианта
 			if (pictureTAVariants.Count < 1)
 				{
-				pictureTAVariants = new List<string> {
+				pictureTAVariants = [
 					"Всегда по центру",
 					"Всегда по левой стороне",
 					"Диалоги по левой стороне",
 					"Запрашивать выравнивание",
-					};
-				pictureTASelectionVariants = new List<string> {
+					];
+				pictureTASelectionVariants = [
 					"По центру",
 					"По левой стороне",
-					};
+					];
 				}
 
 			int res;
@@ -1332,10 +1359,10 @@ namespace RD_AAOW
 			// Запрос варианта
 			if (censorshipVariants.Count < 1)
 				{
-				censorshipVariants = new List<string> {
+				censorshipVariants = [
 					"Отключено",
 					"Действует",
-					};
+					];
 				}
 
 			int res;
@@ -1402,16 +1429,16 @@ namespace RD_AAOW
 			scrollUpButton.TextColor = scrollDownButton.TextColor = menuButton.TextColor =
 				sameCatButton.TextColor = currentLogColor.MainTextColor;
 
-			NavigationPage np = (NavigationPage)MainPage;
+			/*NavigationPage np = (NavigationPage)MainPage;*/
 			if (currentLogColor.IsBright)
 				{
-				np.BarBackgroundColor = currentLogColor.MainTextColor;
-				np.BarTextColor = currentLogColor.BackColor;
+				RDInterface.MasterPage.BarBackgroundColor = currentLogColor.MainTextColor;
+				RDInterface.MasterPage.BarTextColor = currentLogColor.BackColor;
 				}
 			else
 				{
-				np.BarBackgroundColor = currentLogColor.BackColor;
-				np.BarTextColor = currentLogColor.MainTextColor;
+				RDInterface.MasterPage.BarBackgroundColor = currentLogColor.BackColor;
+				RDInterface.MasterPage.BarTextColor = currentLogColor.MainTextColor;
 				}
 
 			// Принудительное обновление (только не при старте)

@@ -16,17 +16,17 @@ namespace RD_AAOW
 		private bool allowExit = false;
 		private bool hideWindow;
 
-		private char[] groupSplitter = new char[] { '\x1' };
+		private char[] groupSplitter = ['\x1'];
 
-		private ContextMenu textContextMenu;
+		private ContextMenuStrip textContextMenu;
 		private int textContextSender;
 
 		private const string fontFamily = "Calibri";
 		private const int translucencyAmount = 15;
 
 		// Контекстные меню категорий
-		private ContextMenu topCategories;
-		private ContextMenu genCategories;
+		private ContextMenuStrip topCategories;
+		private ContextMenuStrip genCategories;
 
 		// Последняя использованная категория
 		private int lastCategoryIndex = -1;
@@ -47,7 +47,7 @@ namespace RD_AAOW
 			}
 
 		// Динамический внешний отступ элементов журнала
-		private Padding LogItemMargin
+		private static Padding LogItemMargin
 			{
 			get
 				{
@@ -79,17 +79,18 @@ namespace RD_AAOW
 			ApplyColorsAndFonts ();
 
 			// Настройка иконки в трее
-			ni.Icon = Properties.JokesArray.TrayIcon;
+			ni.Icon = /*Properties.*/JokesArrayResources.TrayIcon;
 			ni.Text = ProgramDescription.AssemblyVisibleName;
 			ni.Visible = true;
 
-			ni.ContextMenu = new ContextMenu ();
-			ni.ContextMenu.MenuItems.Add (new MenuItem (GMJ.GMJStatsMenuItem, BHelp_ItemClicked));
-			ni.ContextMenu.MenuItems.Add (new MenuItem ("Настройки", BHelp_ItemClicked));
-			ni.ContextMenu.MenuItems.Add (new MenuItem (
-				RDLocale.GetDefaultText (RDLDefaultTexts.Control_AppAbout), BHelp_ItemClicked));
-			ni.ContextMenu.MenuItems.Add (new MenuItem (
-				RDLocale.GetDefaultText (RDLDefaultTexts.Button_Exit), BHelp_ItemClicked));
+			ni.ContextMenuStrip = new ContextMenuStrip ();
+			ni.ContextMenuStrip.ShowImageMargin = false;
+			ni.ContextMenuStrip.Items.Add (GMJ.GMJStatsMenuItem, null, BHelp_ItemClicked);
+			ni.ContextMenuStrip.Items.Add ("Настройки", null, BHelp_ItemClicked);
+			ni.ContextMenuStrip.Items.Add (RDLocale.GetDefaultText (RDLDefaultTexts.Control_AppAbout),
+				null, BHelp_ItemClicked);
+			ni.ContextMenuStrip.Items.Add (RDLocale.GetDefaultText (RDLDefaultTexts.Button_Exit),
+				null, BHelp_ItemClicked);
 
 			ni.MouseDown += ShowHideFullText;
 
@@ -101,9 +102,10 @@ namespace RD_AAOW
 				}
 
 			// Контекстное меню журнала
-			textContextMenu = new ContextMenu ();
-			textContextMenu.MenuItems.Add (new MenuItem ("Копировать текст", TextContext_ItemClicked));
-			textContextMenu.MenuItems.Add (new MenuItem ("Сохранить картинку", TextContext_ItemClicked));
+			textContextMenu = new ContextMenuStrip ();
+			textContextMenu.ShowImageMargin = false;
+			textContextMenu.Items.Add ("Копировать текст", null, TextContext_ItemClicked);
+			textContextMenu.Items.Add ("Сохранить картинку", null, TextContext_ItemClicked);
 
 			// Окно сохранения картинок
 			SFDialog.Title = "Укажите расположение для сохраняемой картинки";
@@ -114,11 +116,13 @@ namespace RD_AAOW
 			LastCategoryButton.Enabled = false;
 #else
 			string[] topCat = GMJ.GetTopCategories ();
-			topCategories = new ContextMenu ();
-			genCategories = new ContextMenu ();
+			topCategories = new ContextMenuStrip ();
+			topCategories.ShowImageMargin = false;
+			genCategories = new ContextMenuStrip ();
+			genCategories.ShowImageMargin = false;
 
 			for (int i = 0; i < topCat.Length; i++)
-				topCategories.MenuItems.Add (new MenuItem (topCat[i].ToUpper (), SelectTopCategory));
+				topCategories.Items.Add (topCat[i].ToUpper (), null, SelectTopCategory);
 
 #endif
 			}
@@ -187,7 +191,7 @@ namespace RD_AAOW
 		private void ApplyColorsAndFonts ()
 			{
 			// Извлечение индекса
-			int idx = (int)NotificationsSupport.LogColor;
+			/*int idx = (int)NotificationsSupport.LogColor;*/
 			Font fnt = new Font (fontFamily, NotificationsSupport.LogFontSize / 10.0f);
 
 			MainLayout.BackColor = NotificationsSupport.LogColors.CurrentColor.BackColor;
@@ -325,7 +329,7 @@ namespace RD_AAOW
 			textContextSender = MainLayout.Controls.IndexOf (l);
 
 			// Контроль возможности формирования картинки
-			textContextMenu.MenuItems[1].Enabled = !l.Text.Contains (GMJ.SourceNoReturnPattern) &&
+			textContextMenu.Items[1].Enabled = !l.Text.Contains (GMJ.SourceNoReturnPattern) &&
 				!l.Text.Contains (GMJ.NoConnectionPattern) && (GMJPicture.AlignString (l.Text) != null);
 
 			textContextMenu.Show (l, e.Location);
@@ -334,7 +338,7 @@ namespace RD_AAOW
 		// Выбор варианта в меню элемента в журнале
 		private void TextContext_ItemClicked (object sender, EventArgs e)
 			{
-			int idx = textContextMenu.MenuItems.IndexOf ((MenuItem)sender);
+			int idx = textContextMenu.Items.IndexOf ((ToolStripItem)sender);
 			if (textContextSender < 0)
 				return;
 			Label l = (Label)MainLayout.Controls[textContextSender];
@@ -346,9 +350,17 @@ namespace RD_AAOW
 					string notItem = l.Text;
 					string notLink = "";
 
-					int left, right;
+					/*int left, right;
 					if (((left = notItem.IndexOf (GMJ.NumberStringBeginning)) >= 0) &&
-						((right = notItem.IndexOf (GMJ.NumberStringEnding, left)) >= 0))
+						((right = notItem.IndexOf (GMJ.NumberStringEnding, left)) >= 0))*/
+					int left = notItem.IndexOf (GMJ.NumberStringBeginning);
+					int right;
+					if (left >= 0)
+						right = notItem.IndexOf (GMJ.NumberStringEnding, left);
+					else
+						right = left;
+
+					if (right >= 0)
 						{
 						left += GMJ.NumberStringBeginning.Length;
 						notLink = GMJ.SourceRedirectLink + "/" + notItem.Substring (left, right - left);
@@ -366,7 +378,7 @@ namespace RD_AAOW
 					string text = l.Text.Substring (hSize + RDLocale.RNRN.Length);
 
 					string sub = "";
-					if (text.EndsWith ("]"))
+					if (text.EndsWith (']'))
 						{
 						int sSize = text.LastIndexOf (RDLocale.RNRN);
 						sub = text.Substring (sSize + RDLocale.RNRN.Length);
@@ -407,7 +419,7 @@ namespace RD_AAOW
 		private void BHelp_ItemClicked (object sender, EventArgs e)
 			{
 			// Извлечение индекса
-			int idx = ni.ContextMenu.MenuItems.IndexOf ((MenuItem)sender);
+			int idx = ni.ContextMenuStrip.Items.IndexOf ((ToolStripItem)sender);
 
 			// Вызов
 			switch (idx)
@@ -464,10 +476,10 @@ namespace RD_AAOW
 		private void SelectTopCategory (object sender, EventArgs e)
 			{
 			// Сброс списков
-			genCategories.MenuItems.Clear ();
+			genCategories.Items.Clear ();
 
 			// Запрос доступных категорий
-			int idx = topCategories.MenuItems.IndexOf ((MenuItem)sender);
+			int idx = topCategories.Items.IndexOf ((ToolStripItem)sender);
 			if (idx < 0)
 				return;
 
@@ -487,7 +499,7 @@ namespace RD_AAOW
 			if (categoriesReqResult.Length <= categoriesPerMenu)
 				{
 				for (int i = 0; i < categoriesReqResult.Length; i++)
-					genCategories.MenuItems.Add (new MenuItem (categoriesReqResult[i], SelectCategory));
+					genCategories.Items.Add (categoriesReqResult[i], null, SelectCategory);
 				genCategories.Tag = (int)0;
 				}
 			else
@@ -502,7 +514,7 @@ namespace RD_AAOW
 					if (left != right)
 						left += (" – " + right);
 
-					genCategories.MenuItems.Add (new MenuItem (left, SelectCategoryGroup));
+					genCategories.Items.Add (left, null, SelectCategoryGroup);
 					}
 				}
 
@@ -521,20 +533,20 @@ namespace RD_AAOW
 		private void SelectCategoryGroup (object sender, EventArgs e)
 			{
 			// Контроль
-			MenuItem b = (MenuItem)sender;
-			int offset = genCategories.MenuItems.IndexOf (b) * categoriesPerMenu;
+			ToolStripItem b = (ToolStripItem)sender;
+			int offset = genCategories.Items.IndexOf (b) * categoriesPerMenu;
 			if (offset < 0)
 				return;
 
-			genCategories.MenuItems.Clear ();
+			genCategories.Items.Clear ();
 			for (int i = offset; (i < offset + categoriesPerMenu) && (i < categoriesReqResult.Length); i++)
-				genCategories.MenuItems.Add (new MenuItem (categoriesReqResult[i], SelectCategory));
+				genCategories.Items.Add (categoriesReqResult[i], null, SelectCategory);
 
 			// Запуск третьего меню
 			genCategories.Tag = offset;
 
-			if (genCategories.MenuItems.Count < 2)
-				SelectCategory (genCategories.MenuItems[0], null);	// Напрямую, т.к. остался один вариант
+			if (genCategories.Items.Count < 2)
+				SelectCategory (genCategories.Items[0], null);  // Напрямую, т.к. остался один вариант
 			else
 				genCategories.Show (LastCategoryButton, Point.Empty);
 			}
@@ -542,8 +554,8 @@ namespace RD_AAOW
 		private void SelectCategory (object sender, EventArgs e)
 			{
 			// Контроль
-			MenuItem b = (MenuItem)sender;
-			int idx = genCategories.MenuItems.IndexOf (b) + (int)genCategories.Tag;
+			ToolStripItem b = (ToolStripItem)sender;
+			int idx = genCategories.Items.IndexOf (b) + (int)genCategories.Tag;
 			if (idx < 0)
 				return;
 
