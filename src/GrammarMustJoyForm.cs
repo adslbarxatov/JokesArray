@@ -79,7 +79,7 @@ namespace RD_AAOW
 			ApplyColorsAndFonts ();
 
 			// Настройка иконки в трее
-			ni.Icon = /*Properties.*/JokesArrayResources.TrayIcon;
+			ni.Icon = JokesArrayResources.TrayIcon;
 			ni.Text = ProgramDescription.AssemblyVisibleName;
 			ni.Visible = true;
 
@@ -191,7 +191,6 @@ namespace RD_AAOW
 		private void ApplyColorsAndFonts ()
 			{
 			// Извлечение индекса
-			/*int idx = (int)NotificationsSupport.LogColor;*/
 			Font fnt = new Font (fontFamily, NotificationsSupport.LogFontSize / 10.0f);
 
 			MainLayout.BackColor = NotificationsSupport.LogColors.CurrentColor.BackColor;
@@ -350,9 +349,6 @@ namespace RD_AAOW
 					string notItem = l.Text;
 					string notLink = "";
 
-					/*int left, right;
-					if (((left = notItem.IndexOf (GMJ.NumberStringBeginning)) >= 0) &&
-						((right = notItem.IndexOf (GMJ.NumberStringEnding, left)) >= 0))*/
 					int left = notItem.IndexOf (GMJ.NumberStringBeginning);
 					int right;
 					if (left >= 0)

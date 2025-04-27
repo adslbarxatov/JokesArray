@@ -64,7 +64,7 @@ namespace RD_AAOW
 		private readonly Color aboutFieldBackColor = Color.FromArgb ("#D0FFD0");
 
 		private readonly Color categoryMasterBackColor = Color.FromArgb ("#F8FFF0");
-		private readonly Color categoryFieldBackColor = Color.FromArgb("#E8FFD0");
+		private readonly Color categoryFieldBackColor = Color.FromArgb ("#E8FFD0");
 
 		#endregion
 
@@ -118,18 +118,15 @@ namespace RD_AAOW
 				RDLocale.CurrentLanguage = RDLanguages.ru_ru;
 
 			// Общая конструкция страниц приложения
-			/*MainPage = new MasterPage ();*/
-
-			settingsPage = RDInterface.ApplyPageSettings (new SettingsPage (), "SettingsPage",
+			settingsPage = RDInterface.ApplyPageSettings (new SettingsPage (), /*"SettingsPage",*/
 				"Настройки приложения", settingsMasterBackColor);
-			aboutPage = RDInterface.ApplyPageSettings (new AboutPage (), "AboutPage",
+			aboutPage = RDInterface.ApplyPageSettings (new AboutPage (), /*"AboutPage",*/
 				RDLocale.GetDefaultText (RDLDefaultTexts.Control_AppAbout), aboutMasterBackColor);
-			logPage = RDInterface.ApplyPageSettings (new LogPage (), "LogPage",
+			logPage = RDInterface.ApplyPageSettings (new LogPage (), /*"LogPage",*/
 				"Журнал", logMasterBackColor);
-			categoryPage = RDInterface.ApplyPageSettings (new CategoryPage (), "CategoryPage",
+			categoryPage = RDInterface.ApplyPageSettings (new CategoryPage (), /*"CategoryPage",*/
 				"Категории", categoryMasterBackColor);
 
-			/*RDInterface.SetMasterPage (MainPage, logPage, logMasterBackColor);*/
 			RDInterface.SetMasterPage (mainPage, logPage, logMasterBackColor);
 
 			if (!((NSTipTypes)RDGenerics.TipsState).HasFlag (NSTipTypes.StartupTips))
@@ -224,7 +221,7 @@ namespace RD_AAOW
 			Label htl = RDInterface.ApplyLabelSettings (aboutPage, "HelpTextLabel",
 				RDGenerics.GetAppHelpText (), RDLabelTypes.SmallLeft);
 			htl.TextType = TextType.Html;
-			/*htl.HorizontalTextAlignment = TextAlignment.Justify;*/ // Пока не работает
+			//htl.HorizontalTextAlignment = TextAlignment.Justify;	// Пока не работает
 
 			FontSizeButton_Clicked (null, null);
 
@@ -512,14 +509,8 @@ namespace RD_AAOW
 				await RDInterface.XPUNLoop ();
 
 			// Требование принятия Политики
-			/*if (!((NSTipTypes)RDGenerics.TipsState).HasFlag (NSTipTypes.PolicyTip))
-				{
-				if (!RDGenerics.IsTV)
-					await RDInterface.PolicyLoop ();
-				RDGenerics.TipsState |= (uint)NSTipTypes.PolicyTip;
-				}*/
 			if (!RDGenerics.IsTV)
-				await RDInterface.PolicyLoop ();	// Выставляет бит 0 в TipsState автоматически
+				await RDInterface.PolicyLoop ();    // Выставляет бит 0 в TipsState автоматически
 
 			// Подсказки
 			if (!((NSTipTypes)RDGenerics.TipsState).HasFlag (NSTipTypes.StartupTips))
@@ -1429,7 +1420,6 @@ namespace RD_AAOW
 			scrollUpButton.TextColor = scrollDownButton.TextColor = menuButton.TextColor =
 				sameCatButton.TextColor = currentLogColor.MainTextColor;
 
-			/*NavigationPage np = (NavigationPage)MainPage;*/
 			if (currentLogColor.IsBright)
 				{
 				RDInterface.MasterPage.BarBackgroundColor = currentLogColor.MainTextColor;
@@ -1583,9 +1573,6 @@ namespace RD_AAOW
 				lastUsedCategory.IsVisible = (categoriesReqResult[lastCategoryIndex] == lastCategory);
 
 			// Отображение полей
-			/*if (!genCategoryLabel.IsVisible)
-				genCategoryLabel.IsVisible = genCatCurrentPage.IsVisible = true;*/
-
 			genCategoryEmpty.IsVisible = (categoriesReqResult.Length < 1);
 			genCategoryLabel.IsVisible = genCatCurrentPage.IsVisible = genCategorySection.IsVisible =
 				!genCategoryEmpty.IsVisible;
