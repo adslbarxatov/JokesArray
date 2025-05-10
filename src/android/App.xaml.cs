@@ -118,13 +118,13 @@ namespace RD_AAOW
 				RDLocale.CurrentLanguage = RDLanguages.ru_ru;
 
 			// Общая конструкция страниц приложения
-			settingsPage = RDInterface.ApplyPageSettings (new SettingsPage (), /*"SettingsPage",*/
+			settingsPage = RDInterface.ApplyPageSettings (new SettingsPage (),
 				"Настройки приложения", settingsMasterBackColor);
-			aboutPage = RDInterface.ApplyPageSettings (new AboutPage (), /*"AboutPage",*/
+			aboutPage = RDInterface.ApplyPageSettings (new AboutPage (),
 				RDLocale.GetDefaultText (RDLDefaultTexts.Control_AppAbout), aboutMasterBackColor);
-			logPage = RDInterface.ApplyPageSettings (new LogPage (), /*"LogPage",*/
+			logPage = RDInterface.ApplyPageSettings (new LogPage (),
 				"Журнал", logMasterBackColor);
-			categoryPage = RDInterface.ApplyPageSettings (new CategoryPage (), /*"CategoryPage",*/
+			categoryPage = RDInterface.ApplyPageSettings (new CategoryPage (),
 				"Категории", categoryMasterBackColor);
 
 			RDInterface.SetMasterPage (mainPage, logPage, logMasterBackColor);
