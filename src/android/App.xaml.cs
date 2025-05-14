@@ -141,7 +141,7 @@ namespace RD_AAOW
 			RDInterface.ApplyLabelSettings (settingsPage, "KeepScreenOnLabel",
 				"Запрет спящего режима", RDLabelTypes.DefaultLeft);
 			keepScreenOnSwitch = RDInterface.ApplySwitchSettings (settingsPage, "KeepScreenOnSwitch",
-				false, settingsFieldBackColor, KeepScreenOnSwitch_Toggled, NotificationsSupport.KeepScreenOn);
+				false, settingsFieldBackColor, KeepScreenOnSwitch_Toggled, RDInterface.KeepScreenOn);
 			RDInterface.ApplyLabelSettings (settingsPage, "KeepScreenOnTip",
 				"Опция запрещает переход устройства в спящий режим, пока приложение открыто, " +
 				"позволяя экрану оставаться активным, пока Вы читаете тексты записей",
@@ -589,7 +589,7 @@ namespace RD_AAOW
 			{
 			RDGenerics.StopRequested = true;
 			NotificationsSupport.SetMasterLog (masterLog);
-			RDGenerics.AppIsRunning = false;
+			/*RDGenerics.AppIsRunning = false;*/
 			}
 
 		/// <summary>
@@ -601,7 +601,7 @@ namespace RD_AAOW
 
 			// Запуск цикла обратной связи (без ожидания, на случай, если приложение было свёрнуто, но не закрыто,
 			// а во время ожидания имели место обновления журнала)
-			RDGenerics.AppIsRunning = true;
+			/*RDGenerics.AppIsRunning = true;*/
 			FinishBackgroundRequest ();
 			}
 
@@ -1167,7 +1167,7 @@ namespace RD_AAOW
 		// Включение / выключение фиксации экрана
 		private void KeepScreenOnSwitch_Toggled (object sender, ToggledEventArgs e)
 			{
-			NotificationsSupport.KeepScreenOn = keepScreenOnSwitch.IsToggled;
+			RDInterface.KeepScreenOn = keepScreenOnSwitch.IsToggled;
 			}
 
 		// Включение / выключение добавления новостей с конца журнала

@@ -49,7 +49,7 @@ namespace RD_AAOW
 			base.SetTheme (Microsoft.Maui.Controls.Resource.Style.MainTheme);
 
 			// Запуск
-			if (NotificationsSupport.KeepScreenOn)
+			if (RDInterface.KeepScreenOn)
 				this.Window.AddFlags (WindowManagerFlags.KeepScreenOn);
 
 			// Инициализация и запуск
