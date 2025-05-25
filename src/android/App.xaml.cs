@@ -76,7 +76,7 @@ namespace RD_AAOW
 			genCategoryEmpty, genCategoryLabel, genCatCurrentPage;
 
 		private Switch newsAtTheEndSwitch, keepScreenOnSwitch, enableCopySubscriptionSwitch,
-			translucencySwitch, offlineModeSwitch;
+			translucencySwitch, offlineModeSwitch, shortLogSwitch;
 
 		private Button centerButton, scrollUpButton, scrollDownButton, menuButton, sameCatButton,
 			pictureBackButton, pTextOnTheLeftButton, censorshipButton, logColorButton,
@@ -269,6 +269,17 @@ namespace RD_AAOW
 				if (!NotificationsSupport.LogNewsItemsAtTheEnd)
 					NotificationsSupport.LogNewsItemsAtTheEnd = true;
 				}
+
+			// Короткий журнал
+			RDInterface.ApplyLabelSettings (settingsPage, "ShortLogLabel",
+				"Режим одной записи", RDLabelTypes.DefaultLeft);
+			shortLogSwitch = RDInterface.ApplySwitchSettings (settingsPage, "ShortLogSwitch",
+				false, settingsFieldBackColor, ShortLogSwitch_Toggled, false /*NotificationsSupport.ShortLog*/);
+			shortLogSwitch.IsEnabled = false;
+			RDInterface.ApplyLabelSettings (settingsPage, "ShortLogTip",
+				"Опция позволяет заменить журнал записей экраном, на котором отображается только одна запись за раз. " +
+				"К сожалению, текущая версия MAUI непригодна для реализации этой опции",
+				RDLabelTypes.TipJustify);
 
 			// Цвет фона журнала
 			RDInterface.ApplyLabelSettings (settingsPage, "LogColorLabel",
@@ -589,7 +600,6 @@ namespace RD_AAOW
 			{
 			RDGenerics.StopRequested = true;
 			NotificationsSupport.SetMasterLog (masterLog);
-			/*RDGenerics.AppIsRunning = false;*/
 			}
 
 		/// <summary>
@@ -601,7 +611,6 @@ namespace RD_AAOW
 
 			// Запуск цикла обратной связи (без ожидания, на случай, если приложение было свёрнуто, но не закрыто,
 			// а во время ожидания имели место обновления журнала)
-			/*RDGenerics.AppIsRunning = true;*/
 			FinishBackgroundRequest ();
 			}
 
@@ -625,6 +634,14 @@ namespace RD_AAOW
 
 		private void UpdateLog (int ScrollPosition)
 			{
+			/*// Отключение отображения для исключения прыгания по экрану
+			if (NotificationsSupport.ShortLog)
+				{
+				for (int i = 0; i < MainLogItem.ViewLabels.Length; i++)
+					MainLogItem.ViewLabels[i].IsVisible = false;
+				}*/
+
+			// Обновление журнала
 			tvScrollPosition = ScrollPosition;
 			mainLog.ItemsSource = null;
 			mainLog.ItemsSource = masterLog;
@@ -647,6 +664,20 @@ namespace RD_AAOW
 
 			if ((masterLog.Count < 1) || !needsScroll)
 				return false;
+
+			/*// Пересчёт отступа для одиночной записи
+			if (NotificationsSupport.ShortLog)
+				{
+				double height = 0;
+				for (int i = 0; i < MainLogItem.ViewLabels.Length; i++)
+					height += MainLogItem.ViewLabels[i].Height;
+
+				if (height + menuButton.Height < mainLog.Height)
+					MainLogItem.ViewLabels[0].HeightRequest = (mainLog.Height - height) / 2;
+
+				for (int i = 0; i < MainLogItem.ViewLabels.Length; i++)
+					MainLogItem.ViewLabels[i].IsVisible = true;
+				}*/
 
 			// Искусственная задержка
 			await Task.Delay (100);
@@ -936,7 +967,8 @@ namespace RD_AAOW
 			{
 			// Переключение состояния кнопок и свичей
 			centerButtonEnabled = State;
-			menuButton.IsVisible = scrollDownButton.IsVisible = scrollUpButton.IsVisible = State;
+			menuButton.IsVisible = scrollDownButton.IsVisible = scrollUpButton.IsVisible =
+				sameCatButton.IsVisible = State;
 			scrollUpButton.IsVisible = scrollDownButton.IsVisible = State && RDGenerics.IsTV;
 
 			// Обновление статуса
@@ -946,12 +978,13 @@ namespace RD_AAOW
 		// Добавление текста в журнал
 		private void AddTextToLog (string Text)
 			{
+			uint limit = /*NotificationsSupport.ShortLog ? 1 :*/ NotificationsSupport.MasterLogMaxItems;
 			if (NotificationsSupport.LogNewsItemsAtTheEnd)
 				{
 				masterLog.Add (new MainLogItem (Text));
 
 				// Удаление верхних строк
-				while (masterLog.Count > NotificationsSupport.MasterLogMaxItems)
+				while (masterLog.Count > limit)
 					masterLog.RemoveAt (0);
 				}
 			else
@@ -959,7 +992,7 @@ namespace RD_AAOW
 				masterLog.Insert (0, new MainLogItem (Text));
 
 				// Удаление нижних строк (здесь требуется, т.к. не выполняется обрезка свойством .MainLog)
-				while (masterLog.Count > NotificationsSupport.MasterLogMaxItems)
+				while (masterLog.Count > limit)
 					masterLog.RemoveAt (masterLog.Count - 1);
 				}
 			}
@@ -1041,6 +1074,7 @@ namespace RD_AAOW
 								}
 							else
 								{
+								/*NotificationsSupport.ShortLog = false;	// Отмена для неодинарных записей*/
 								AddTextToLog (newText.Substring (0, left));
 								newText = NotificationsSupport.HeaderBeginning + "(продолжение)" +
 									NotificationsSupport.HeaderEnding + MainLogItem.MainLogItemSplitter +
@@ -1057,6 +1091,9 @@ namespace RD_AAOW
 							}
 						while ((left > 0) || ((newText.Length - newText.Replace ("\n", "").Length > linesLimit) ||
 							(newText.Length > charsLimit * linesLimit)));
+
+						/*// Восстановление для неодинарных записей
+						NotificationsSupport.ShortLog = shortLogSwitch.IsToggled;*/
 
 						needsScroll = true;
 
@@ -1178,6 +1215,12 @@ namespace RD_AAOW
 				NotificationsSupport.LogNewsItemsAtTheEnd = newsAtTheEndSwitch.IsToggled;
 
 			UpdateLogButton (false, false);
+			}
+
+		// Включение / выключение режима короткого журнала
+		private void ShortLogSwitch_Toggled (object sender, ToggledEventArgs e)
+			{
+			/*NotificationsSupport.ShortLog = shortLogSwitch.IsToggled;*/
 			}
 
 		// Изменение размера шрифта лога

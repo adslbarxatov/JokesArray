@@ -69,6 +69,12 @@
 			<Label x:Name="LogSettingsLabel" />
 
 			<StackLayout Orientation="Horizontal">
+				<Switch x:Name="ShortLogSwitch" VerticalOptions="Center" />
+				<Label x:Name="ShortLogLabel" VerticalOptions="Center" />
+			</StackLayout>
+			<Label x:Name="ShortLogTip" />
+
+			<StackLayout Orientation="Horizontal">
 				<Switch x:Name="NewsAtTheEndSwitch" VerticalOptions="Center" />
 				<Label x:Name="NewsAtTheEndLabel" VerticalOptions="Center" />
 			</StackLayout>
@@ -77,7 +83,7 @@
 			<BoxView VerticalOptions="Center" HorizontalOptions="Center" HeightRequest="1" 
 					WidthRequest="100" Color="#505050" Margin="12" />
 
-			<StackLayout Orientation="Horizontal">
+			<StackLayout Orientation="Vertical">
 				<Label x:Name="LogColorLabel" VerticalOptions="Center" />
 				<Button x:Name="LogColorButton" VerticalOptions="Center" />
 			</StackLayout>
