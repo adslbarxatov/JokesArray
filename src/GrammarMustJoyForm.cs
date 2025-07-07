@@ -251,7 +251,7 @@ namespace RD_AAOW
 					Thread.Sleep (1000);
 
 				res += (GMJ.GetRandomRecord () + sp);
-				bw.ReportProgress ((int)(HardWorkExecutor.ProgressBarSize * (i + 1) / group),
+				bw.ReportProgress ((int)(RDWorkerForm.ProgressBarSize * (i + 1) / group),
 					"Запрошено " + (i + 1).ToString () + limit);
 				}
 
@@ -421,7 +421,7 @@ namespace RD_AAOW
 			switch (idx)
 				{
 				case 0:
-					RDInterface.MessageBox (RDMessageTypes.Information_Left, GMJ.GMJStats);
+					RDInterface.MessageBox (RDMessageFlags.Information | RDMessageFlags.NoSound, GMJ.GMJStats);
 					break;
 
 				case 1:
@@ -442,12 +442,12 @@ namespace RD_AAOW
 		// Предложение записей
 		private void BAdd_Click (object sender, EventArgs e)
 			{
-			if (RDInterface.MessageBox (RDMessageTypes.Question_Center, GMJ.SuggestionMessage,
+			if (RDInterface.MessageBox (RDMessageFlags.Question | RDMessageFlags.CenterText, GMJ.SuggestionMessage,
 				RDLocale.GetDefaultText (RDLDefaultTexts.Button_Yes),
 				RDLocale.GetDefaultText (RDLDefaultTexts.Button_No)) != RDMessageButtons.ButtonOne)
 				return;
 
-			AboutForm.AskDeveloper ();
+			RDAboutForm.AskDeveloper ();
 			}
 
 		// Вызов настроек
@@ -486,7 +486,7 @@ namespace RD_AAOW
 			// Контроль
 			if (categoriesReqResult.Length < 1)
 				{
-				RDInterface.MessageBox (RDMessageTypes.Information_Center,
+				RDInterface.MessageBox (RDMessageFlags.Information | RDMessageFlags.CenterText,
 					"Все записи из этой категории уже просмотрены", 1000);
 				return;
 				}
@@ -570,7 +570,7 @@ namespace RD_AAOW
 			int post = GMJ.GetRandomFromCategory ((uint)lastCategoryIndex);
 			if (post < 0)
 				{
-				RDInterface.MessageBox (RDMessageTypes.Information_Center,
+				RDInterface.MessageBox (RDMessageFlags.Information | RDMessageFlags.CenterText,
 					(lastCategoryIndex < 0) ? "Не выбрана категория для просмотра" :
 					"Все записи из выбранной категории уже просмотрены", 1000);
 				return;

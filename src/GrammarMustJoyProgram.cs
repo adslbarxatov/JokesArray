@@ -33,7 +33,7 @@ namespace RD_AAOW
 
 			// !!! Миграция из GMJ
 			string gmjExists = RDGenerics.GetDPArrayRegistryValue ("GrammarMustJoy");
-			string jaVersion = RDGenerics.GetSettings (AboutForm.LastShownVersionKey, "");
+			string jaVersion = RDGenerics.GetSettings (RDAboutForm.LastShownVersionKey, "");
 			if (!string.IsNullOrWhiteSpace (gmjExists) && string.IsNullOrWhiteSpace (jaVersion))
 				NotificationsSupport.MigrateSettingsFromGMJ ();
 
