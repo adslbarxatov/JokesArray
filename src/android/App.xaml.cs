@@ -634,13 +634,6 @@ namespace RD_AAOW
 
 		private void UpdateLog (int ScrollPosition)
 			{
-			/*// Отключение отображения для исключения прыгания по экрану
-			if (NotificationsSupport.ShortLog)
-				{
-				for (int i = 0; i < MainLogItem.ViewLabels.Length; i++)
-					MainLogItem.ViewLabels[i].IsVisible = false;
-				}*/
-
 			// Обновление журнала
 			tvScrollPosition = ScrollPosition;
 			mainLog.ItemsSource = null;
@@ -664,20 +657,6 @@ namespace RD_AAOW
 
 			if ((masterLog.Count < 1) || !needsScroll)
 				return false;
-
-			/*// Пересчёт отступа для одиночной записи
-			if (NotificationsSupport.ShortLog)
-				{
-				double height = 0;
-				for (int i = 0; i < MainLogItem.ViewLabels.Length; i++)
-					height += MainLogItem.ViewLabels[i].Height;
-
-				if (height + menuButton.Height < mainLog.Height)
-					MainLogItem.ViewLabels[0].HeightRequest = (mainLog.Height - height) / 2;
-
-				for (int i = 0; i < MainLogItem.ViewLabels.Length; i++)
-					MainLogItem.ViewLabels[i].IsVisible = true;
-				}*/
 
 			// Искусственная задержка
 			await Task.Delay (100);
