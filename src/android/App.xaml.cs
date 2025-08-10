@@ -1130,10 +1130,18 @@ namespace RD_AAOW
 					];
 				}
 
-			int res = await RDInterface.ShowList (RDLocale.GetDefaultText (RDLDefaultTexts.Button_GoTo),
-				RDLocale.GetDefaultText (RDLDefaultTexts.Button_Cancel), pageVariants);
-			if (res < 0)
-				return;
+			int res;
+			if (sender == null)
+				{
+				res = 1;
+				}
+			else
+				{
+				res = await RDInterface.ShowList (RDLocale.GetDefaultText (RDLDefaultTexts.Button_GoTo),
+					RDLocale.GetDefaultText (RDLDefaultTexts.Button_Cancel), pageVariants);
+				if (res < 0)
+					return;
+				}
 
 			// Вызов
 			switch (res)
@@ -1668,10 +1676,18 @@ namespace RD_AAOW
 			int post = GMJ.GetRandomFromCategory ((uint)lastCategoryIndex);
 			if (post < 0)
 				{
-				if (lastCategoryIndex < 0)
-					RDInterface.ShowBalloon ("Не выбрана категория для просмотра", true);
+				if ((Button)sender == lastUsedCategory)
+					{
+					if (lastCategoryIndex < 0)
+						RDInterface.ShowBalloon ("Не выбрана категория для просмотра", true);
+					else
+						RDInterface.ShowBalloon ("Все записи из выбранной категории уже просмотрены", true);
+					}
 				else
-					RDInterface.ShowBalloon ("Все записи из выбранной категории уже просмотрены", true);
+					{
+					SelectPage (null, null);
+					}
+
 				return;
 				}
 
