@@ -73,7 +73,7 @@ namespace RD_AAOW
 		private ContentPage settingsPage, aboutPage, logPage, categoryPage;
 
 		private Label fontSizeFieldLabel, groupSizeFieldLabel, aboutFontSizeField,
-			genCategoryEmpty, genCategoryLabel, genCatCurrentPage;
+			genCategoryEmpty, genCategoryLabel, genCatCurrentPage, topCategoryLabel;
 
 		private Switch newsAtTheEndSwitch, keepScreenOnSwitch, enableCopySubscriptionSwitch,
 			translucencySwitch, offlineModeSwitch, shortLogSwitch;
@@ -224,6 +224,60 @@ namespace RD_AAOW
 			//htl.HorizontalTextAlignment = TextAlignment.Justify;	// Пока не работает
 
 			FontSizeButton_Clicked (null, null);
+
+			#endregion
+
+			#region Страница категорий
+
+			// Категории верхнего уровня
+			topCategoryLabel = RDInterface.ApplyLabelSettings (categoryPage, "TopCategoryLabel",
+				"Группы категорий:", RDLabelTypes.HeaderLeft);
+			topCategorySection = (FlexLayout)categoryPage.FindByName ("TopCategorySection");
+
+			GMJLogColor currentLogColor = NotificationsSupport.LogColors.CurrentColor;
+			string[] topCat = GMJ.GetTopCategories ();  // Активация списка
+			for (int i = 0; i < topCat.Length; i++)
+				{
+				Button b = new Button ();
+				/*b.BackgroundColor = categoryFieldBackColor;*/
+				b.BackgroundColor = currentLogColor.TranslucentColor;
+				b.FontAttributes = FontAttributes.None;
+				b.FontSize = 5 * RDInterface.MasterFontSize / 4;
+				/*b.TextColor = RDInterface.GetInterfaceColor (RDInterfaceColors.AndroidTextColor);*/
+				b.TextColor = currentLogColor.MainTextColor;
+				b.WidthRequest = b.HeightRequest = RDInterface.MasterFontSize * 2.75;
+				b.Padding = Thickness.Zero;
+				b.Margin = new Thickness (3);
+				b.Text = topCat[i];
+				b.TextTransform = TextTransform.None;
+				b.Clicked += SelectTopCategory;
+
+				topCategories.Add (b);
+				topCategorySection.Add (b);
+				}
+
+			genCategoryLabel = RDInterface.ApplyLabelSettings (categoryPage, "GenCategoryLabel",
+				"Категории:", RDLabelTypes.HeaderLeft);
+			genCategoryLabel.IsVisible = false;
+
+			genCatPrevPage = RDInterface.ApplyButtonSettings (categoryPage, "GenCatPrevPage",
+				RDDefaultButtons.Backward, categoryFieldBackColor, ChangeCatPage_Clicked);
+			genCatCurrentPage = RDInterface.ApplyLabelSettings (categoryPage, "GenCatCurrentPage",
+				" ", RDLabelTypes.HeaderCenter);
+			genCatNextPage = RDInterface.ApplyButtonSettings (categoryPage, "GenCatNextPage",
+				RDDefaultButtons.Start, categoryFieldBackColor, ChangeCatPage_Clicked);
+			genCatPrevPage.IsVisible = genCatNextPage.IsVisible = genCatCurrentPage.IsVisible = false;
+
+			genCategorySection = (FlexLayout)categoryPage.FindByName ("GenCategorySection");
+			genCategorySection.IsVisible = false;
+
+			genCategoryEmpty = RDInterface.ApplyLabelSettings (categoryPage, "GenCategoryEmpty",
+				"(все записи из этой категории уже просмотрены)", RDLabelTypes.TipCenter);
+			genCategoryEmpty.IsVisible = false;
+
+			lastUsedCategory = RDInterface.ApplyButtonSettings (categoryPage, "LastUsedCategory",
+				"Последняя выбранная категория", categoryFieldBackColor, LastUsedCategory_Clicked, false);
+			lastUsedCategory.IsVisible = false;
 
 			#endregion
 
@@ -418,57 +472,6 @@ namespace RD_AAOW
 				PTextOnTheLeft_Toggled (null, null);
 				PSubs_Clicked (null, null);
 				}
-
-			#endregion
-
-			#region Страница категорий
-
-			// Категории верхнего уровня
-			RDInterface.ApplyLabelSettings (categoryPage, "TopCategoryLabel",
-				"Группы категорий:", RDLabelTypes.HeaderLeft);
-			topCategorySection = (FlexLayout)categoryPage.FindByName ("TopCategorySection");
-
-			string[] topCat = GMJ.GetTopCategories ();  // Активация списка
-			for (int i = 0; i < topCat.Length; i++)
-				{
-				Button b = new Button ();
-				b.BackgroundColor = categoryFieldBackColor;
-				b.FontAttributes = FontAttributes.None;
-				b.FontSize = 5 * RDInterface.MasterFontSize / 4;
-				b.TextColor = RDInterface.GetInterfaceColor (RDInterfaceColors.AndroidTextColor);
-				b.WidthRequest = b.HeightRequest = RDInterface.MasterFontSize * 2.75;
-				b.Padding = Thickness.Zero;
-				b.Margin = new Thickness (3);
-				b.Text = topCat[i];
-				b.TextTransform = TextTransform.None;
-				b.Clicked += SelectTopCategory;
-
-				topCategories.Add (b);
-				topCategorySection.Add (b);
-				}
-
-			genCategoryLabel = RDInterface.ApplyLabelSettings (categoryPage, "GenCategoryLabel",
-				"Категории:", RDLabelTypes.HeaderLeft);
-			genCategoryLabel.IsVisible = false;
-
-			genCatPrevPage = RDInterface.ApplyButtonSettings (categoryPage, "GenCatPrevPage",
-				RDDefaultButtons.Backward, categoryFieldBackColor, ChangeCatPage_Clicked);
-			genCatCurrentPage = RDInterface.ApplyLabelSettings (categoryPage, "GenCatCurrentPage",
-				" ", RDLabelTypes.HeaderCenter);
-			genCatNextPage = RDInterface.ApplyButtonSettings (categoryPage, "GenCatNextPage",
-				RDDefaultButtons.Start, categoryFieldBackColor, ChangeCatPage_Clicked);
-			genCatPrevPage.IsVisible = genCatNextPage.IsVisible = genCatCurrentPage.IsVisible = false;
-
-			genCategorySection = (FlexLayout)categoryPage.FindByName ("GenCategorySection");
-			genCategorySection.IsVisible = false;
-
-			genCategoryEmpty = RDInterface.ApplyLabelSettings (categoryPage, "GenCategoryEmpty",
-				"(все записи из этой категории уже просмотрены)", RDLabelTypes.TipCenter);
-			genCategoryEmpty.IsVisible = false;
-
-			lastUsedCategory = RDInterface.ApplyButtonSettings (categoryPage, "LastUsedCategory",
-				"Последняя выбранная категория", categoryFieldBackColor, LastUsedCategory_Clicked, false);
-			lastUsedCategory.IsVisible = false;
 
 			#endregion
 
@@ -1444,12 +1447,36 @@ namespace RD_AAOW
 			GMJLogColor currentLogColor = NotificationsSupport.LogColors.CurrentColor;
 			logColorButton.Text = logColorVariants[res];
 
+			// Цвета журнала
 			logPage.BackgroundColor = mainLog.BackgroundColor = centerButton.BackgroundColor =
 				scrollUpButton.BackgroundColor = scrollDownButton.BackgroundColor =
 				menuButton.BackgroundColor = sameCatButton.BackgroundColor = currentLogColor.BackColor;
 			scrollUpButton.TextColor = scrollDownButton.TextColor = menuButton.TextColor =
 				sameCatButton.TextColor = currentLogColor.MainTextColor;
 
+			// Цвета раздела категорий
+			categoryPage.BackgroundColor = currentLogColor.BackColor;
+			topCategoryLabel.TextColor = genCategoryLabel.TextColor = genCatCurrentPage.TextColor =
+				genCatPrevPage.TextColor = genCatNextPage.TextColor = lastUsedCategory.TextColor =
+				currentLogColor.MainTextColor;
+
+			for (int i = 0; i < topCategories.Count; i++)
+				{
+				topCategories[i].BackgroundColor = currentLogColor.TranslucentColor;
+				topCategories[i].TextColor = currentLogColor.MainTextColor;
+				}
+
+			genCatPrevPage.BackgroundColor = genCatNextPage.BackgroundColor = lastUsedCategory.BackgroundColor =
+				currentLogColor.TranslucentColor;
+			for (int i = 0; i < genCategories.Count; i++)
+				{
+				genCategories[i].BackgroundColor = currentLogColor.TranslucentColor;
+				genCategories[i].TextColor = currentLogColor.MainTextColor;
+				}
+
+			genCategoryEmpty.TextColor = currentLogColor.SecondaryTextColor;
+
+			// Навигатор страницы
 			if (currentLogColor.IsBright)
 				{
 				RDInterface.MasterPage.BarBackgroundColor = currentLogColor.MainTextColor;
@@ -1625,15 +1652,18 @@ namespace RD_AAOW
 
 			genCatPrevPage.IsVisible = genCatNextPage.IsVisible = (categoriesPagesCount > 1);
 
+			GMJLogColor currentLogColor = NotificationsSupport.LogColors.CurrentColor;
 			for (int i = (int)(currentCategoriesPage * categoriesPerPage);
 				(i < (currentCategoriesPage + 1) * categoriesPerPage) && (i < categoriesReqResult.Length); i++)
 				{
 				Button b = new Button ();
-				b.BackgroundColor = categoryFieldBackColor;
+				/*b.BackgroundColor = categoryFieldBackColor;*/
+				b.BackgroundColor = currentLogColor.TranslucentColor;
 				b.FontAttributes = FontAttributes.None;
 				b.FontSize = RDInterface.MasterFontSize;
 				b.HeightRequest = RDInterface.MasterFontSize * 2.75;
-				b.TextColor = RDInterface.GetInterfaceColor (RDInterfaceColors.AndroidTextColor);
+				/*b.TextColor = RDInterface.GetInterfaceColor (RDInterfaceColors.AndroidTextColor);*/
+				b.TextColor = currentLogColor.MainTextColor;
 				b.Margin = b.Padding = new Thickness (3);
 				b.Text = categoriesReqResult[i];
 				b.TextTransform = TextTransform.None;
