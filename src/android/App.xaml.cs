@@ -239,11 +239,9 @@ namespace RD_AAOW
 			for (int i = 0; i < topCat.Length; i++)
 				{
 				Button b = new Button ();
-				/*b.BackgroundColor = categoryFieldBackColor;*/
 				b.BackgroundColor = currentLogColor.TranslucentColor;
 				b.FontAttributes = FontAttributes.None;
 				b.FontSize = 5 * RDInterface.MasterFontSize / 4;
-				/*b.TextColor = RDInterface.GetInterfaceColor (RDInterfaceColors.AndroidTextColor);*/
 				b.TextColor = currentLogColor.MainTextColor;
 				b.WidthRequest = b.HeightRequest = RDInterface.MasterFontSize * 2.75;
 				b.Padding = Thickness.Zero;
@@ -328,7 +326,7 @@ namespace RD_AAOW
 			RDInterface.ApplyLabelSettings (settingsPage, "ShortLogLabel",
 				"Режим одной записи", RDLabelTypes.DefaultLeft);
 			shortLogSwitch = RDInterface.ApplySwitchSettings (settingsPage, "ShortLogSwitch",
-				false, settingsFieldBackColor, ShortLogSwitch_Toggled, false /*NotificationsSupport.ShortLog*/);
+				false, settingsFieldBackColor, ShortLogSwitch_Toggled, false);
 			shortLogSwitch.IsEnabled = false;
 			RDInterface.ApplyLabelSettings (settingsPage, "ShortLogTip",
 				"Опция позволяет заменить журнал записей экраном, на котором отображается только одна запись за раз. " +
@@ -960,7 +958,7 @@ namespace RD_AAOW
 		// Добавление текста в журнал
 		private void AddTextToLog (string Text)
 			{
-			uint limit = /*NotificationsSupport.ShortLog ? 1 :*/ NotificationsSupport.MasterLogMaxItems;
+			uint limit = NotificationsSupport.MasterLogMaxItems;
 			if (NotificationsSupport.LogNewsItemsAtTheEnd)
 				{
 				masterLog.Add (new MainLogItem (Text));
@@ -1056,7 +1054,6 @@ namespace RD_AAOW
 								}
 							else
 								{
-								/*NotificationsSupport.ShortLog = false;	// Отмена для неодинарных записей*/
 								AddTextToLog (newText.Substring (0, left));
 								newText = NotificationsSupport.HeaderBeginning + "(продолжение)" +
 									NotificationsSupport.HeaderEnding + MainLogItem.MainLogItemSplitter +
@@ -1073,9 +1070,6 @@ namespace RD_AAOW
 							}
 						while ((left > 0) || ((newText.Length - newText.Replace ("\n", "").Length > linesLimit) ||
 							(newText.Length > charsLimit * linesLimit)));
-
-						/*// Восстановление для неодинарных записей
-						NotificationsSupport.ShortLog = shortLogSwitch.IsToggled;*/
 
 						needsScroll = true;
 
@@ -1210,7 +1204,6 @@ namespace RD_AAOW
 		// Включение / выключение режима короткого журнала
 		private void ShortLogSwitch_Toggled (object sender, ToggledEventArgs e)
 			{
-			/*NotificationsSupport.ShortLog = shortLogSwitch.IsToggled;*/
 			}
 
 		// Изменение размера шрифта лога
@@ -1657,12 +1650,10 @@ namespace RD_AAOW
 				(i < (currentCategoriesPage + 1) * categoriesPerPage) && (i < categoriesReqResult.Length); i++)
 				{
 				Button b = new Button ();
-				/*b.BackgroundColor = categoryFieldBackColor;*/
 				b.BackgroundColor = currentLogColor.TranslucentColor;
 				b.FontAttributes = FontAttributes.None;
 				b.FontSize = RDInterface.MasterFontSize;
 				b.HeightRequest = RDInterface.MasterFontSize * 2.75;
-				/*b.TextColor = RDInterface.GetInterfaceColor (RDInterfaceColors.AndroidTextColor);*/
 				b.TextColor = currentLogColor.MainTextColor;
 				b.Margin = b.Padding = new Thickness (3);
 				b.Text = categoriesReqResult[i];
