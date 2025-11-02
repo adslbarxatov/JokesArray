@@ -18,8 +18,8 @@ namespace RD_AAOW
 
 		// Управление центральной кнопкой журнала
 		private bool centerButtonEnabled = true;
-		private const string semaphoreOn = "●";
-		private const string semaphoreOff = "○";
+		/*private const string semaphoreOn = "●";
+		private const string semaphoreOff = "○";*/
 
 		// Параметры прокрутки журнала
 		private bool needsScroll = true;
@@ -76,11 +76,11 @@ namespace RD_AAOW
 			genCategoryEmpty, genCategoryLabel, genCatCurrentPage, topCategoryLabel;
 
 		private Switch newsAtTheEndSwitch, keepScreenOnSwitch, enableCopySubscriptionSwitch,
-			translucencySwitch, offlineModeSwitch, shortLogSwitch;
+			translucencySwitch, offlineModeSwitch /*, shortLogSwitch*/;
 
 		private Button centerButton, scrollUpButton, scrollDownButton, menuButton, sameCatButton,
 			pictureBackButton, pTextOnTheLeftButton, censorshipButton, logColorButton,
-			pSubsButton, logFontFamilyButton, lastUsedCategory, genCatPrevPage, genCatNextPage;
+			pSubsButton, logFontFamilyButton, /*lastUsedCategory,*/ genCatPrevPage, genCatNextPage;
 
 		private List<Button> topCategories = [];
 		private List<Button> genCategories = [];
@@ -273,9 +273,9 @@ namespace RD_AAOW
 				"(все записи из этой категории уже просмотрены)", RDLabelTypes.TipCenter);
 			genCategoryEmpty.IsVisible = false;
 
-			lastUsedCategory = RDInterface.ApplyButtonSettings (categoryPage, "LastUsedCategory",
+			/*lastUsedCategory = RDInterface.ApplyButtonSettings (categoryPage, "LastUsedCategory",
 				"Последняя выбранная категория", categoryFieldBackColor, LastUsedCategory_Clicked, false);
-			lastUsedCategory.IsVisible = false;
+			lastUsedCategory.IsVisible = false;*/
 
 			#endregion
 
@@ -292,15 +292,18 @@ namespace RD_AAOW
 
 			RDInterface.MasterPage.Popped += CurrentPageChanged;
 
-			centerButton = RDInterface.ApplyButtonSettings (logPage, "CenterButton", " ",
-				logFieldBackColor, CenterButton_Click, false);
-			centerButton.FontSize += 6;
+			centerButton = RDInterface.ApplyButtonSettings (logPage, "CenterButton", "Ещё!",
+				logFieldBackColor, CenterButton_Click, true);
+			/*centerButton.FontSize += 6;*/
+			centerButton.FontAttributes = FontAttributes.Bold;
+			centerButton.Padding = Thickness.Zero;
 
 			scrollUpButton = RDInterface.ApplyButtonSettings (logPage, "ScrollUp",
 				RDDefaultButtons.Up, logFieldBackColor, ScrollUpButton_Click);
 			scrollDownButton = RDInterface.ApplyButtonSettings (logPage, "ScrollDown",
 				RDDefaultButtons.Down, logFieldBackColor, ScrollDownButton_Click);
 			centerButton.HeightRequest = centerButton.MaximumHeightRequest = scrollDownButton.HeightRequest;
+			scrollDownButton.Padding = scrollUpButton.Padding = Thickness.Zero;
 
 			// Главный журнал
 			RDInterface.ApplyLabelSettings (settingsPage, "LogSettingsLabel",
@@ -323,7 +326,7 @@ namespace RD_AAOW
 				}
 
 			// Короткий журнал
-			RDInterface.ApplyLabelSettings (settingsPage, "ShortLogLabel",
+			/*RDInterface.ApplyLabelSettings (settingsPage, "ShortLogLabel",
 				"Режим одной записи", RDLabelTypes.DefaultLeft);
 			shortLogSwitch = RDInterface.ApplySwitchSettings (settingsPage, "ShortLogSwitch",
 				false, settingsFieldBackColor, ShortLogSwitch_Toggled, false);
@@ -331,7 +334,7 @@ namespace RD_AAOW
 			RDInterface.ApplyLabelSettings (settingsPage, "ShortLogTip",
 				"Опция позволяет заменить журнал записей экраном, на котором отображается только одна запись за раз. " +
 				"К сожалению, текущая версия MAUI непригодна для реализации этой опции",
-				RDLabelTypes.TipJustify);
+				RDLabelTypes.TipJustify);*/
 
 			// Цвет фона журнала
 			RDInterface.ApplyLabelSettings (settingsPage, "LogColorLabel",
@@ -342,10 +345,20 @@ namespace RD_AAOW
 				NotificationsSupport.LogColorTip, RDLabelTypes.TipJustify);
 
 			// Кнопки меню и предложения в журнале
-			menuButton = RDInterface.ApplyButtonSettings (logPage, "MenuButton",
+			/*menuButton = RDInterface.ApplyButtonSettings (logPage, "MenuButton",
 				RDDefaultButtons.Menu, logFieldBackColor, SelectPage);
 			sameCatButton = RDInterface.ApplyButtonSettings (logPage, "SameCatButton",
-				RDDefaultButtons.Refresh, logFieldBackColor, LastUsedCategory_Clicked);
+				RDDefaultButtons.Refresh, logFieldBackColor, LastUsedCategory_Clicked);*/
+			menuButton = RDInterface.ApplyButtonSettings (logPage, "MenuButton", "Меню",
+				logFieldBackColor, SelectPage, false);
+			menuButton.HeightRequest = menuButton.MaximumHeightRequest = scrollDownButton.HeightRequest;
+			menuButton.Padding = Thickness.Zero;
+
+			sameCatButton = RDInterface.ApplyButtonSettings (logPage, "SameCatButton", "Кат.",
+				logFieldBackColor, LastUsedCategory_Clicked, false);
+			sameCatButton.HeightRequest = sameCatButton.MaximumHeightRequest = scrollDownButton.HeightRequest;
+			sameCatButton.Padding = Thickness.Zero;
+
 			scrollUpButton.IsVisible = scrollDownButton.IsVisible = RDGenerics.IsTV;
 
 			// Режим полупрозрачности
@@ -531,7 +544,7 @@ namespace RD_AAOW
 					"• На этой странице Вы можете настроить поведение приложения." + RDLocale.RNRN +
 					"• Используйте системную кнопку «Назад», чтобы вернуться к журналу записей " +
 					"из любого раздела." + RDLocale.RNRN +
-					"• Используйте кнопку с семафором для получения случайных записей из архива",
+					"• Используйте кнопку «" + centerButton.Text + "» для получения случайных записей из архива",
 					RDLocale.GetDefaultText (RDLDefaultTexts.Button_Next));
 
 				if (RDGenerics.IsTV)
@@ -539,7 +552,7 @@ namespace RD_AAOW
 					await RDInterface.ShowMessage ("Внимание!" + RDLocale.RNRN +
 						"• Убедитесь, что данное устройство имеет выход в интернет. Если такой возможности нет, " +
 						"не забудьте включить оффлайн-режим в настройках приложения." + RDLocale.RNRN +
-						"• Ознакомьтесь с описанием проекта в разделе «О приложении» (кнопка ≡). Убедитесь, " +
+						"• Ознакомьтесь с описанием проекта в разделе «О приложении» (кнопка «" + menuButton.Text + "»). Убедитесь, " +
 						"что Вы согласны с Политикой Лаборатории",
 						RDLocale.GetDefaultText (RDLDefaultTexts.Button_OK));
 					}
@@ -717,8 +730,8 @@ namespace RD_AAOW
 
 			if (red || yellow || green)
 				{
-				centerButton.Text = (red ? semaphoreOn : semaphoreOff) + (yellow ? semaphoreOn : semaphoreOff) +
-					(green ? semaphoreOn : semaphoreOff);
+				/*centerButton.Text = (red ? semaphoreOn : semaphoreOff) + (yellow ? semaphoreOn : semaphoreOff) +
+					(green ? semaphoreOn : semaphoreOff);*/
 
 				if (red)
 					centerButton.TextColor = Color.FromArgb (dark ? "#FF4040" : "#D00000");
@@ -758,7 +771,7 @@ namespace RD_AAOW
 				}
 
 			// Формирование меню
-			const string secondMenuName = "🔣\t Ещё";
+			const string secondMenuName = "🔣\t Дополнительно";
 			const string copyTextName = "📑\t Скопировать текст";
 			const string shareTextName = "📣\t Поделиться текстом";
 			const string originalName = "➡️\t Перейти к оригиналу";
@@ -1119,18 +1132,21 @@ namespace RD_AAOW
 			if (pageVariants.Count < 1)
 				{
 				pageVariants = [
+					"▶️\t Ещё!",
 					"🔄\t Та же категория",
 					"🔍\t Все категории",
 					"⚙️\t Настройки приложения",
 					"ℹ️\t " + RDLocale.GetDefaultText (RDLDefaultTexts.Control_AppAbout),
-					"🆕\t Предложить запись",
 					];
+
+				if (!RDGenerics.IsTV)
+					pageVariants.Add ("🆕\t Предложить запись");
 				}
 
 			int res;
 			if (sender == null)
 				{
-				res = 1;
+				res = 2;
 				}
 			else
 				{
@@ -1144,14 +1160,18 @@ namespace RD_AAOW
 			switch (res)
 				{
 				case 0:
-					LastUsedCategory_Clicked (null, null);
+					CenterButton_Click (null, null);
 					break;
 
 				case 1:
+					LastUsedCategory_Clicked (null, null);
+					break;
+
+				case 2:
 					if (GMJ.RecordsLeft < 1)
 						{
 						await RDInterface.ShowMessage ("Архив записей ещё не обновлялся." + RDLocale.RNRN +
-							"Нажмите кнопку с семафором, чтобы запросить первую запись из архива",
+							"Нажмите кнопку «" + centerButton.Text + "», чтобы запросить первую запись из архива",
 							RDLocale.GetDefaultText (RDLDefaultTexts.Button_OK));
 						return;
 						}
@@ -1162,15 +1182,15 @@ namespace RD_AAOW
 						SelectTopCategory (topCategories[lastTopCategoryIndex], null);
 					break;
 
-				case 2:
+				case 3:
 					RDInterface.SetCurrentPage (settingsPage, settingsMasterBackColor);
 					break;
 
-				case 3:
+				case 4:
 					RDInterface.SetCurrentPage (aboutPage, aboutMasterBackColor);
 					break;
 
-				case 4:
+				case 5:
 					if (!await RDInterface.ShowMessage (GMJ.SuggestionMessage,
 						RDLocale.GetDefaultText (RDLDefaultTexts.Button_Yes),
 						RDLocale.GetDefaultText (RDLDefaultTexts.Button_No)))
@@ -1201,10 +1221,10 @@ namespace RD_AAOW
 			UpdateLogButton (false, false);
 			}
 
-		// Включение / выключение режима короткого журнала
+		/*// Включение / выключение режима короткого журнала
 		private void ShortLogSwitch_Toggled (object sender, ToggledEventArgs e)
 			{
-			}
+			}*/
 
 		// Изменение размера шрифта лога
 		private void FontSizeChanged (object sender, EventArgs e)
@@ -1450,7 +1470,7 @@ namespace RD_AAOW
 			// Цвета раздела категорий
 			categoryPage.BackgroundColor = currentLogColor.BackColor;
 			topCategoryLabel.TextColor = genCategoryLabel.TextColor = genCatCurrentPage.TextColor =
-				genCatPrevPage.TextColor = genCatNextPage.TextColor = lastUsedCategory.TextColor =
+				genCatPrevPage.TextColor = genCatNextPage.TextColor = /*lastUsedCategory.TextColor =*/
 				currentLogColor.MainTextColor;
 
 			for (int i = 0; i < topCategories.Count; i++)
@@ -1459,7 +1479,7 @@ namespace RD_AAOW
 				topCategories[i].TextColor = currentLogColor.MainTextColor;
 				}
 
-			genCatPrevPage.BackgroundColor = genCatNextPage.BackgroundColor = lastUsedCategory.BackgroundColor =
+			genCatPrevPage.BackgroundColor = genCatNextPage.BackgroundColor = /*lastUsedCategory.BackgroundColor =*/
 				currentLogColor.TranslucentColor;
 			for (int i = 0; i < genCategories.Count; i++)
 				{
@@ -1611,16 +1631,16 @@ namespace RD_AAOW
 
 			// Блокировка
 			topCategorySection.IsEnabled = false;
-			lastUsedCategory.IsVisible = false;
+			/*lastUsedCategory.IsVisible = false;*/
 			genCatPrevPage.IsVisible = genCatNextPage.IsVisible = false;
 
 			// Запрос
 			lastTopCategoryIndex = idx;
 			await Task.Run (CategoriesRequest);
 
-			// Отображение кнопки последней категории, если возможно
+			/*// Отображение кнопки последней категории, если возможно
 			if ((lastCategoryIndex >= 0) && (lastCategoryIndex < categoriesReqResult.Length))
-				lastUsedCategory.IsVisible = (categoriesReqResult[lastCategoryIndex] == lastCategory);
+				lastUsedCategory.IsVisible = (categoriesReqResult[lastCategoryIndex] == lastCategory);*/
 
 			// Отображение полей
 			genCategoryEmpty.IsVisible = (categoriesReqResult.Length < 1);
@@ -1697,7 +1717,7 @@ namespace RD_AAOW
 			int post = GMJ.GetRandomFromCategory ((uint)lastCategoryIndex);
 			if (post < 0)
 				{
-				if ((Button)sender == lastUsedCategory)
+				/*if ((Button)sender == lastUsedCategory)
 					{
 					if (lastCategoryIndex < 0)
 						RDInterface.ShowBalloon ("Не выбрана категория для просмотра", true);
@@ -1705,9 +1725,9 @@ namespace RD_AAOW
 						RDInterface.ShowBalloon ("Все записи из выбранной категории уже просмотрены", true);
 					}
 				else
-					{
-					SelectPage (null, null);
-					}
+					{*/
+				SelectPage (null, null);
+				/*}*/
 
 				return;
 				}
