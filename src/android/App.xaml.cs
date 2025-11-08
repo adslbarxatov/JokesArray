@@ -294,7 +294,6 @@ namespace RD_AAOW
 
 			centerButton = RDInterface.ApplyButtonSettings (logPage, "CenterButton", "Ещё!",
 				logFieldBackColor, CenterButton_Click, true);
-			/*centerButton.FontSize += 6;*/
 			centerButton.FontAttributes = FontAttributes.Bold;
 			centerButton.Padding = Thickness.Zero;
 
@@ -325,17 +324,6 @@ namespace RD_AAOW
 					NotificationsSupport.LogNewsItemsAtTheEnd = true;
 				}
 
-			// Короткий журнал
-			/*RDInterface.ApplyLabelSettings (settingsPage, "ShortLogLabel",
-				"Режим одной записи", RDLabelTypes.DefaultLeft);
-			shortLogSwitch = RDInterface.ApplySwitchSettings (settingsPage, "ShortLogSwitch",
-				false, settingsFieldBackColor, ShortLogSwitch_Toggled, false);
-			shortLogSwitch.IsEnabled = false;
-			RDInterface.ApplyLabelSettings (settingsPage, "ShortLogTip",
-				"Опция позволяет заменить журнал записей экраном, на котором отображается только одна запись за раз. " +
-				"К сожалению, текущая версия MAUI непригодна для реализации этой опции",
-				RDLabelTypes.TipJustify);*/
-
 			// Цвет фона журнала
 			RDInterface.ApplyLabelSettings (settingsPage, "LogColorLabel",
 				"Цветовая тема:", RDLabelTypes.DefaultLeft);
@@ -345,10 +333,6 @@ namespace RD_AAOW
 				NotificationsSupport.LogColorTip, RDLabelTypes.TipJustify);
 
 			// Кнопки меню и предложения в журнале
-			/*menuButton = RDInterface.ApplyButtonSettings (logPage, "MenuButton",
-				RDDefaultButtons.Menu, logFieldBackColor, SelectPage);
-			sameCatButton = RDInterface.ApplyButtonSettings (logPage, "SameCatButton",
-				RDDefaultButtons.Refresh, logFieldBackColor, LastUsedCategory_Clicked);*/
 			menuButton = RDInterface.ApplyButtonSettings (logPage, "MenuButton", "Меню",
 				logFieldBackColor, SelectPage, false);
 			menuButton.HeightRequest = menuButton.MaximumHeightRequest = scrollDownButton.HeightRequest;
@@ -1221,11 +1205,6 @@ namespace RD_AAOW
 			UpdateLogButton (false, false);
 			}
 
-		/*// Включение / выключение режима короткого журнала
-		private void ShortLogSwitch_Toggled (object sender, ToggledEventArgs e)
-			{
-			}*/
-
 		// Изменение размера шрифта лога
 		private void FontSizeChanged (object sender, EventArgs e)
 			{
@@ -1463,15 +1442,15 @@ namespace RD_AAOW
 			// Цвета журнала
 			logPage.BackgroundColor = mainLog.BackgroundColor = centerButton.BackgroundColor =
 				scrollUpButton.BackgroundColor = scrollDownButton.BackgroundColor =
-				menuButton.BackgroundColor = sameCatButton.BackgroundColor = currentLogColor.BackColor;
+				menuButton.BackgroundColor = sameCatButton.BackgroundColor = logColorButton.BackgroundColor =
+				currentLogColor.BackColor;
 			scrollUpButton.TextColor = scrollDownButton.TextColor = menuButton.TextColor =
-				sameCatButton.TextColor = currentLogColor.MainTextColor;
+				sameCatButton.TextColor = logColorButton.TextColor = currentLogColor.MainTextColor;
 
 			// Цвета раздела категорий
 			categoryPage.BackgroundColor = currentLogColor.BackColor;
 			topCategoryLabel.TextColor = genCategoryLabel.TextColor = genCatCurrentPage.TextColor =
-				genCatPrevPage.TextColor = genCatNextPage.TextColor = /*lastUsedCategory.TextColor =*/
-				currentLogColor.MainTextColor;
+				genCatPrevPage.TextColor = genCatNextPage.TextColor = currentLogColor.MainTextColor;
 
 			for (int i = 0; i < topCategories.Count; i++)
 				{
@@ -1479,8 +1458,7 @@ namespace RD_AAOW
 				topCategories[i].TextColor = currentLogColor.MainTextColor;
 				}
 
-			genCatPrevPage.BackgroundColor = genCatNextPage.BackgroundColor = /*lastUsedCategory.BackgroundColor =*/
-				currentLogColor.TranslucentColor;
+			genCatPrevPage.BackgroundColor = genCatNextPage.BackgroundColor = currentLogColor.TranslucentColor;
 			for (int i = 0; i < genCategories.Count; i++)
 				{
 				genCategories[i].BackgroundColor = currentLogColor.TranslucentColor;
