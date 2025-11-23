@@ -18,8 +18,6 @@ namespace RD_AAOW
 
 		// Управление центральной кнопкой журнала
 		private bool centerButtonEnabled = true;
-		/*private const string semaphoreOn = "●";
-		private const string semaphoreOff = "○";*/
 
 		// Параметры прокрутки журнала
 		private bool needsScroll = true;
@@ -42,7 +40,7 @@ namespace RD_AAOW
 		private List<string> logFontFamilyVariants = [];
 
 		// Последняя использованная категория
-		private string lastCategory = "";
+		/*private string lastCategory = "";*/
 		private int lastCategoryIndex = -1;
 		private int lastTopCategoryIndex = -1;
 
@@ -76,11 +74,11 @@ namespace RD_AAOW
 			genCategoryEmpty, genCategoryLabel, genCatCurrentPage, topCategoryLabel;
 
 		private Switch newsAtTheEndSwitch, keepScreenOnSwitch, enableCopySubscriptionSwitch,
-			translucencySwitch, offlineModeSwitch /*, shortLogSwitch*/;
+			translucencySwitch, offlineModeSwitch;
 
 		private Button centerButton, scrollUpButton, scrollDownButton, menuButton, sameCatButton,
 			pictureBackButton, pTextOnTheLeftButton, censorshipButton, logColorButton,
-			pSubsButton, logFontFamilyButton, /*lastUsedCategory,*/ genCatPrevPage, genCatNextPage;
+			pSubsButton, logFontFamilyButton, genCatPrevPage, genCatNextPage;
 
 		private List<Button> topCategories = [];
 		private List<Button> genCategories = [];
@@ -272,10 +270,6 @@ namespace RD_AAOW
 			genCategoryEmpty = RDInterface.ApplyLabelSettings (categoryPage, "GenCategoryEmpty",
 				"(все записи из этой категории уже просмотрены)", RDLabelTypes.TipCenter);
 			genCategoryEmpty.IsVisible = false;
-
-			/*lastUsedCategory = RDInterface.ApplyButtonSettings (categoryPage, "LastUsedCategory",
-				"Последняя выбранная категория", categoryFieldBackColor, LastUsedCategory_Clicked, false);
-			lastUsedCategory.IsVisible = false;*/
 
 			#endregion
 
@@ -714,9 +708,6 @@ namespace RD_AAOW
 
 			if (red || yellow || green)
 				{
-				/*centerButton.Text = (red ? semaphoreOn : semaphoreOff) + (yellow ? semaphoreOn : semaphoreOff) +
-					(green ? semaphoreOn : semaphoreOff);*/
-
 				if (red)
 					centerButton.TextColor = Color.FromArgb (dark ? "#FF4040" : "#D00000");
 				else if (yellow)
@@ -1609,16 +1600,11 @@ namespace RD_AAOW
 
 			// Блокировка
 			topCategorySection.IsEnabled = false;
-			/*lastUsedCategory.IsVisible = false;*/
 			genCatPrevPage.IsVisible = genCatNextPage.IsVisible = false;
 
 			// Запрос
 			lastTopCategoryIndex = idx;
 			await Task.Run (CategoriesRequest);
-
-			/*// Отображение кнопки последней категории, если возможно
-			if ((lastCategoryIndex >= 0) && (lastCategoryIndex < categoriesReqResult.Length))
-				lastUsedCategory.IsVisible = (categoriesReqResult[lastCategoryIndex] == lastCategory);*/
 
 			// Отображение полей
 			genCategoryEmpty.IsVisible = (categoriesReqResult.Length < 1);
@@ -1682,7 +1668,7 @@ namespace RD_AAOW
 
 			// Получение номера записи
 			lastCategoryIndex = idx + (int)(currentCategoriesPage * categoriesPerPage);
-			lastCategory = b.Text;
+			/*lastCategory = b.Text;*/
 
 			// Запуск
 			LastUsedCategory_Clicked (null, null);
@@ -1695,18 +1681,7 @@ namespace RD_AAOW
 			int post = GMJ.GetRandomFromCategory ((uint)lastCategoryIndex);
 			if (post < 0)
 				{
-				/*if ((Button)sender == lastUsedCategory)
-					{
-					if (lastCategoryIndex < 0)
-						RDInterface.ShowBalloon ("Не выбрана категория для просмотра", true);
-					else
-						RDInterface.ShowBalloon ("Все записи из выбранной категории уже просмотрены", true);
-					}
-				else
-					{*/
 				SelectPage (null, null);
-				/*}*/
-
 				return;
 				}
 
