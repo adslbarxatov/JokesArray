@@ -40,7 +40,6 @@ namespace RD_AAOW
 		private List<string> logFontFamilyVariants = [];
 
 		// Последняя использованная категория
-		/*private string lastCategory = "";*/
 		private int lastCategoryIndex = -1;
 		private int lastTopCategoryIndex = -1;
 
@@ -1668,7 +1667,6 @@ namespace RD_AAOW
 
 			// Получение номера записи
 			lastCategoryIndex = idx + (int)(currentCategoriesPage * categoriesPerPage);
-			/*lastCategory = b.Text;*/
 
 			// Запуск
 			LastUsedCategory_Clicked (null, null);
