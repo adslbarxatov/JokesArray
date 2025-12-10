@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.RD_AAOW.GrammarMustJoy"
-	android:installLocation="internalOnly" android:versionCode="600335" android:versionName="3.5.5">
+	android:installLocation="internalOnly" android:versionCode="600336" android:versionName="3.6">
 
-	<uses-sdk android:minSdkVersion="21" android:targetSdkVersion="35" />
+	<uses-sdk android:minSdkVersion="21" android:targetSdkVersion="36" />
 
 	<uses-permission android:name="android.permission.INTERNET" />
 	<uses-permission android:name="android.permission.WAKE_LOCK" />
