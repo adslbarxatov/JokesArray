@@ -64,7 +64,8 @@ namespace RD_AAOW
 			// Инициализация
 			InitializeComponent ();
 
-			this.Text = ProgramDescription.AssemblyVisibleName;
+			/*this.Text = ProgramDescription.AssemblyVisibleName;*/
+			this.Text = RDGenerics.DefaultAssemblyVisibleName;
 			this.CancelButton = BClose;
 			if (!RDGenerics.AppHasAccessRights (false, false))
 				this.Text += RDLocale.GetDefaultText (RDLDefaultTexts.Message_LimitedFunctionality);
@@ -80,7 +81,8 @@ namespace RD_AAOW
 
 			// Настройка иконки в трее
 			ni.Icon = JokesArrayResources.TrayIcon;
-			ni.Text = ProgramDescription.AssemblyVisibleName;
+			/*ni.Text = ProgramDescription.AssemblyVisibleName;*/
+			ni.Text = RDGenerics.DefaultAssemblyVisibleName;
 			ni.Visible = true;
 
 			ni.ContextMenuStrip = new ContextMenuStrip ();
