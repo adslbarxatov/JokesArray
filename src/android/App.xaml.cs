@@ -18,15 +18,6 @@ namespace RD_AAOW
 		// Управление центральной кнопкой журнала
 		private bool centerButtonEnabled = true;
 
-		/*// Параметры прокрутки журнала
-		private bool needsScroll = true;
-		private int currentScrollItem;
-		private int tvScrollPosition;
-
-		private const int autoScrollMode = -1;
-		private const int manualScrollModeUp = -2;
-		private const int manualScrollModeDown = -3;*/
-
 		// Сформированные контекстные меню
 		private List<List<string>> tapMenuItems = [];
 		private List<string> pageVariants = [];
@@ -72,21 +63,19 @@ namespace RD_AAOW
 			genCategoryEmpty, genCategoryLabel, genCatCurrentPage, topCategoryLabel,
 			entryHeader, entryText, entrySign;
 
-		private Switch /*newsAtTheEndSwitch,*/ keepScreenOnSwitch, enableCopySubscriptionSwitch,
+		private Switch keepScreenOnSwitch, enableCopySubscriptionSwitch,
 			translucencySwitch, offlineModeSwitch;
 
-		private Button centerButton, /*scrollUpButton, scrollDownButton,*/ menuButton, sameCatButton,
+		private Button centerButton, menuButton, sameCatButton,
 			pictureBackButton, pTextOnTheLeftButton, censorshipButton, logColorButton,
 			pSubsButton, logFontFamilyButton, genCatPrevPage, genCatNextPage,
-			prevEntryButton, nextEntryButton, shareButton;
+			prevEntryButton, nextEntryButton, shareButton, emptyButton;
 
 		private List<Button> topCategories = [];
 		private List<Button> genCategories = [];
 
 		private FlexLayout topCategorySection, genCategorySection;
 		private ScrollView entryScroll;
-
-		/*private ListView mainLog;*/
 
 		#endregion
 
@@ -222,7 +211,7 @@ namespace RD_AAOW
 			Label htl = RDInterface.ApplyLabelSettings (aboutPage, "HelpTextLabel",
 				RDGenerics.GetAppHelpText (), RDLabelTypes.SmallLeft);
 			htl.TextType = TextType.Html;
-			htl.HorizontalTextAlignment = TextAlignment.Justify;    // Пока не работает
+			/*htl.HorizontalTextAlignment = TextAlignment.Justify;    // Пока не работает*/
 
 			FontSizeButton_Clicked (null, null);
 
@@ -278,75 +267,33 @@ namespace RD_AAOW
 
 			#region Страницы журнала и настроек приложения
 
-			/*mainLog = (ListView)logPage.FindByName ("MainLog");
-			mainLog.BackgroundColor = logFieldBackColor;
-			mainLog.HasUnevenRows = true;
-			mainLog.ItemTapped += MainLog_ItemTapped;
-			mainLog.ItemTemplate = new DataTemplate (typeof (NotificationView));
-			mainLog.SelectionMode = ListViewSelectionMode.None;
-			mainLog.SeparatorVisibility = SeparatorVisibility.None;
-			mainLog.ItemAppearing += MainLog_ItemAppearing;*/
-
-			/*GMJLogColor color = NotificationsSupport.LogColors.CurrentColor;
-			FontAttributes fa;
-			string ff;
-			RDGenerics.GetCurrentFontFamily (out ff, out fa);*/
-
 			entryScroll = (ScrollView)logPage.FindByName ("TextScroll");
 
 			// Текстовое поле
 			entryText = RDInterface.ApplyLabelSettings (logPage, "Text", " ", RDLabelTypes.DefaultLeft);
-
-			/*entryText.FontAttributes = fa;
-			entryText.FontFamily = ff;
-			entryText.FontSize = NotificationsSupport.LogFontSize;*/
 			entryText.HorizontalOptions = LayoutOptions.Fill;
 			entryText.Margin = new Thickness (6);
-			/*entryText.TextColor = color.MainTextColor;
-			if (NotificationsSupport.TranslucentLogItems)
-				entryText.BackgroundColor = color.TranslucentColor;
-			else
-				entryText.BackgroundColor = color.BackColor;*/
 			entryText.HorizontalTextAlignment = TextAlignment.Justify;
 
 			// Поле заголовка
-			entryHeader = RDInterface.ApplyLabelSettings (logPage, "Header", " ", RDLabelTypes.DefaultLeft);
-
-			/*entryHeader.FontAttributes = FontAttributes.Bold | fa;
-			entryHeader.FontFamily = ff;
-			entryHeader.FontSize = NotificationsSupport.LogFontSize * 0.85;*/
-			entryHeader.Margin = new Thickness (6);
+			entryHeader = RDInterface.ApplyLabelSettings (logPage, "Header", " ", RDLabelTypes.HeaderCenter);
+			/*entryHeader.Margin = new Thickness (6);
 			entryHeader.HorizontalOptions = LayoutOptions.Center;
 			entryHeader.HorizontalTextAlignment = TextAlignment.Center;
-			/*entryHeader.TextColor = color.SecondaryTextColor;*/
 			entryHeader.VerticalTextAlignment = TextAlignment.End;
+			entryHeader.FontAttributes = FontAttributes.Bold;*/
 
 			// Поле подписи
 			entrySign = RDInterface.ApplyLabelSettings (logPage, "Sign", " ", RDLabelTypes.DefaultLeft);
-
-			/*entrySign.FontAttributes = FontAttributes.Italic;
-			entrySign.FontFamily = ff;
-			entrySign.FontSize = NotificationsSupport.LogFontSize * 0.7;*/
 			entrySign.HorizontalTextAlignment = TextAlignment.Center;
 			entrySign.Margin = new Thickness (6);
-			/*sep.SetBinding (Label.TextProperty, "Separator");
-			sep.SetBinding (Label.HorizontalOptionsProperty, "SeparatorAlignment");
-			entrySign.TextColor = color.SecondaryTextColor;*/
 
 			// Управление
-			/*RDInterface.MasterPage.Popped += CurrentPageChanged;*/
-
 			centerButton = RDInterface.ApplyButtonSettings (logPage, "CenterButton", "Ещё!",
 				logFieldBackColor, CenterButton_Click, true);
 			centerButton.FontAttributes = FontAttributes.Bold;
 			centerButton.Padding = Thickness.Zero;
 
-			/*scrollUpButton = RDInterface.ApplyButtonSettings (logPage, "ScrollUp",
-				RDDefaultButtons.Up, logFieldBackColor, ScrollUpButton_Click);
-			scrollDownButton = RDInterface.ApplyButtonSettings (logPage, "ScrollDown",
-				RDDefaultButtons.Down, logFieldBackColor, ScrollDownButton_Click);
-			centerButton.HeightRequest = centerButton.MaximumHeightRequest = scrollDownButton.HeightRequest;
-			scrollDownButton.Padding = scrollUpButton.Padding = Thickness.Zero;*/
 			prevEntryButton = RDInterface.ApplyButtonSettings (logPage, "PrevEntryButton",
 				RDDefaultButtons.Backward, logFieldBackColor, PrevEntry_Click);
 			nextEntryButton = RDInterface.ApplyButtonSettings (logPage, "NextEntryButton",
@@ -357,22 +304,6 @@ namespace RD_AAOW
 			// Главный журнал
 			RDInterface.ApplyLabelSettings (settingsPage, "LogSettingsLabel",
 				"Журнал", RDLabelTypes.HeaderLeft);
-
-			/*// Расположение новых записей в конце журнала
-			Label nates1 = RDInterface.ApplyLabelSettings (settingsPage, "NewsAtTheEndLabel",
-				"Новые записи – снизу", RDLabelTypes.DefaultLeft);
-			newsAtTheEndSwitch = RDInterface.ApplySwitchSettings (settingsPage, "NewsAtTheEndSwitch",
-				false, settingsFieldBackColor, NewsAtTheEndSwitch_Toggled, NotificationsSupport.LogNewsItemsAtTheEnd);
-			Label nates2 = RDInterface.ApplyLabelSettings (settingsPage, "NewsAtTheEndTip",
-				"Опция позволяет добавлять новые записи в конец журнала (снизу). Если выключена, " +
-				"записи добавляются в начало журнала (сверху)", RDLabelTypes.TipJustify);
-
-			if (RDGenerics.IsTV)
-				{
-				nates1.IsVisible = nates2.IsVisible = newsAtTheEndSwitch.IsVisible = false;
-				if (!NotificationsSupport.LogNewsItemsAtTheEnd)
-					NotificationsSupport.LogNewsItemsAtTheEnd = true;
-				}*/
 
 			// Цвет фона журнала
 			RDInterface.ApplyLabelSettings (settingsPage, "LogColorLabel",
@@ -385,23 +316,28 @@ namespace RD_AAOW
 			// Кнопки меню и предложения в журнале
 			menuButton = RDInterface.ApplyButtonSettings (logPage, "MenuButton", "Меню",
 				logFieldBackColor, Menu_Click, false);
-			/*menuButton.HeightRequest = menuButton.MaximumHeightRequest = scrollDownButton.HeightRequest;*/
-			menuButton.HeightRequest = menuButton.MaximumHeightRequest = prevEntryButton.HeightRequest;
+			menuButton.HeightRequest = menuButton.MaximumHeightRequest =
+				menuButton.WidthRequest = menuButton.MaximumWidthRequest = prevEntryButton.HeightRequest;
 			menuButton.Padding = Thickness.Zero;
 
 			sameCatButton = RDInterface.ApplyButtonSettings (logPage, "SameCatButton", "Кат.",
 				logFieldBackColor, LastUsedCategory_Clicked, false);
-			/*sameCatButton.HeightRequest = sameCatButton.MaximumHeightRequest = scrollDownButton.HeightRequest;*/
-			sameCatButton.HeightRequest = sameCatButton.MaximumHeightRequest = prevEntryButton.HeightRequest;
+			sameCatButton.HeightRequest = sameCatButton.MaximumHeightRequest =
+				sameCatButton.WidthRequest = sameCatButton.MaximumWidthRequest =
+				prevEntryButton.HeightRequest;
 			sameCatButton.Padding = Thickness.Zero;
-
-			/*scrollUpButton.IsVisible = scrollDownButton.IsVisible = RDGenerics.IsTV;*/
 
 			shareButton = RDInterface.ApplyButtonSettings (logPage, "Share", RDDefaultButtons.Down,
 				aboutFieldBackColor, MainLogShare_Click);
-			shareButton.Text = "↗️";
+			shareButton.Text = RDGenerics.IsTV ? " " : "◥";
 			shareButton.Padding = shareButton.Margin = Thickness.Zero;
-			/*shareButton.WidthRequest = shareButton.HeightRequest = 3 * shareButton.WidthRequest / 4;*/
+
+			emptyButton = RDInterface.ApplyButtonSettings (logPage, "Empty", RDDefaultButtons.Down,
+				aboutFieldBackColor, null);
+			emptyButton.Text = " ";
+			emptyButton.Padding = shareButton.Margin = Thickness.Zero;
+
+			shareButton.IsEnabled = emptyButton.IsEnabled = !RDGenerics.IsTV;
 
 			// Режим полупрозрачности
 			RDInterface.ApplyLabelSettings (settingsPage, "TranslucencyLabel",
@@ -528,20 +464,14 @@ namespace RD_AAOW
 
 			#endregion
 
-			/*// Запуск цикла обратной связи (без ожидания)
-			FinishBackgroundRequest ();*/
-
 			// Первичная загрузка журнала
 			SetLogState (false);
 			UpdateLogButton (true, true);
 
 			// Перезапрос журнала
-			/*if (masterLog != null)
-				masterLog.Clear ();*/
 			masterLog = new List<MainLogItem> (NotificationsSupport.GetMasterLog (true));
 			currentLogItem = masterLog.Count - 1;
 
-			/*needsScroll = true;*/
 			UpdateLog ();
 			SetLogState (true);
 
@@ -549,38 +479,6 @@ namespace RD_AAOW
 			ShowStartupTips ();
 			return mainPage;
 			}
-
-		/*// Исправление для сброса текущей позиции журнала
-		private async void CurrentPageChanged (object sender, EventArgs e)
-			{
-			// Автопрокрутка при возврате на главную страницу (только если не выполняются фоновые процессы)
-			if ((RDInterface.MasterPage.CurrentPage == logPage) && centerButtonEnabled)
-				{
-				needsScroll = true;
-				await ScrollMainLog (autoScrollMode);
-				}
-			}*/
-
-		/*// Цикл обратной связи для загрузки текущего журнала, если фоновая служба не успела завершить работу
-		private bool FinishBackgroundRequest ()
-			{
-			// Ожидание завершения операции
-			SetLogState (false);
-
-			UpdateLogButton (true, true);
-
-			// Перезапрос журнала
-			if (masterLog != null)
-				masterLog.Clear ();
-			masterLog = new List<MainLogItem> (NotificationsSupport.GetMasterLog (true));
-
-			needsScroll = true;
-			UpdateLog ();
-
-			// Настройка и запуск
-			SetLogState (true);
-			return true;
-			}*/
 
 		// Метод отображает подсказки при первом запуске
 		private async void ShowStartupTips ()
@@ -626,7 +524,7 @@ namespace RD_AAOW
 			}
 
 		// Метод отображает остальные подсказки
-		private static async Task<bool> ShowTips (NSTipTypes Type)
+		private async Task<bool> ShowTips (NSTipTypes Type)
 			{
 			// Подсказки
 			string msg = "";
@@ -650,7 +548,8 @@ namespace RD_AAOW
 					break;
 
 				case NSTipTypes.MainLogClickMenuTip:
-					msg = "Все операции с текстами записей доступны по клику на них в журнале приложения";
+					msg = "Все операции с текстами записей доступны по кнопке «" + shareButton.Text +
+						"» в верхнем правом углу страницы";
 					break;
 
 				case NSTipTypes.PostSubscriptions:
@@ -690,10 +589,6 @@ namespace RD_AAOW
 
 			Current_MainDisplayInfoChanged (null, null);
 			base.OnResume ();
-
-			/*// Запуск цикла обратной связи (без ожидания, на случай, если приложение было свёрнуто, но не закрыто,
-			// а во время ожидания имели место обновления журнала)
-			FinishBackgroundRequest ();*/
 			}
 
 		/// <summary>
@@ -710,7 +605,7 @@ namespace RD_AAOW
 			await Task.Delay (500);
 
 			entryScroll.HeightRequest = entryScroll.MaximumHeightRequest =
-				logPage.Height - shareButton.Height - 3 * centerButton.Height / 2;
+				logPage.Height - shareButton.Height - 11 * centerButton.Height / 8;
 			}
 
 		// Этот вызов необходим для корректной разметки страницы журнала, когда первой отображается страница настроек
@@ -726,15 +621,6 @@ namespace RD_AAOW
 		// Принудительное обновление лога
 		private void UpdateLog ()
 			{
-			/*UpdateLog (-1);
-			}
-
-		private void UpdateLog (int ScrollPosition)
-			{
-			// Обновление журнала
-			tvScrollPosition = ScrollPosition;
-			mainLog.ItemsSource = null;
-			mainLog.ItemsSource = masterLog;*/
 			if (masterLog.Count < 1)
 				return;
 
@@ -746,104 +632,32 @@ namespace RD_AAOW
 			entrySign.HorizontalOptions = item.SeparatorAlignment;
 			}
 
-		/*// Промотка журнала к нужной позиции
-		private async void MainLog_ItemAppearing (object sender, ItemVisibilityEventArgs e)
-			{
-			if (tvScrollPosition >= 0)
-				await ScrollMainLog (tvScrollPosition);
-			else
-				await ScrollMainLog (NotificationsSupport.LogNewsItemsAtTheEnd ? masterLog.Count - 1 : 0);
-			}
-
-		private async Task<bool> ScrollMainLog (int VisibleItem)
-			{
-			// Контроль
-			if (masterLog == null)
-				return false;
-
-			if ((masterLog.Count < 1) || !needsScroll)
-				return false;
-
-			// Искусственная задержка
-			await Task.Delay (100);
-
-			// Промотка с повторением до достижения нужного участка
-			if (VisibleItem <= autoScrollMode)
-				needsScroll = false;
-
-			// Определение варианта промотки
-			bool toTheEnd = NotificationsSupport.LogNewsItemsAtTheEnd;
-			if (VisibleItem > manualScrollModeUp)
-				{
-				currentScrollItem = VisibleItem;
-				if (currentScrollItem < 0)
-					currentScrollItem = toTheEnd ? (masterLog.Count - 1) : 0;
-				if (currentScrollItem > masterLog.Count - 1)
-					currentScrollItem = masterLog.Count - 1;
-				}
-			else if (VisibleItem > manualScrollModeDown)
-				{
-				if (currentScrollItem > 0)
-					currentScrollItem--;
-				}
-			else
-				{
-				if (currentScrollItem < (masterLog.Count - 1))
-					currentScrollItem++;
-				}
-
-			if (toTheEnd)
-				{
-				if (VisibleItem > masterLog.Count - 3)
-					needsScroll = false;
-				}
-			else
-				{
-				if (VisibleItem < 2)
-					needsScroll = false;
-				}
-
-			try
-				{
-				mainLog.ScrollTo (masterLog[currentScrollItem], ScrollToPosition.MakeVisible,
-					VisibleItem <= manualScrollModeUp);
-				}
-			catch { }
-			return true;
-			}*/
-
 		// Обновление формы кнопки журнала
 		private void UpdateLogButton (bool Requesting, bool FinishingBackgroundRequest)
 			{
 			bool red = Requesting && FinishingBackgroundRequest;
 			bool yellow = Requesting && !FinishingBackgroundRequest;
-			bool green = !Requesting && !FinishingBackgroundRequest;
+			/*bool green = !Requesting && !FinishingBackgroundRequest;*/
 			bool dark = !NotificationsSupport.LogColors.CurrentColor.IsBright;
 
-			if (red || yellow || green)
-				{
-				if (red)
-					centerButton.TextColor = Color.FromArgb (dark ? "#FF4040" : "#D00000");
-				else if (yellow)
-					centerButton.TextColor = Color.FromArgb (dark ? "#FFFF40" : "#D0D000");
-				else
-					centerButton.TextColor = Color.FromArgb (dark ? "#40FF40" : "#00D000");
-				}
-			/*else
-				{
-				centerButton.Text = "   ";
-				}*/
+			/*if (red || yellow || green)
+				{*/
+			if (red)
+				centerButton.TextColor = Color.FromArgb (dark ? "#FF4040" : "#D00000");
+			else if (yellow)
+				centerButton.TextColor = Color.FromArgb (dark ? "#FFFF40" : "#D0D000");
+			else
+				centerButton.TextColor = Color.FromArgb (dark ? "#40FF40" : "#00D000");
+			/*}*/
 			}
 
 		// Выбор оповещения для перехода или share
-		/*private async void MainLog_ItemTapped (object sender, ItemTappedEventArgs e)*/
 		private async void MainLogShare_Click (object sender, EventArgs e)
 			{
 			// Контроль
 			if (RDGenerics.IsTV)
 				return;
 
-			/*MainLogItem notItem = (MainLogItem)e.Item;*/
 			MainLogItem notItem = masterLog[currentLogItem];
 			if (!centerButtonEnabled || (notItem.StringForSaving == ""))  // Признак разделителя
 				return;
@@ -862,7 +676,6 @@ namespace RD_AAOW
 				}
 
 			// Формирование меню
-			/*const string secondMenuName = "🔣\t Дополнительно";*/
 			const string copyTextName = "📑\t Скопировать текст";
 			const string shareTextName = "📣\t Поделиться текстом";
 			const string originalName = "➡️\t Перейти к оригиналу";
@@ -871,25 +684,18 @@ namespace RD_AAOW
 				tapMenuItems.Add ([
 					shareTextName,
 					copyTextName,
-					/*secondMenuName,*/
 					]);
 				tapMenuItems.Add ([
 					originalName,
 					shareTextName,
 					copyTextName,
-					/*secondMenuName,*/
 					]);
 				tapMenuItems.Add ([
 					originalName,
 					shareTextName,
 					"🌅\t Поделиться картинкой",
 					copyTextName,
-					/*secondMenuName,*/
 					]);
-				/*tapMenuItems.Add ([
-					"❌\t Удалить из журнала",
-					"❌\t Очистить журнал",
-					]);*/
 				}
 
 			// Запрос варианта использования
@@ -907,19 +713,6 @@ namespace RD_AAOW
 
 			if (menuItem < 0)
 				return;
-
-			/*bool secondMenu = (tapMenuItems[menuVariant][menuItem] == secondMenuName);
-
-			// Контроль второго набора
-			if (secondMenu)
-				{
-				menuVariant = 3;
-
-				menuItem = await RDInterface.ShowList ("Выберите действие:",
-					RDLocale.GetDefaultText (RDLDefaultTexts.Button_Cancel), tapMenuItems[menuVariant]);
-				if (menuItem < 0)
-					return;
-				}*/
 
 			// Окончательный выбор варианта действия
 			menuVariant = menuItem + 10 * (menuVariant + 1);
@@ -942,10 +735,14 @@ namespace RD_AAOW
 						await ShowTips (NSTipTypes.GoToButton);
 
 					if (GMJ.EnableCensorship)
-						await RDInterface.ShowMessage (GMJ.CensorshipGoToChannelMessage,
-							RDLocale.GetDefaultText (RDLDefaultTexts.Button_OK));
-
-					await RDGenerics.RunURL (notLink, true);
+						{
+						if (await RDInterface.ShowMessage (GMJ.CensorshipGoToChannelMessage,
+							RDLocale.GetDefaultText (RDLDefaultTexts.Button_OK),
+							RDLocale.GetDefaultText (RDLDefaultTexts.Button_Cancel)))
+							{
+							await RDGenerics.RunURL (notLink, true);
+							}
+						}
 					break;
 
 				// Поделиться
@@ -955,7 +752,7 @@ namespace RD_AAOW
 					if (!((NSTipTypes)RDGenerics.TipsState).HasFlag (NSTipTypes.ShareTextButton))
 						await ShowTips (NSTipTypes.ShareTextButton);
 
-					await Share.RequestAsync (notText, /*ProgramDescription.AssemblyVisibleName*/ RDGenerics.DefaultAssemblyVisibleName);
+					await Share.RequestAsync (notText, RDGenerics.DefaultAssemblyVisibleName);
 					break;
 
 				// Скопировать в буфер обмена
@@ -1024,23 +821,6 @@ namespace RD_AAOW
 
 					await GMJPicture.SaveRecordPictureToFile (pict, notItem.Header);
 					break;
-
-				/*// Удаление из журнала
-				case 40:
-					masterLog.RemoveAt (e.ItemIndex);
-					UpdateLog ();
-					break;
-
-				// Очистка журнала
-				case 41:
-					if (await RDInterface.ShowMessage ("Очистить журнал?",
-						RDLocale.GetDefaultText (RDLDefaultTexts.Button_Yes),
-						RDLocale.GetDefaultText (RDLDefaultTexts.Button_No)))
-						{
-						masterLog.Clear ();
-						UpdateLog ();
-						}
-					break;*/
 				}
 
 			// Завершено
@@ -1051,14 +831,18 @@ namespace RD_AAOW
 			{
 			// Переключение состояния кнопок и свичей
 			centerButtonEnabled = State;
-			menuButton.IsVisible = /*scrollDownButton.IsVisible = scrollUpButton.IsVisible =*/
-				sameCatButton.IsVisible = shareButton.IsVisible = State;
-			/*scrollUpButton.IsVisible = scrollDownButton.IsVisible = State && RDGenerics.IsTV;*/
+			menuButton.IsVisible = sameCatButton.IsVisible = /*shareButton.IsVisible =*/ State;
 
 			if (!State)
+				{
 				prevEntryButton.IsVisible = nextEntryButton.IsVisible = false;
+				emptyButton.IsEnabled = shareButton.IsEnabled = false;
+				}
 			else
+				{
 				UpdateNavButtons ();
+				emptyButton.IsEnabled = shareButton.IsEnabled = !RDGenerics.IsTV;
+				}
 
 			// Обновление статуса
 			UpdateLogButton (!State, false);
@@ -1067,25 +851,13 @@ namespace RD_AAOW
 		// Добавление текста в журнал
 		private void AddTextToLog (string Text)
 			{
-			/*uint limit = NotificationsSupport.MasterLogMaxItems;
-			if (NotificationsSupport.LogNewsItemsAtTheEnd)
-				{*/
 			masterLog.Add (new MainLogItem (Text));
 
 			// Удаление верхних строк
-			while (masterLog.Count > /*limit*/ NotificationsSupport.MasterLogMaxItems)
+			while (masterLog.Count > NotificationsSupport.MasterLogMaxItems)
 				masterLog.RemoveAt (0);
 
 			currentLogItem = masterLog.Count - 1;
-			/*}
-			else
-				{
-				masterLog.Insert (0, new MainLogItem (Text));
-
-				// Удаление нижних строк (здесь требуется, т.к. не выполняется обрезка свойством .MainLog)
-				while (masterLog.Count > limit)
-					masterLog.RemoveAt (masterLog.Count - 1);
-				}*/
 			}
 
 		// Действия средней кнопки журнала
@@ -1133,71 +905,8 @@ namespace RD_AAOW
 					}
 				else
 					{
-					/*// Разбиение на экраны
-					if (RDGenerics.IsTV)
-						{
-						int left;
-						const int linesLimit = 9;
-
-						// NotificationsSupport.LogNewsItemsAtTheEnd is true
-						int scrollTo = masterLog.Count;
-
-						int charsLimit = 60;
-						if (NotificationsSupport.LogFontSize > 20)
-							charsLimit -= 2 * (int)(NotificationsSupport.LogFontSize - 20);
-						if (charsLimit < 30)
-							charsLimit = 30;
-
-						do
-							{
-							// Поиск ближайшего подходящего абзаца
-							left = -RDLocale.RN.Length;
-							for (int l = 0; l < linesLimit; l++)
-								{
-								left = newText.IndexOf (RDLocale.RN, left + RDLocale.RN.Length);
-								if ((left < 0) || (left > charsLimit * linesLimit))
-									break;
-								}
-
-							// Отделение
-							if (left < 0)
-								{
-								AddTextToLog (newText);
-								}
-							else
-								{
-								AddTextToLog (newText.Substring (0, left));
-								newText = NotificationsSupport.HeaderBeginning + "(продолжение)" +
-									NotificationsSupport.HeaderEnding + MainLogItem.MainLogItemSplitter +
-									newText.Substring (left + RDLocale.RN.Length);
-								}
-
-							// При достижении конца текста немедленное завершение
-							if (left < 0)
-								break;
-							// (left > 0) обеспечивает обработку последнего фрагмента текста
-
-							// NotificationsSupport.LogNewsItemsAtTheEnd is true
-							scrollTo--;
-							}
-						while ((left > 0) || ((newText.Length - newText.Replace ("\n", "").Length > linesLimit) ||
-							(newText.Length > charsLimit * linesLimit)));
-
-						needsScroll = true;
-
-						scrollTo--; // Пока не понятно, почему -1
-						if (scrollTo < 0)
-							scrollTo = 0;
-						UpdateLog (scrollTo);
-						}
-
-					// Прямое направление
-					else
-						{*/
 					AddTextToLog (newText);
-					/*needsScroll = true;*/
 					UpdateLog ();
-					/*}*/
 
 					// Завершено
 					success = true;
@@ -1207,22 +916,9 @@ namespace RD_AAOW
 			// Разблокировка
 			SetLogState (true);
 			UpdateLogButton (!success, !success);
-			if (!((NSTipTypes)RDGenerics.TipsState).HasFlag (NSTipTypes.MainLogClickMenuTip))
+			if (!RDGenerics.IsTV && !((NSTipTypes)RDGenerics.TipsState).HasFlag (NSTipTypes.MainLogClickMenuTip))
 				await ShowTips (NSTipTypes.MainLogClickMenuTip);
 			}
-
-		/*// Ручная прокрутка
-		private async void ScrollUpButton_Click (object sender, EventArgs e)
-			{
-			needsScroll = true;
-			await ScrollMainLog (manualScrollModeUp);
-			}
-
-		private async void ScrollDownButton_Click (object sender, EventArgs e)
-			{
-			needsScroll = true;
-			await ScrollMainLog (manualScrollModeDown);
-			}*/
 
 		// Переход между страницами журнала
 		private void PrevEntry_Click (object sender, EventArgs e)
@@ -1331,16 +1027,6 @@ namespace RD_AAOW
 			RDInterface.KeepScreenOn = keepScreenOnSwitch.IsToggled;
 			}
 
-		/*// Включение / выключение добавления новостей с конца журнала
-		private void NewsAtTheEndSwitch_Toggled (object sender, ToggledEventArgs e)
-			{
-			// Обновление журнала
-			if (e != null)
-				NotificationsSupport.LogNewsItemsAtTheEnd = newsAtTheEndSwitch.IsToggled;
-
-			UpdateLogButton (false, false);
-			}*/
-
 		// Изменение размера шрифта лога
 		private void LogFontSizeChanged (object sender, EventArgs e)
 			{
@@ -1363,15 +1049,9 @@ namespace RD_AAOW
 			fontSizeFieldLabel.Text = string.Format ("Размер шрифта: <b>{0:D}</b>", fontSize.ToString ());
 
 			// Применение к журналу
-			entryHeader.FontSize = NotificationsSupport.LogFontSize * 0.85;
+			/*entryHeader.FontSize = NotificationsSupport.LogFontSize * 0.85;*/
 			entrySign.FontSize = NotificationsSupport.LogFontSize * 0.7;
 			entryText.FontSize = NotificationsSupport.LogFontSize;
-
-			/*if (e != null)
-				{
-				needsScroll = true;
-				UpdateLog ();
-				}*/
 			}
 
 		// Изменение количества записей, запрашиваемых подряд
@@ -1581,23 +1261,29 @@ namespace RD_AAOW
 			logColorButton.Text = logColorVariants[res];
 
 			// Цвета журнала
-			logPage.BackgroundColor = /*mainLog.BackgroundColor =*/ centerButton.BackgroundColor =
-				/*scrollUpButton.BackgroundColor = scrollDownButton.BackgroundColor =*/
+			logPage.BackgroundColor = centerButton.BackgroundColor =
 				prevEntryButton.BackgroundColor = nextEntryButton.BackgroundColor =
 				menuButton.BackgroundColor = sameCatButton.BackgroundColor = logColorButton.BackgroundColor =
-				shareButton.BackgroundColor = currentLogColor.BackColor;
-			/*scrollUpButton.TextColor = scrollDownButton.TextColor =*/
-			menuButton.TextColor = sameCatButton.TextColor = logColorButton.TextColor = prevEntryButton.TextColor =
-				nextEntryButton.TextColor = shareButton.TextColor = currentLogColor.MainTextColor;
+				shareButton.BackgroundColor = emptyButton.BackgroundColor = currentLogColor.BackColor;
+			/*menuButton.TextColor = sameCatButton.TextColor = logColorButton.TextColor = prevEntryButton.TextColor =
+				nextEntryButton.TextColor = shareButton.TextColor = currentLogColor.MainTextColor;*/
+			logColorButton.TextColor = currentLogColor.MainTextColor;
+			menuButton.TextColor = sameCatButton.TextColor = prevEntryButton.TextColor =
+				nextEntryButton.TextColor = shareButton.TextColor = emptyButton.TextColor = currentLogColor.SecondaryTextColor;
 
-			entryText.TextColor = currentLogColor.MainTextColor;
-			if (NotificationsSupport.TranslucentLogItems)
+			/*if (NotificationsSupport.TranslucentLogItems)
 				entryText.BackgroundColor = currentLogColor.TranslucentColor;
 			else
-				entryText.BackgroundColor = currentLogColor.BackColor;
+				entryText.BackgroundColor = currentLogColor.BackColor;*/
+			if (NotificationsSupport.TranslucentLogItems)
+				entryScroll.BackgroundColor = currentLogColor.TranslucentColor;
+			else
+				entryScroll.BackgroundColor = currentLogColor.BackColor;
 
+			entryText.TextColor = currentLogColor.MainTextColor;
 			entryHeader.TextColor = currentLogColor.SecondaryTextColor;
-			entrySign.TextColor = currentLogColor.SecondaryTextColor;
+			/*entrySign.TextColor = currentLogColor.SecondaryTextColor;*/
+			entrySign.TextColor = currentLogColor.MainTextColor;
 
 			// Цвета раздела категорий
 			categoryPage.BackgroundColor = currentLogColor.BackColor;
@@ -1631,13 +1317,6 @@ namespace RD_AAOW
 				RDInterface.MasterPage.BarTextColor = currentLogColor.MainTextColor;
 				}
 
-			/*// Принудительное обновление (только не при старте)
-			if (sender != null)
-				{
-				needsScroll = true;
-				UpdateLog ();
-				}*/
-
 			// Цепляет кнопку журнала
 			UpdateLogButton (false, false);
 			}
@@ -1651,9 +1330,6 @@ namespace RD_AAOW
 				entryText.BackgroundColor = currentLogColor.TranslucentColor;
 			else
 				entryText.BackgroundColor = currentLogColor.BackColor;
-
-			/*needsScroll = true;
-			UpdateLog ();*/
 			}
 
 		// Изменение размера и семейства шрифта лога
@@ -1699,17 +1375,11 @@ namespace RD_AAOW
 			entryText.FontAttributes = fa;
 			entryText.FontFamily = ff;
 
-			entryHeader.FontAttributes = FontAttributes.Bold | fa;
-			entryHeader.FontFamily = ff;
+			/*entryHeader.FontAttributes = FontAttributes.Bold | fa;
+			entryHeader.FontFamily = ff;*/
 
 			entrySign.FontAttributes = FontAttributes.Italic;
 			entrySign.FontFamily = ff;
-
-			/*if (e != null)
-				{
-				needsScroll = true;
-				UpdateLog ();
-				}*/
 			}
 
 		#endregion
@@ -1814,8 +1484,10 @@ namespace RD_AAOW
 				b.FontAttributes = FontAttributes.None;
 				b.FontSize = RDInterface.MasterFontSize;
 				b.HeightRequest = RDInterface.MasterFontSize * 2.75;
+				b.MinimumWidthRequest = b.HeightRequest;
 				b.TextColor = currentLogColor.MainTextColor;
-				b.Margin = b.Padding = new Thickness (3);
+				b.Margin = new Thickness (3);
+				b.Padding = new Thickness (6, 0);
 				b.Text = categoriesReqResult[i];
 				b.TextTransform = TextTransform.None;
 				b.Clicked += SelectCategory;

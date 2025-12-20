@@ -16,6 +16,7 @@
 				<ColumnDefinition Width="60" />
 			</Grid.ColumnDefinitions>
 
+			<Button x:Name="Empty" Grid.Column="0" HorizontalOptions="Start" />
 			<Label x:Name="Header" Grid.Column="1" VerticalOptions="Center" />
 			<Button x:Name="Share" Grid.Column="2" HorizontalOptions="End" />
 		</Grid>
