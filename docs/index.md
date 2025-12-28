@@ -135,13 +135,13 @@
 - В первый раз приложение запустится на странице **`Настроек приложения`**.
 Здесь можно выбрать необходимые параметры работы приложения.
 
-<center><img src="/JokesArray/img/JA01.png" width="500" /></center>
+<center><img src="/JokesArray/img/JA01.png" width="550" /></center>
 
-<center><img src="/JokesArray/img/JA02.png" width="500" /></center>
+<center><img src="/JokesArray/img/JA02.png" width="550" /></center>
 
-<center><img src="/JokesArray/img/JA03.png" width="500" /></center>
+<center><img src="/JokesArray/img/JA03.png" width="550" /></center>
 
-<center><img src="/JokesArray/img/JA04.png" width="500" /></center>
+<center><img src="/JokesArray/img/JA04.png" width="550" /></center>
 
 В дальнейшем этот раздел будет доступен через кнопку «Меню».
 
@@ -149,14 +149,14 @@
 
 - На экране **`О приложении`** доступна полная инструкция и обратная связь с нами на случай непредвиденных ситуаций.
 
-<center><img src="/JokesArray/img/JA05.png" width="500" /></center>
+<center><img src="/JokesArray/img/JA05.png" width="550" /></center>
 
 - Системная кнопка `Назад` позволяет вернуться в главный журнал из любого раздела.
 **`Журнал оповещений`** – основной раздел приложения, который теперь будет первым появляться
 при его запуске. Под ним расположена центральная кнопка «Ещё!». Первое нажатие отобразит вступительное слово, а каждое
 последующее будет запрашивать одну случайную запись из сообщества (более 4000 уникальных постов на 1.12.2025).
 
-<center><img src="/JokesArray/img/JA06.png" width="500" /></center>
+<center><img src="/JokesArray/img/JA06.png" width="550" /></center>
 
 - Первый запрос может занять чуть больше времени, т.к. приложение формирует список доступных записей.
 Так оно обеспечивает неповторяемость отображаемых постов на всём «протяжении» архива сообщества.
