@@ -1,14 +1,5 @@
 # JokesArray project: the concept
-> **ƒ** &nbsp;RD AAOW FDL; 6.02.2025; 22:39
-
-&nbsp;
-
-
-
-### Содержание страницы:
-
-- [The project concept](#the-project-concept)
-- [The parent project](https://adslbarxatov.github.io/UniNotifier)
+> **ƒ** &nbsp;RD AAOW FDL; 28.12.2025; 22:48
 
 &nbsp;
 
