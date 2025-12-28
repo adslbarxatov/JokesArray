@@ -69,7 +69,7 @@ namespace RD_AAOW
 		private Button centerButton, menuButton, sameCatButton,
 			pictureBackButton, pTextOnTheLeftButton, censorshipButton, logColorButton,
 			pSubsButton, logFontFamilyButton, genCatPrevPage, genCatNextPage,
-			prevEntryButton, nextEntryButton, shareButton, emptyButton;
+			prevEntryButton, nextEntryButton, shareButton, heightButton;
 
 		private List<Button> topCategories = [];
 		private List<Button> genCategories = [];
@@ -211,7 +211,6 @@ namespace RD_AAOW
 			Label htl = RDInterface.ApplyLabelSettings (aboutPage, "HelpTextLabel",
 				RDGenerics.GetAppHelpText (), RDLabelTypes.SmallLeft);
 			htl.TextType = TextType.Html;
-			/*htl.HorizontalTextAlignment = TextAlignment.Justify;    // Пока не работает*/
 
 			FontSizeButton_Clicked (null, null);
 
@@ -229,15 +228,15 @@ namespace RD_AAOW
 			for (int i = 0; i < topCat.Length; i++)
 				{
 				Button b = new Button ();
+				RDInterface.ApplyButtonDefaults (b);
+
 				b.BackgroundColor = currentLogColor.TranslucentColor;
-				b.FontAttributes = FontAttributes.None;
 				b.FontSize = 5 * RDInterface.MasterFontSize / 4;
 				b.TextColor = currentLogColor.MainTextColor;
 				b.WidthRequest = b.HeightRequest = RDInterface.MasterFontSize * 2.75;
 				b.Padding = Thickness.Zero;
 				b.Margin = new Thickness (3);
 				b.Text = topCat[i];
-				b.TextTransform = TextTransform.None;
 				b.Clicked += SelectTopCategory;
 
 				topCategories.Add (b);
@@ -277,11 +276,6 @@ namespace RD_AAOW
 
 			// Поле заголовка
 			entryHeader = RDInterface.ApplyLabelSettings (logPage, "Header", " ", RDLabelTypes.HeaderCenter);
-			/*entryHeader.Margin = new Thickness (6);
-			entryHeader.HorizontalOptions = LayoutOptions.Center;
-			entryHeader.HorizontalTextAlignment = TextAlignment.Center;
-			entryHeader.VerticalTextAlignment = TextAlignment.End;
-			entryHeader.FontAttributes = FontAttributes.Bold;*/
 
 			// Поле подписи
 			entrySign = RDInterface.ApplyLabelSettings (logPage, "Sign", " ", RDLabelTypes.DefaultLeft);
@@ -332,12 +326,17 @@ namespace RD_AAOW
 			shareButton.Text = RDGenerics.IsTV ? " " : "◥";
 			shareButton.Padding = shareButton.Margin = Thickness.Zero;
 
-			emptyButton = RDInterface.ApplyButtonSettings (logPage, "Empty", RDDefaultButtons.Down,
+			/*emptyButton = RDInterface.ApplyButtonSettings (logPage, "Empty", RDDefaultButtons.Down,
 				aboutFieldBackColor, null);
 			emptyButton.Text = " ";
-			emptyButton.Padding = shareButton.Margin = Thickness.Zero;
+			emptyButton.Padding = shareButton.Margin = Thickness.Zero;*/
+			heightButton = RDInterface.ApplyButtonSettings (logPage, "Empty", RDDefaultButtons.Down,
+				aboutFieldBackColor, SwitchHeight_Click);
+			heightButton.Text = RDGenerics.IsTV ? " " : "↕";
+			heightButton.Padding = shareButton.Margin = Thickness.Zero;
 
-			shareButton.IsEnabled = emptyButton.IsEnabled = !RDGenerics.IsTV;
+			/*shareButton.IsEnabled = emptyButton.IsEnabled = !RDGenerics.IsTV;*/
+			shareButton.IsEnabled = heightButton.IsEnabled = !RDGenerics.IsTV;
 
 			// Режим полупрозрачности
 			RDInterface.ApplyLabelSettings (settingsPage, "TranslucencyLabel",
@@ -604,8 +603,8 @@ namespace RD_AAOW
 			{
 			await Task.Delay (500);
 
-			entryScroll.HeightRequest = entryScroll.MaximumHeightRequest =
-				logPage.Height - shareButton.Height - 11 * centerButton.Height / 8;
+			entryScroll.HeightRequest = entryScroll.MaximumHeightRequest = logPage.Height - shareButton.Height - 
+				11 * centerButton.Height / 8 - NotificationsSupport.AdditionalLogHeight;
 			}
 
 		// Этот вызов необходим для корректной разметки страницы журнала, когда первой отображается страница настроек
@@ -637,18 +636,14 @@ namespace RD_AAOW
 			{
 			bool red = Requesting && FinishingBackgroundRequest;
 			bool yellow = Requesting && !FinishingBackgroundRequest;
-			/*bool green = !Requesting && !FinishingBackgroundRequest;*/
 			bool dark = !NotificationsSupport.LogColors.CurrentColor.IsBright;
 
-			/*if (red || yellow || green)
-				{*/
 			if (red)
 				centerButton.TextColor = Color.FromArgb (dark ? "#FF4040" : "#D00000");
 			else if (yellow)
 				centerButton.TextColor = Color.FromArgb (dark ? "#FFFF40" : "#D0D000");
 			else
 				centerButton.TextColor = Color.FromArgb (dark ? "#40FF40" : "#00D000");
-			/*}*/
 			}
 
 		// Выбор оповещения для перехода или share
@@ -826,22 +821,35 @@ namespace RD_AAOW
 			// Завершено
 			}
 
+		// Переключение ограничителя высоты журнала
+		private async void SwitchHeight_Click (object sender, EventArgs e)
+			{
+			if (NotificationsSupport.AdditionalLogHeight != 0)
+				NotificationsSupport.AdditionalLogHeight = 0;
+			else
+				NotificationsSupport.AdditionalLogHeight = (uint)centerButton.Height;
+
+			Current_MainDisplayInfoChanged (null, null);
+			}
+
 		// Блокировка / разблокировка кнопок
 		private void SetLogState (bool State)
 			{
 			// Переключение состояния кнопок и свичей
 			centerButtonEnabled = State;
-			menuButton.IsVisible = sameCatButton.IsVisible = /*shareButton.IsVisible =*/ State;
+			menuButton.IsVisible = sameCatButton.IsVisible = State;
 
 			if (!State)
 				{
 				prevEntryButton.IsVisible = nextEntryButton.IsVisible = false;
-				emptyButton.IsEnabled = shareButton.IsEnabled = false;
+				/*emptyButton.IsEnabled = shareButton.IsEnabled = false;*/
+				heightButton.IsEnabled = shareButton.IsEnabled = false;
 				}
 			else
 				{
 				UpdateNavButtons ();
-				emptyButton.IsEnabled = shareButton.IsEnabled = !RDGenerics.IsTV;
+				/*emptyButton.IsEnabled = shareButton.IsEnabled = !RDGenerics.IsTV;*/
+				heightButton.IsEnabled = shareButton.IsEnabled = !RDGenerics.IsTV;
 				}
 
 			// Обновление статуса
@@ -1049,7 +1057,6 @@ namespace RD_AAOW
 			fontSizeFieldLabel.Text = string.Format ("Размер шрифта: <b>{0:D}</b>", fontSize.ToString ());
 
 			// Применение к журналу
-			/*entryHeader.FontSize = NotificationsSupport.LogFontSize * 0.85;*/
 			entrySign.FontSize = NotificationsSupport.LogFontSize * 0.7;
 			entryText.FontSize = NotificationsSupport.LogFontSize;
 			}
@@ -1264,17 +1271,15 @@ namespace RD_AAOW
 			logPage.BackgroundColor = centerButton.BackgroundColor =
 				prevEntryButton.BackgroundColor = nextEntryButton.BackgroundColor =
 				menuButton.BackgroundColor = sameCatButton.BackgroundColor = logColorButton.BackgroundColor =
-				shareButton.BackgroundColor = emptyButton.BackgroundColor = currentLogColor.BackColor;
-			/*menuButton.TextColor = sameCatButton.TextColor = logColorButton.TextColor = prevEntryButton.TextColor =
-				nextEntryButton.TextColor = shareButton.TextColor = currentLogColor.MainTextColor;*/
+				/*shareButton.BackgroundColor = emptyButton.BackgroundColor = currentLogColor.BackColor;*/
+				shareButton.BackgroundColor = heightButton.BackgroundColor = currentLogColor.BackColor;
+
 			logColorButton.TextColor = currentLogColor.MainTextColor;
 			menuButton.TextColor = sameCatButton.TextColor = prevEntryButton.TextColor =
-				nextEntryButton.TextColor = shareButton.TextColor = emptyButton.TextColor = currentLogColor.SecondaryTextColor;
+				/*nextEntryButton.TextColor = shareButton.TextColor = emptyButton.TextColor = currentLogColor.SecondaryTextColor;*/
+				nextEntryButton.TextColor = shareButton.TextColor = heightButton.TextColor =
+				currentLogColor.SecondaryTextColor;
 
-			/*if (NotificationsSupport.TranslucentLogItems)
-				entryText.BackgroundColor = currentLogColor.TranslucentColor;
-			else
-				entryText.BackgroundColor = currentLogColor.BackColor;*/
 			if (NotificationsSupport.TranslucentLogItems)
 				entryScroll.BackgroundColor = currentLogColor.TranslucentColor;
 			else
@@ -1282,7 +1287,6 @@ namespace RD_AAOW
 
 			entryText.TextColor = currentLogColor.MainTextColor;
 			entryHeader.TextColor = currentLogColor.SecondaryTextColor;
-			/*entrySign.TextColor = currentLogColor.SecondaryTextColor;*/
 			entrySign.TextColor = currentLogColor.MainTextColor;
 
 			// Цвета раздела категорий
@@ -1374,9 +1378,6 @@ namespace RD_AAOW
 			// Обновление журнала
 			entryText.FontAttributes = fa;
 			entryText.FontFamily = ff;
-
-			/*entryHeader.FontAttributes = FontAttributes.Bold | fa;
-			entryHeader.FontFamily = ff;*/
 
 			entrySign.FontAttributes = FontAttributes.Italic;
 			entrySign.FontFamily = ff;
@@ -1480,8 +1481,9 @@ namespace RD_AAOW
 				(i < (currentCategoriesPage + 1) * categoriesPerPage) && (i < categoriesReqResult.Length); i++)
 				{
 				Button b = new Button ();
+				RDInterface.ApplyButtonDefaults (b);
+
 				b.BackgroundColor = currentLogColor.TranslucentColor;
-				b.FontAttributes = FontAttributes.None;
 				b.FontSize = RDInterface.MasterFontSize;
 				b.HeightRequest = RDInterface.MasterFontSize * 2.75;
 				b.MinimumWidthRequest = b.HeightRequest;
@@ -1489,7 +1491,6 @@ namespace RD_AAOW
 				b.Margin = new Thickness (3);
 				b.Padding = new Thickness (6, 0);
 				b.Text = categoriesReqResult[i];
-				b.TextTransform = TextTransform.None;
 				b.Clicked += SelectCategory;
 
 				genCategories.Add (b);
