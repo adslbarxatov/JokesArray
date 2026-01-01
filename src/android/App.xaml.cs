@@ -308,8 +308,8 @@ namespace RD_AAOW
 				NotificationsSupport.LogColorTip, RDLabelTypes.TipJustify);
 
 			// Кнопки меню и предложения в журнале
-			menuButton = RDInterface.ApplyButtonSettings (logPage, "MenuButton", "Меню",
-				logFieldBackColor, Menu_Click, false);
+			menuButton = RDInterface.ApplyButtonSettings (logPage, "MenuButton", RDGenerics.IsTV ? "Меню" : "Зап.",
+				logFieldBackColor, RDGenerics.IsTV ? Menu_Click : MainLogShare_Click, false);
 			menuButton.HeightRequest = menuButton.MaximumHeightRequest =
 				menuButton.WidthRequest = menuButton.MaximumWidthRequest = prevEntryButton.HeightRequest;
 			menuButton.Padding = Thickness.Zero;
@@ -321,22 +321,22 @@ namespace RD_AAOW
 				prevEntryButton.HeightRequest;
 			sameCatButton.Padding = Thickness.Zero;
 
-			shareButton = RDInterface.ApplyButtonSettings (logPage, "Share", RDDefaultButtons.Down,
-				aboutFieldBackColor, MainLogShare_Click);
-			shareButton.Text = RDGenerics.IsTV ? " " : "◥";
+			shareButton = RDInterface.ApplyButtonSettings (logPage, "Share", RDDefaultButtons.Menu,
+				aboutFieldBackColor, RDGenerics.IsTV ? null : Menu_Click);
+			if (RDGenerics.IsTV)
+				{
+				shareButton.Text = " ";
+				shareButton.IsEnabled = false;
+				}
 			shareButton.Padding = shareButton.Margin = Thickness.Zero;
 
-			/*emptyButton = RDInterface.ApplyButtonSettings (logPage, "Empty", RDDefaultButtons.Down,
-				aboutFieldBackColor, null);
-			emptyButton.Text = " ";
-			emptyButton.Padding = shareButton.Margin = Thickness.Zero;*/
 			heightButton = RDInterface.ApplyButtonSettings (logPage, "Empty", RDDefaultButtons.Down,
 				aboutFieldBackColor, SwitchHeight_Click);
 			heightButton.Text = RDGenerics.IsTV ? " " : "↕";
 			heightButton.Padding = shareButton.Margin = Thickness.Zero;
+			heightButton.IsEnabled = !RDGenerics.IsTV;
 
-			/*shareButton.IsEnabled = emptyButton.IsEnabled = !RDGenerics.IsTV;*/
-			shareButton.IsEnabled = heightButton.IsEnabled = !RDGenerics.IsTV;
+			/*shareButton.IsEnabled = heightButton.IsEnabled = !RDGenerics.IsTV;*/
 
 			// Режим полупрозрачности
 			RDInterface.ApplyLabelSettings (settingsPage, "TranslucencyLabel",
@@ -842,13 +842,11 @@ namespace RD_AAOW
 			if (!State)
 				{
 				prevEntryButton.IsVisible = nextEntryButton.IsVisible = false;
-				/*emptyButton.IsEnabled = shareButton.IsEnabled = false;*/
 				heightButton.IsEnabled = shareButton.IsEnabled = false;
 				}
 			else
 				{
 				UpdateNavButtons ();
-				/*emptyButton.IsEnabled = shareButton.IsEnabled = !RDGenerics.IsTV;*/
 				heightButton.IsEnabled = shareButton.IsEnabled = !RDGenerics.IsTV;
 				}
 
@@ -1271,12 +1269,10 @@ namespace RD_AAOW
 			logPage.BackgroundColor = centerButton.BackgroundColor =
 				prevEntryButton.BackgroundColor = nextEntryButton.BackgroundColor =
 				menuButton.BackgroundColor = sameCatButton.BackgroundColor = logColorButton.BackgroundColor =
-				/*shareButton.BackgroundColor = emptyButton.BackgroundColor = currentLogColor.BackColor;*/
 				shareButton.BackgroundColor = heightButton.BackgroundColor = currentLogColor.BackColor;
 
 			logColorButton.TextColor = currentLogColor.MainTextColor;
 			menuButton.TextColor = sameCatButton.TextColor = prevEntryButton.TextColor =
-				/*nextEntryButton.TextColor = shareButton.TextColor = emptyButton.TextColor = currentLogColor.SecondaryTextColor;*/
 				nextEntryButton.TextColor = shareButton.TextColor = heightButton.TextColor =
 				currentLogColor.SecondaryTextColor;
 
