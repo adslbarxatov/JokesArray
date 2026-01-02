@@ -23,6 +23,7 @@ namespace RD_AAOW
 		private List<string> pageVariants = [];
 		private List<string> pictureBKVariants = [];
 		private List<string> pictureBKSelectionVariants = [];
+		private List<string> pictureTXVariants = [];
 		private List<string> pictureTAVariants = [];
 		private List<string> pictureTASelectionVariants = [];
 		private List<string> censorshipVariants = [];
@@ -67,7 +68,7 @@ namespace RD_AAOW
 			translucencySwitch, offlineModeSwitch;
 
 		private Button centerButton, menuButton, sameCatButton,
-			pictureBackButton, pTextOnTheLeftButton, censorshipButton, logColorButton,
+			pictureBackButton, pictureTextButton, pTextOnTheLeftButton, censorshipButton, logColorButton,
 			pSubsButton, logFontFamilyButton, genCatPrevPage, genCatNextPage,
 			prevEntryButton, nextEntryButton, shareButton, heightButton;
 
@@ -248,11 +249,11 @@ namespace RD_AAOW
 			genCategoryLabel.IsVisible = false;
 
 			genCatPrevPage = RDInterface.ApplyButtonSettings (categoryPage, "GenCatPrevPage",
-				RDDefaultButtons.Backward, categoryFieldBackColor, ChangeCatPage_Clicked);
+				RDDefaultButtons.Left, categoryFieldBackColor, ChangeCatPage_Clicked);
 			genCatCurrentPage = RDInterface.ApplyLabelSettings (categoryPage, "GenCatCurrentPage",
 				" ", RDLabelTypes.HeaderCenter);
 			genCatNextPage = RDInterface.ApplyButtonSettings (categoryPage, "GenCatNextPage",
-				RDDefaultButtons.Start, categoryFieldBackColor, ChangeCatPage_Clicked);
+				RDDefaultButtons.Right, categoryFieldBackColor, ChangeCatPage_Clicked);
 			genCatPrevPage.IsVisible = genCatNextPage.IsVisible = genCatCurrentPage.IsVisible = false;
 
 			genCategorySection = (FlexLayout)categoryPage.FindByName ("GenCategorySection");
@@ -289,9 +290,9 @@ namespace RD_AAOW
 			centerButton.Padding = Thickness.Zero;
 
 			prevEntryButton = RDInterface.ApplyButtonSettings (logPage, "PrevEntryButton",
-				RDDefaultButtons.Backward, logFieldBackColor, PrevEntry_Click);
+				RDDefaultButtons.Left, logFieldBackColor, PrevEntry_Click);
 			nextEntryButton = RDInterface.ApplyButtonSettings (logPage, "NextEntryButton",
-				RDDefaultButtons.Start, logFieldBackColor, NextEntry_Click);
+				RDDefaultButtons.Right, logFieldBackColor, NextEntry_Click);
 			centerButton.HeightRequest = centerButton.MaximumHeightRequest = prevEntryButton.HeightRequest;
 			prevEntryButton.Padding = nextEntryButton.Padding = Thickness.Zero;
 
@@ -330,11 +331,16 @@ namespace RD_AAOW
 				}
 			shareButton.Padding = shareButton.Margin = Thickness.Zero;
 
-			heightButton = RDInterface.ApplyButtonSettings (logPage, "Empty", RDDefaultButtons.Down,
+			heightButton = RDInterface.ApplyButtonSettings (logPage, "Empty", RDDefaultButtons.UpDownArrow,
 				aboutFieldBackColor, SwitchHeight_Click);
-			heightButton.Text = RDGenerics.IsTV ? " " : "↕";
+			/*heightButton.Text = RDGenerics.IsTV ? " " : "↕";*/
 			heightButton.Padding = shareButton.Margin = Thickness.Zero;
-			heightButton.IsEnabled = !RDGenerics.IsTV;
+			/*heightButton.IsEnabled = !RDGenerics.IsTV;*/
+			if (RDGenerics.IsTV)
+				{
+				heightButton.Text = " ";
+				heightButton.IsEnabled = false;
+				}
 
 			/*shareButton.IsEnabled = heightButton.IsEnabled = !RDGenerics.IsTV;*/
 
@@ -431,12 +437,20 @@ namespace RD_AAOW
 			Label pictBackLabel2 = RDInterface.ApplyLabelSettings (settingsPage, "PicturesBackTip",
 				NotificationsSupport.PicturesBackTip, RDLabelTypes.TipJustify);
 
+			// Текст и рамка картинок
+			Label pictTextLabel1 = RDInterface.ApplyLabelSettings (settingsPage, "PicturesTextLabel",
+				"Текст и рамка:", RDLabelTypes.DefaultLeft);
+			pictureTextButton = RDInterface.ApplyButtonSettings (settingsPage, "PicturesTextButton",
+				" ", settingsFieldBackColor, PictureText_Clicked, false);
+			Label pictTextLabel2 = RDInterface.ApplyLabelSettings (settingsPage, "PicturesTextTip",
+				NotificationsSupport.PicturesTextTip, RDLabelTypes.TipJustify);
+
 			// Выравнивание текста
-			Label pictTextLabel1 = RDInterface.ApplyLabelSettings (settingsPage, "PTextLeftLabel",
+			Label pictTextAlignLabel1 = RDInterface.ApplyLabelSettings (settingsPage, "PTextLeftLabel",
 				"Выравнивание:", RDLabelTypes.DefaultLeft);
 			pTextOnTheLeftButton = RDInterface.ApplyButtonSettings (settingsPage, "PTextLeftButton",
 				" ", settingsFieldBackColor, PTextOnTheLeft_Toggled, false);
-			Label pictTextLabel2 = RDInterface.ApplyLabelSettings (settingsPage, "PTextLeftTip",
+			Label pictTextAlignLabel2 = RDInterface.ApplyLabelSettings (settingsPage, "PTextLeftTip",
 				NotificationsSupport.PicturesTextAlignmentTip, RDLabelTypes.TipJustify);
 
 			// Подпись картинок
@@ -451,7 +465,8 @@ namespace RD_AAOW
 				{
 				pictLabel.IsVisible =
 					pictBackLabel1.IsVisible = pictBackLabel2.IsVisible = pictureBackButton.IsVisible =
-					pictTextLabel1.IsVisible = pictTextLabel2.IsVisible = pTextOnTheLeftButton.IsVisible =
+					pictTextLabel1.IsVisible = pictTextLabel2.IsVisible = pictureTextButton.IsVisible =
+					pictTextAlignLabel1.IsVisible = pictTextAlignLabel2.IsVisible = pTextOnTheLeftButton.IsVisible =
 					pictSubsLabel1.IsVisible = pictSubsLabel2.IsVisible = pSubsButton.IsVisible = false;
 				}
 			else
@@ -505,7 +520,8 @@ namespace RD_AAOW
 					await RDInterface.ShowMessage ("Внимание!" + RDLocale.RNRN +
 						"• Убедитесь, что данное устройство имеет выход в интернет. Если такой возможности нет, " +
 						"не забудьте включить оффлайн-режим в настройках приложения." + RDLocale.RNRN +
-						"• Ознакомьтесь с описанием проекта в разделе «О приложении» (кнопка «" + menuButton.Text + "»). Убедитесь, " +
+						"• Ознакомьтесь с описанием проекта в разделе «О приложении» (кнопка «" +
+						(RDGenerics.IsTV ? shareButton.Text : menuButton.Text) + "»). Убедитесь, " +
 						"что Вы согласны с Политикой Лаборатории",
 						RDLocale.GetDefaultText (RDLDefaultTexts.Button_OK));
 					}
@@ -547,8 +563,8 @@ namespace RD_AAOW
 					break;
 
 				case NSTipTypes.MainLogClickMenuTip:
-					msg = "Все операции с текстами записей доступны по кнопке «" + shareButton.Text +
-						"» в верхнем правом углу страницы";
+					msg = "Все операции с текстами записей доступны по кнопке «" + menuButton.Text +
+						"» в углу страницы";
 					break;
 
 				case NSTipTypes.PostSubscriptions:
@@ -1125,6 +1141,31 @@ namespace RD_AAOW
 			pictureBackButton.Text = pictureBKVariants[res];
 			}
 
+		// Выбор цвета текста картинок
+		private async void PictureText_Clicked (object sender, EventArgs e)
+			{
+			// Запрос варианта
+			if (pictureTXVariants.Count < 1)
+				pictureTXVariants.AddRange (GMJPicture.PictureTextColorNames);
+
+			int res;
+			if (sender == null)
+				{
+				res = (int)NotificationsSupport.PicturesTextColor;
+				}
+			else
+				{
+				res = await RDInterface.ShowList ("Цвет текста картинок",
+					RDLocale.GetDefaultText (RDLDefaultTexts.Button_Cancel), pictureTXVariants);
+				if (res < 0)
+					return;
+
+				NotificationsSupport.PicturesTextColor = (GMJPictureTextColor) res;
+				}
+
+			pictureTextButton.Text = pictureTXVariants[res];
+			}
+
 		// Выбор режима выравнивания текста картинок
 		private async void PTextOnTheLeft_Toggled (object sender, EventArgs e)
 			{
@@ -1478,6 +1519,7 @@ namespace RD_AAOW
 				{
 				Button b = new Button ();
 				RDInterface.ApplyButtonDefaults (b);
+				b.LineBreakMode = LineBreakMode.NoWrap;	// Именно здесь это критично
 
 				b.BackgroundColor = currentLogColor.TranslucentColor;
 				b.FontSize = RDInterface.MasterFontSize;
@@ -1486,7 +1528,7 @@ namespace RD_AAOW
 				b.TextColor = currentLogColor.MainTextColor;
 				b.Margin = new Thickness (3);
 				b.Padding = new Thickness (6, 0);
-				b.Text = categoriesReqResult[i];
+				b.Text = " " + categoriesReqResult[i] + " ";
 				b.Clicked += SelectCategory;
 
 				genCategories.Add (b);
@@ -1543,7 +1585,7 @@ namespace RD_AAOW
 				{
 				// Изменение значения
 				Button b = (Button)sender;
-				bool decrease = RDInterface.IsNameDefault (b.Text, RDDefaultButtons.Backward);
+				bool decrease = RDInterface.IsNameDefault (b.Text, RDDefaultButtons.Left);
 
 				if (decrease)
 					{

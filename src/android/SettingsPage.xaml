@@ -129,6 +129,15 @@
 					WidthRequest="100" Color="#505050" Margin="12" />
 
 			<StackLayout Orientation="Horizontal">
+				<Label x:Name="PicturesTextLabel" VerticalOptions="Center" />
+				<Button x:Name="PicturesTextButton" VerticalOptions="Center" />
+			</StackLayout>
+			<Label x:Name="PicturesTextTip" />
+
+			<BoxView VerticalOptions="Center" HorizontalOptions="Center" HeightRequest="1" 
+					WidthRequest="100" Color="#505050" Margin="12" />
+
+			<StackLayout Orientation="Horizontal">
 				<Label x:Name="PTextLeftLabel" VerticalOptions="Center" />
 				<Button x:Name="PTextLeftButton" VerticalOptions="Center" />
 			</StackLayout>
