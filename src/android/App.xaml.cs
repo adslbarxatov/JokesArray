@@ -149,9 +149,9 @@ namespace RD_AAOW
 				RDLocale.GetDefaultText (RDLDefaultTexts.Control_InterfaceFontSize),
 				RDLabelTypes.DefaultLeft);
 			RDInterface.ApplyButtonSettings (settingsPage, "FontSizeInc",
-				RDDefaultButtons.Increase, settingsFieldBackColor, FontSizeButton_Clicked);
+				RDDefaultButtons.Increase, settingsFieldBackColor, FontSizeButton_Clicked, true);
 			RDInterface.ApplyButtonSettings (settingsPage, "FontSizeDec",
-				RDDefaultButtons.Decrease, settingsFieldBackColor, FontSizeButton_Clicked);
+				RDDefaultButtons.Decrease, settingsFieldBackColor, FontSizeButton_Clicked, true);
 			aboutFontSizeField = RDInterface.ApplyLabelSettings (settingsPage, "FontSizeField",
 				" ", RDLabelTypes.DefaultCenter);
 			RDInterface.ApplyLabelSettings (settingsPage, "FontSizeTipLabel",
@@ -192,11 +192,11 @@ namespace RD_AAOW
 
 			RDInterface.ApplyButtonSettings (aboutPage, "ManualsButton",
 				RDLocale.GetDefaultText (RDLDefaultTexts.Control_ReferenceMaterials),
-				aboutFieldBackColor, ReferenceButton_Click, false);
+				aboutFieldBackColor, ReferenceButton_Click);
 
 			Button hlp = RDInterface.ApplyButtonSettings (aboutPage, "HelpButton",
 				RDLocale.GetDefaultText (RDLDefaultTexts.Control_HelpSupport),
-				aboutFieldBackColor, HelpButton_Click, false);
+				aboutFieldBackColor, HelpButton_Click);
 			hlp.IsVisible = !RDGenerics.IsTV;
 
 			Image qrImage = (Image)aboutPage.FindByName ("QRImage");
@@ -204,7 +204,7 @@ namespace RD_AAOW
 
 			RDInterface.ApplyButtonSettings (aboutPage, "StatsButton",
 				GMJ.GMJStatsMenuItem,
-				aboutFieldBackColor, StatsButton_Click, false);
+				aboutFieldBackColor, StatsButton_Click);
 
 			RDInterface.ApplyLabelSettings (aboutPage, "HelpHeaderLabel",
 				RDLocale.GetDefaultText (RDLDefaultTexts.Control_AppAbout),
@@ -229,7 +229,7 @@ namespace RD_AAOW
 			for (int i = 0; i < topCat.Length; i++)
 				{
 				Button b = new Button ();
-				RDInterface.ApplyButtonDefaults (b);
+				RDInterface.ApplyButtonDefaults (b, true);
 
 				b.BackgroundColor = currentLogColor.TranslucentColor;
 				b.FontSize = 5 * RDInterface.MasterFontSize / 4;
@@ -249,11 +249,11 @@ namespace RD_AAOW
 			genCategoryLabel.IsVisible = false;
 
 			genCatPrevPage = RDInterface.ApplyButtonSettings (categoryPage, "GenCatPrevPage",
-				RDDefaultButtons.Left, categoryFieldBackColor, ChangeCatPage_Clicked);
+				RDDefaultButtons.Left, categoryFieldBackColor, ChangeCatPage_Clicked, true);
 			genCatCurrentPage = RDInterface.ApplyLabelSettings (categoryPage, "GenCatCurrentPage",
 				" ", RDLabelTypes.HeaderCenter);
 			genCatNextPage = RDInterface.ApplyButtonSettings (categoryPage, "GenCatNextPage",
-				RDDefaultButtons.Right, categoryFieldBackColor, ChangeCatPage_Clicked);
+				RDDefaultButtons.Right, categoryFieldBackColor, ChangeCatPage_Clicked, true);
 			genCatPrevPage.IsVisible = genCatNextPage.IsVisible = genCatCurrentPage.IsVisible = false;
 
 			genCategorySection = (FlexLayout)categoryPage.FindByName ("GenCategorySection");
@@ -285,14 +285,14 @@ namespace RD_AAOW
 
 			// Управление
 			centerButton = RDInterface.ApplyButtonSettings (logPage, "CenterButton", "Ещё!",
-				logFieldBackColor, CenterButton_Click, true);
+				logFieldBackColor, CenterButton_Click,RDButtonFlags.BiggerFontSize);
 			centerButton.FontAttributes = FontAttributes.Bold;
 			centerButton.Padding = Thickness.Zero;
 
 			prevEntryButton = RDInterface.ApplyButtonSettings (logPage, "PrevEntryButton",
-				RDDefaultButtons.Left, logFieldBackColor, PrevEntry_Click);
+				RDDefaultButtons.Left, logFieldBackColor, PrevEntry_Click, false);
 			nextEntryButton = RDInterface.ApplyButtonSettings (logPage, "NextEntryButton",
-				RDDefaultButtons.Right, logFieldBackColor, NextEntry_Click);
+				RDDefaultButtons.Right, logFieldBackColor, NextEntry_Click, false);
 			centerButton.HeightRequest = centerButton.MaximumHeightRequest = prevEntryButton.HeightRequest;
 			prevEntryButton.Padding = nextEntryButton.Padding = Thickness.Zero;
 
@@ -304,26 +304,26 @@ namespace RD_AAOW
 			RDInterface.ApplyLabelSettings (settingsPage, "LogColorLabel",
 				"Цветовая тема:", RDLabelTypes.DefaultLeft);
 			logColorButton = RDInterface.ApplyButtonSettings (settingsPage, "LogColorButton",
-				" ", settingsFieldBackColor, LogColor_Clicked, false);
+				" ", settingsFieldBackColor, LogColor_Clicked);
 			RDInterface.ApplyLabelSettings (settingsPage, "LogColorTip",
 				NotificationsSupport.LogColorTip, RDLabelTypes.TipJustify);
 
 			// Кнопки меню и предложения в журнале
 			menuButton = RDInterface.ApplyButtonSettings (logPage, "MenuButton", RDGenerics.IsTV ? "Меню" : "Зап.",
-				logFieldBackColor, RDGenerics.IsTV ? Menu_Click : MainLogShare_Click, false);
+				logFieldBackColor, RDGenerics.IsTV ? Menu_Click : MainLogShare_Click, RDButtonFlags.None);
 			menuButton.HeightRequest = menuButton.MaximumHeightRequest =
 				menuButton.WidthRequest = menuButton.MaximumWidthRequest = prevEntryButton.HeightRequest;
 			menuButton.Padding = Thickness.Zero;
 
 			sameCatButton = RDInterface.ApplyButtonSettings (logPage, "SameCatButton", "Кат.",
-				logFieldBackColor, LastUsedCategory_Clicked, false);
+				logFieldBackColor, LastUsedCategory_Clicked, RDButtonFlags.None);
 			sameCatButton.HeightRequest = sameCatButton.MaximumHeightRequest =
 				sameCatButton.WidthRequest = sameCatButton.MaximumWidthRequest =
 				prevEntryButton.HeightRequest;
 			sameCatButton.Padding = Thickness.Zero;
 
 			shareButton = RDInterface.ApplyButtonSettings (logPage, "Share", RDDefaultButtons.Menu,
-				aboutFieldBackColor, RDGenerics.IsTV ? null : Menu_Click);
+				aboutFieldBackColor, RDGenerics.IsTV ? null : Menu_Click, false);
 			if (RDGenerics.IsTV)
 				{
 				shareButton.Text = " ";
@@ -332,17 +332,13 @@ namespace RD_AAOW
 			shareButton.Padding = shareButton.Margin = Thickness.Zero;
 
 			heightButton = RDInterface.ApplyButtonSettings (logPage, "Empty", RDDefaultButtons.UpDownArrow,
-				aboutFieldBackColor, SwitchHeight_Click);
-			/*heightButton.Text = RDGenerics.IsTV ? " " : "↕";*/
+				aboutFieldBackColor, SwitchHeight_Click, false);
 			heightButton.Padding = shareButton.Margin = Thickness.Zero;
-			/*heightButton.IsEnabled = !RDGenerics.IsTV;*/
 			if (RDGenerics.IsTV)
 				{
 				heightButton.Text = " ";
 				heightButton.IsEnabled = false;
 				}
-
-			/*shareButton.IsEnabled = heightButton.IsEnabled = !RDGenerics.IsTV;*/
 
 			// Режим полупрозрачности
 			RDInterface.ApplyLabelSettings (settingsPage, "TranslucencyLabel",
@@ -361,9 +357,9 @@ namespace RD_AAOW
 			fontSizeFieldLabel.TextType = TextType.Html;
 
 			RDInterface.ApplyButtonSettings (settingsPage, "FontSizeIncButton",
-				RDDefaultButtons.Increase, settingsFieldBackColor, LogFontSizeChanged);
+				RDDefaultButtons.Increase, settingsFieldBackColor, LogFontSizeChanged, true);
 			RDInterface.ApplyButtonSettings (settingsPage, "FontSizeDecButton",
-				RDDefaultButtons.Decrease, settingsFieldBackColor, LogFontSizeChanged);
+				RDDefaultButtons.Decrease, settingsFieldBackColor, LogFontSizeChanged, true);
 
 			RDInterface.ApplyLabelSettings (settingsPage, "FontSizeFieldTip",
 				NotificationsSupport.FontSizeFieldTip, RDLabelTypes.TipJustify);
@@ -376,9 +372,9 @@ namespace RD_AAOW
 			groupSizeFieldLabel.TextType = TextType.Html;
 
 			RDInterface.ApplyButtonSettings (settingsPage, "GroupSizeIncButton",
-				RDDefaultButtons.Increase, settingsFieldBackColor, GroupSizeChanged);
+				RDDefaultButtons.Increase, settingsFieldBackColor, GroupSizeChanged, true);
 			RDInterface.ApplyButtonSettings (settingsPage, "GroupSizeDecButton",
-				RDDefaultButtons.Decrease, settingsFieldBackColor, GroupSizeChanged);
+				RDDefaultButtons.Decrease, settingsFieldBackColor, GroupSizeChanged, true);
 			RDInterface.ApplyLabelSettings (settingsPage, "GroupSizeFieldTip",
 				NotificationsSupport.GroupSizeFieldTip, RDLabelTypes.TipJustify);
 
@@ -386,7 +382,7 @@ namespace RD_AAOW
 
 			// Цензурирование
 			censorshipButton = RDInterface.ApplyButtonSettings (settingsPage, "CensorshipButton",
-				" ", settingsFieldBackColor, Censorship_Clicked, false);
+				" ", settingsFieldBackColor, Censorship_Clicked);
 
 			if (flags.HasFlag (RDAppStartupFlags.DisableXPUN))
 				{
@@ -414,7 +410,7 @@ namespace RD_AAOW
 			RDInterface.ApplyLabelSettings (settingsPage, "LogFontFamilyLabel",
 				"Шрифт:", RDLabelTypes.DefaultLeft);
 			logFontFamilyButton = RDInterface.ApplyButtonSettings (settingsPage, "LogFontFamilyButton",
-				" ", settingsFieldBackColor, LogFontFamily_Clicked, false);
+				" ", settingsFieldBackColor, LogFontFamily_Clicked);
 			RDInterface.ApplyLabelSettings (settingsPage, "LogFontFamilyTip",
 				"Опция задаёт шрифт текста в журнале: " +
 				"Roboto – без засечек (несколько яркостей), " +
@@ -433,7 +429,7 @@ namespace RD_AAOW
 			Label pictBackLabel1 = RDInterface.ApplyLabelSettings (settingsPage, "PicturesBackLabel",
 				"Фон:", RDLabelTypes.DefaultLeft);
 			pictureBackButton = RDInterface.ApplyButtonSettings (settingsPage, "PicturesBackButton",
-				" ", settingsFieldBackColor, PictureBack_Clicked, false);
+				" ", settingsFieldBackColor, PictureBack_Clicked);
 			Label pictBackLabel2 = RDInterface.ApplyLabelSettings (settingsPage, "PicturesBackTip",
 				NotificationsSupport.PicturesBackTip, RDLabelTypes.TipJustify);
 
@@ -441,7 +437,7 @@ namespace RD_AAOW
 			Label pictTextLabel1 = RDInterface.ApplyLabelSettings (settingsPage, "PicturesTextLabel",
 				"Текст и рамка:", RDLabelTypes.DefaultLeft);
 			pictureTextButton = RDInterface.ApplyButtonSettings (settingsPage, "PicturesTextButton",
-				" ", settingsFieldBackColor, PictureText_Clicked, false);
+				" ", settingsFieldBackColor, PictureText_Clicked);
 			Label pictTextLabel2 = RDInterface.ApplyLabelSettings (settingsPage, "PicturesTextTip",
 				NotificationsSupport.PicturesTextTip, RDLabelTypes.TipJustify);
 
@@ -449,7 +445,7 @@ namespace RD_AAOW
 			Label pictTextAlignLabel1 = RDInterface.ApplyLabelSettings (settingsPage, "PTextLeftLabel",
 				"Выравнивание:", RDLabelTypes.DefaultLeft);
 			pTextOnTheLeftButton = RDInterface.ApplyButtonSettings (settingsPage, "PTextLeftButton",
-				" ", settingsFieldBackColor, PTextOnTheLeft_Toggled, false);
+				" ", settingsFieldBackColor, PTextOnTheLeft_Toggled);
 			Label pictTextAlignLabel2 = RDInterface.ApplyLabelSettings (settingsPage, "PTextLeftTip",
 				NotificationsSupport.PicturesTextAlignmentTip, RDLabelTypes.TipJustify);
 
@@ -457,7 +453,7 @@ namespace RD_AAOW
 			Label pictSubsLabel1 = RDInterface.ApplyLabelSettings (settingsPage, "PSubsLabel",
 				"Подпись:", RDLabelTypes.DefaultLeft);
 			pSubsButton = RDInterface.ApplyButtonSettings (settingsPage, "PSubsButton",
-				" ", settingsFieldBackColor, PSubs_Clicked, false);
+				" ", settingsFieldBackColor, PSubs_Clicked);
 			Label pictSubsLabel2 = RDInterface.ApplyLabelSettings (settingsPage, "PSubsTip",
 				NotificationsSupport.PicturesSubscriptionTip, RDLabelTypes.TipJustify);
 
@@ -472,6 +468,7 @@ namespace RD_AAOW
 			else
 				{
 				PictureBack_Clicked (null, null);
+				PictureText_Clicked (null, null);
 				PTextOnTheLeft_Toggled (null, null);
 				PSubs_Clicked (null, null);
 				}
@@ -1518,7 +1515,7 @@ namespace RD_AAOW
 				(i < (currentCategoriesPage + 1) * categoriesPerPage) && (i < categoriesReqResult.Length); i++)
 				{
 				Button b = new Button ();
-				RDInterface.ApplyButtonDefaults (b);
+				RDInterface.ApplyButtonDefaults (b, true);
 				b.LineBreakMode = LineBreakMode.NoWrap;	// Именно здесь это критично
 
 				b.BackgroundColor = currentLogColor.TranslucentColor;
