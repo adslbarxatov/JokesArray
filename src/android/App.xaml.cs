@@ -1,4 +1,15 @@
-﻿[assembly: XamlCompilation (XamlCompilationOptions.Compile)]
+﻿using Microsoft.Maui;
+using Microsoft.Maui.ApplicationModel.DataTransfer;
+using Microsoft.Maui.Controls;
+using Microsoft.Maui.Controls.Xaml;
+using Microsoft.Maui.Devices;
+using Microsoft.Maui.Graphics;
+using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+
+[assembly: XamlCompilation (XamlCompilationOptions.Compile)]
 namespace RD_AAOW
 	{
 	/// <summary>

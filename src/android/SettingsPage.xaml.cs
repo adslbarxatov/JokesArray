@@ -1,7 +1,10 @@
-﻿namespace RD_AAOW
+﻿using Microsoft.Maui.Controls;
+using Microsoft.Maui.Controls.Xaml;
+
+namespace RD_AAOW
 	{
 	/// <summary>
-	/// Класс описывает страницу решения
+	/// Класс описывает страницу настроек приложения
 	/// </summary>
 	[XamlCompilation (XamlCompilationOptions.Compile)]
 	public partial class SettingsPage: ContentPage
