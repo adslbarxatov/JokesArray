@@ -353,7 +353,7 @@ namespace RD_AAOW
 
 			// Режим полупрозрачности
 			RDInterface.ApplyLabelSettings (settingsPage, "TranslucencyLabel",
-				"Полупрозрачность журнала", RDLabelTypes.DefaultLeft);
+				"Светлый фон для текстов записей", RDLabelTypes.DefaultLeft);
 			translucencySwitch = RDInterface.ApplySwitchSettings (settingsPage,
 				"TranslucencySwitch", false, settingsFieldBackColor,
 				Translucency_Toggled, NotificationsSupport.TranslucentLogItems);
@@ -1376,9 +1376,9 @@ namespace RD_AAOW
 
 			GMJLogColor currentLogColor = NotificationsSupport.LogColors.CurrentColor;
 			if (NotificationsSupport.TranslucentLogItems)
-				entryText.BackgroundColor = currentLogColor.TranslucentColor;
+				entryScroll.BackgroundColor = currentLogColor.TranslucentColor;
 			else
-				entryText.BackgroundColor = currentLogColor.BackColor;
+				entryScroll.BackgroundColor = currentLogColor.BackColor;
 			}
 
 		// Изменение размера и семейства шрифта лога
