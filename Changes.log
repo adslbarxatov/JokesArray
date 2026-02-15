@@ -1,5 +1,8 @@
 ﻿JokesArray: changes log
 
+ToDo:
+- проверить: Exception android.runtime.JavaProxyThrowable: [System.IndexOutOfRangeException]: Index was outside the bounds of the array. at RD_AAOW.GMJ+<GetRandomRecord>d__4.MoveNext + 0x705 (Unknown Source)
+
 Версия 3.7.9:
 • Оффлайн-справка теперь представлена PDF-снимком онлайн-справки на момент публикации
   версии приложения;
