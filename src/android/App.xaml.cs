@@ -217,13 +217,6 @@ namespace RD_AAOW
 				GMJ.GMJStatsMenuItem,
 				aboutFieldBackColor, StatsButton_Click);
 
-			/*RDInterface.ApplyLabelSettings (aboutPage, "HelpHeaderLabel",
-				RDLocale.GetDefaultText (RDLDefaultTexts.Control_AppAbout),
-				RDLabelTypes.HeaderLeft);
-			Label htl = RDInterface.ApplyLabelSettings (aboutPage, "HelpTextLabel",
-				RDGenerics.GetAppHelpText (), RDLabelTypes.SmallLeft);
-			htl.TextType = TextType.Html;*/
-
 			FontSizeButton_Clicked (null, null);
 
 			#endregion

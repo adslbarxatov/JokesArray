@@ -1,7 +1,9 @@
 ﻿JokesArray: changes log
 
-ToDo:
-- проверить: Exception android.runtime.JavaProxyThrowable: [System.IndexOutOfRangeException]: Index was outside the bounds of the array. at RD_AAOW.GMJ+<GetRandomRecord>d__4.MoveNext + 0x705 (Unknown Source)
+Версия 3.8:
+• Индексы архива в текущей версии: 4076-1102-517-1995-4076;
+• Обновлены пакеты поддержки .NET;
+• Не удаётся обнаружить исключение при обращении IEnumerable.MoveNext в методе GetRandomRecord
 
 Версия 3.7.9:
 • Оффлайн-справка теперь представлена PDF-снимком онлайн-справки на момент публикации
