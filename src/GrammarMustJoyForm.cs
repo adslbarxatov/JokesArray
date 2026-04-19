@@ -70,9 +70,9 @@ namespace RD_AAOW
 				this.Text += RDLocale.GetDefaultText (RDLDefaultTexts.Message_LimitedFunctionality);
 			hideWindow = HideWindow;
 
-			// Принудительные параметры
+			/*// Принудительные параметры
 			if (!RDLocale.IsCurrentLanguageRuRu)
-				RDLocale.CurrentLanguage = RDLanguages.ru_ru;
+				RDLocale.CurrentLanguage = RDLanguages.ru_ru;*/
 
 			// Получение настроек
 			RDGenerics.LoadWindowDimensions (this);

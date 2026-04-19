@@ -114,8 +114,8 @@ namespace RD_AAOW
 			Page mainPage = new MasterPage ();
 			flags = RDGenerics.GetAppStartupFlags (RDAppStartupFlags.DisableXPUN | RDAppStartupFlags.CanWriteFiles);
 
-			if (!RDLocale.IsCurrentLanguageRuRu)
-				RDLocale.CurrentLanguage = RDLanguages.ru_ru;
+			/*if (!RDLocale.IsCurrentLanguageRuRu)
+				RDLocale.CurrentLanguage = RDLanguages.ru_ru;*/
 
 			// Общая конструкция страниц приложения
 			settingsPage = RDInterface.ApplyPageSettings (new SettingsPage (),
