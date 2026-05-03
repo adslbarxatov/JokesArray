@@ -114,9 +114,6 @@ namespace RD_AAOW
 			Page mainPage = new MasterPage ();
 			flags = RDGenerics.GetAppStartupFlags (RDAppStartupFlags.DisableXPUN | RDAppStartupFlags.CanWriteFiles);
 
-			/*if (!RDLocale.IsCurrentLanguageRuRu)
-				RDLocale.CurrentLanguage = RDLanguages.ru_ru;*/
-
 			// Общая конструкция страниц приложения
 			settingsPage = RDInterface.ApplyPageSettings (new SettingsPage (),
 				"Настройки приложения", settingsMasterBackColor);
@@ -900,13 +897,17 @@ namespace RD_AAOW
 			// Блокировка на время опроса
 			SetLogState (false);
 
-			if (FromCategory)
-				RDInterface.ShowBalloon ("Запрос записи...", false);
-			else
-				RDInterface.ShowBalloon ("Запрос случайной записи...", false);
+			if (!GMJ.EnableOfflineMode)
+				{
+				// Не нужны из-за высокой скорости ответа
+				if (FromCategory)
+					RDInterface.ShowBalloon ("Запрос записи...", false);
+				else
+					RDInterface.ShowBalloon ("Запрос случайной записи...", false);
+				}
 
 			// Запуск и разбор
-			RDGenerics.StopRequested = false; // Разблокировка метода GetHTML
+			RDGenerics.StopRequested = false;	// Разблокировка метода GetHTML
 			string newText = "";
 			uint group = NotificationsSupport.GroupSize;
 			bool success = false;
@@ -939,6 +940,9 @@ namespace RD_AAOW
 			// Разблокировка
 			SetLogState (true);
 			UpdateLogButton (!success, !success);
+			if (RDGenerics.IsTV && FromCategory)
+				sameCatButton.Focus ();	// Не факт, что поможет, но попробуем
+
 			if (!RDGenerics.IsTV && !((NSTipTypes)RDGenerics.TipsState).HasFlag (NSTipTypes.MainLogClickMenuTip))
 				await ShowTips (NSTipTypes.MainLogClickMenuTip);
 			}
