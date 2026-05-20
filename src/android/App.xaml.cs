@@ -35,6 +35,7 @@ namespace RD_AAOW
 		private List<string> pictureBKVariants = [];
 		private List<string> pictureBKSelectionVariants = [];
 		private List<string> pictureTXVariants = [];
+		private List<string> pictureTXSelectionVariants = [];
 		private List<string> pictureTAVariants = [];
 		private List<string> pictureTASelectionVariants = [];
 		private List<string> censorshipVariants = [];
@@ -819,9 +820,30 @@ namespace RD_AAOW
 							break;
 						}
 
+					GMJPictureTextColor2 ptk;
+					switch (NotificationsSupport.PicturesTextColor2)
+						{
+						case GMJPictureTextColor2.AskUser:
+							int res = await RDInterface.ShowList ("Цвет рамки и текста:",
+								RDLocale.GetDefaultText (RDLDefaultTexts.Button_Cancel), pictureTXSelectionVariants);
+							if (res < 0)
+								return;
+
+							ptk = (GMJPictureTextColor2)res;
+							break;
+
+						case GMJPictureTextColor2.Random:
+							ptk = (GMJPictureTextColor2)RDGenerics.RND.Next (GMJPicture.PictureTextColorNames.Length);
+							break;
+
+						default:
+							ptk = NotificationsSupport.PicturesTextColor2;
+							break;
+						}
+
 					var pict = GMJPicture.CreateRecordPicture (notItem.Header, notItem.Text,
 						notItem.SeparatorIsSign ? notItem.Separator.Replace (RDLocale.RN, "") : "",
-						pta, NotificationsSupport.PictureColors.GetColor ((uint)pbk));
+						pta, NotificationsSupport.PictureColors.GetColor ((uint)pbk), ptk);
 					if (pict == null)
 						{
 						RDInterface.ShowBalloon ("Текст записи не позволяет сформировать картинку", true);
@@ -1151,12 +1173,19 @@ namespace RD_AAOW
 			{
 			// Запрос варианта
 			if (pictureTXVariants.Count < 1)
+				{
 				pictureTXVariants.AddRange (GMJPicture.PictureTextColorNames);
+				pictureTXVariants.Add ("(спрашивать)");
+				pictureTXVariants.Add ("(случайный)");
+				}
+
+			if (pictureTXSelectionVariants.Count < 1)
+				pictureTXSelectionVariants.AddRange (GMJPicture.PictureTextColorNames);
 
 			int res;
 			if (sender == null)
 				{
-				res = (int)NotificationsSupport.PicturesTextColor;
+				res = (int)NotificationsSupport.PicturesTextColor2;
 				}
 			else
 				{
@@ -1165,7 +1194,7 @@ namespace RD_AAOW
 				if (res < 0)
 					return;
 
-				NotificationsSupport.PicturesTextColor = (GMJPictureTextColor) res;
+				NotificationsSupport.PicturesTextColor2 = (GMJPictureTextColor2) res;
 				}
 
 			pictureTextButton.Text = pictureTXVariants[res];

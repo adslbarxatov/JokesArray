@@ -391,16 +391,32 @@ namespace RD_AAOW
 							break;
 						}
 
+					GMJPictureTextColor2 ptk;
+					switch (NotificationsSupport.PicturesTextColor2)
+						{
+						case GMJPictureTextColor2.Random:
+							ptk = (GMJPictureTextColor2)RDGenerics.RND.Next (GMJPicture.PictureTextColorNames.Length);
+							break;
+
+						default:
+							ptk = NotificationsSupport.PicturesTextColor2;
+							break;
+						}
+
 					// Создание изображения
 					Bitmap b = GMJPicture.CreateRecordPicture (header, text, sub,
 						NotificationsSupport.PicturesTextAlignment,
-						NotificationsSupport.PictureColors.GetColor ((uint)pbk));
+						NotificationsSupport.PictureColors.GetColor ((uint)pbk), ptk);
 
 					// Сохранение
 					SFDialog.FileName = GMJPicture.GetFileNameFromCode (header);
 
 					if (SFDialog.ShowDialog () == DialogResult.OK)
-						GMJPicture.SaveRecordPictureToFile (b, SFDialog.FileName);
+						{
+						if (GMJPicture.SaveRecordPictureToFile (b, SFDialog.FileName))
+							RDInterface.MessageBox (RDMessageFlags.Success | RDMessageFlags.CenterText,
+								"Изображение успешно сохранено", 1000);
+						}
 
 					b.Dispose ();
 					break;
