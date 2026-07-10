@@ -12,16 +12,15 @@
 			</StackLayout>
 
 			<BoxView VerticalOptions="Center" HorizontalOptions="Center" HeightRequest="1" 
-					WidthRequest="200" Color="#505050" Margin="6" />
+					WidthRequest="200" Color="#505050" Margin="20" />
 
 			<Button x:Name="ManualsButton" HorizontalOptions="Center" />
 			<Button x:Name="HelpButton" HorizontalOptions="Center" />
 			<Image x:Name="QRImage" HorizontalOptions="Center" Source="@drawable/qr" MaximumWidthRequest="200" />
 
 			<BoxView VerticalOptions="Center" HorizontalOptions="Center" HeightRequest="1" 
-					WidthRequest="200" Color="#606060" Margin="9" />
+					WidthRequest="200" Color="#606060" Margin="20" />
 
-			<Label />
 			<Button x:Name="StatsButton" HorizontalOptions="Center" />
 
 			<Label />

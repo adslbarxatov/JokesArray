@@ -43,9 +43,8 @@
 			<Label x:Name="GenericSettingsLabel" />
 			<Label x:Name="RestartTipLabel" />
 
+			<Label x:Name="FontSizeLabel" VerticalOptions="Center" />
 			<StackLayout Orientation="Horizontal" HorizontalOptions="Start" >
-				<Label x:Name="FontSizeLabel" VerticalOptions="Center" />
-
 				<Button x:Name="FontSizeInc" VerticalOptions="Center" />
 				<Label x:Name="FontSizeField" VerticalOptions="Center" />
 				<Button x:Name="FontSizeDec" VerticalOptions="Center" />

@@ -333,8 +333,10 @@ namespace RD_AAOW
 				}
 			shareButton.Padding = shareButton.Margin = Thickness.Zero;
 
+			/*heightButton = RDInterface.ApplyButtonSettings (logPage, "Empty", RDDefaultButtons.UpDownArrow,
+				aboutFieldBackColor, SwitchHeight_Click, false);*/
 			heightButton = RDInterface.ApplyButtonSettings (logPage, "Empty", RDDefaultButtons.UpDownArrow,
-				aboutFieldBackColor, SwitchHeight_Click, false);
+				aboutFieldBackColor, null, false);
 			heightButton.Padding = shareButton.Margin = Thickness.Zero;
 			if (RDGenerics.IsTV)
 				{
@@ -502,7 +504,7 @@ namespace RD_AAOW
 
 			// Требование принятия Политики
 			if (!RDGenerics.IsTV)
-				await RDInterface.PolicyLoop ();    // Выставляет бит 0 в TipsState автоматически
+				await RDInterface.PolicyLoop ();
 
 			// Подсказки
 			if (!((NSTipTypes)RDGenerics.TipsState).HasFlag (NSTipTypes.StartupTips))
@@ -618,8 +620,11 @@ namespace RD_AAOW
 			{
 			await Task.Delay (500);
 
-			entryScroll.HeightRequest = entryScroll.MaximumHeightRequest = logPage.Height - shareButton.Height - 
-				11 * centerButton.Height / 8 - NotificationsSupport.AdditionalLogHeight;
+			/*entryScroll.HeightRequest = entryScroll.MaximumHeightRequest = logPage.Height - shareButton.Height - 
+				11 * centerButton.Height / 8 - NotificationsSupport.AdditionalLogHeight;*/
+			double height = RDInterface.MasterPage.CurrentPage.Height - RDGenerics.NavigationBarsSize;
+			entryScroll.HeightRequest = entryScroll.MaximumHeightRequest =
+				height - 8 * (shareButton.Height + centerButton.Height) / 10;
 			}
 
 		// Этот вызов необходим для корректной разметки страницы журнала, когда первой отображается страница настроек
@@ -857,7 +862,7 @@ namespace RD_AAOW
 			// Завершено
 			}
 
-		// Переключение ограничителя высоты журнала
+		/*// Переключение ограничителя высоты журнала
 		private async void SwitchHeight_Click (object sender, EventArgs e)
 			{
 			if (NotificationsSupport.AdditionalLogHeight != 0)
@@ -866,7 +871,7 @@ namespace RD_AAOW
 				NotificationsSupport.AdditionalLogHeight = (uint)centerButton.Height;
 
 			Current_MainDisplayInfoChanged (null, null);
-			}
+			}*/
 
 		// Блокировка / разблокировка кнопок
 		private void SetLogState (bool State)
@@ -1005,7 +1010,7 @@ namespace RD_AAOW
 					];
 
 				if (!RDGenerics.IsTV)
-					pageVariants.Add ("🆕\t Предложить запись");
+					pageVariants.Add ("✨\t Предложить запись");
 				}
 
 			int res;
