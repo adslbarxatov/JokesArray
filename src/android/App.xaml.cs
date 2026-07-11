@@ -113,6 +113,7 @@ namespace RD_AAOW
 		private Page AppShell ()
 			{
 			Page mainPage = new MasterPage ();
+
 			flags = RDGenerics.GetAppStartupFlags (RDAppStartupFlags.DisableXPUN | RDAppStartupFlags.CanWriteFiles);
 
 			// Общая конструкция страниц приложения
@@ -674,7 +675,7 @@ namespace RD_AAOW
 				return;
 
 			MainLogItem notItem = masterLog[currentLogItem];
-			if (!centerButtonEnabled || (notItem.StringForSaving == ""))  // Признак разделителя
+			if (!centerButtonEnabled || (notItem.StringForSaving == ""))	// Признак разделителя
 				return;
 
 			// Сброс состояния
