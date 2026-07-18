@@ -55,10 +55,6 @@ namespace RD_AAOW
 
 			// Инициализация и запуск
 			base.OnCreate (savedInstanceState);
-
-			/*// Необходимо для правильного расчёта размера страницы без учёта навигационной панели
-			this.Window.DecorView.SystemUiFlags = SystemUiFlags.ImmersiveSticky;
-			//this.Window.InsetsController.SystemBarsBehavior = 0x00000002;*/
 			}
 		}
 	}

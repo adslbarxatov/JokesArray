@@ -391,15 +391,15 @@ namespace RD_AAOW
 							break;
 						}
 
-					GMJPictureTextColor2 ptk;
-					switch (NotificationsSupport.PicturesTextColor2)
+					GMJPictureTextColor ptk;
+					switch (NotificationsSupport.PicturesTextColor)
 						{
-						case GMJPictureTextColor2.Random:
-							ptk = (GMJPictureTextColor2)RDGenerics.RND.Next (GMJPicture.PictureTextColorNames.Length);
+						case GMJPictureTextColor.Random:
+							ptk = (GMJPictureTextColor)RDGenerics.RND.Next (GMJPicture.PictureTextColorNames.Length);
 							break;
 
 						default:
-							ptk = NotificationsSupport.PicturesTextColor2;
+							ptk = NotificationsSupport.PicturesTextColor;
 							break;
 						}
 

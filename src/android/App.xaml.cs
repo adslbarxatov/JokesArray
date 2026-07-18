@@ -334,8 +334,6 @@ namespace RD_AAOW
 				}
 			shareButton.Padding = shareButton.Margin = Thickness.Zero;
 
-			/*heightButton = RDInterface.ApplyButtonSettings (logPage, "Empty", RDDefaultButtons.UpDownArrow,
-				aboutFieldBackColor, SwitchHeight_Click, false);*/
 			heightButton = RDInterface.ApplyButtonSettings (logPage, "Empty", RDDefaultButtons.UpDownArrow,
 				aboutFieldBackColor, null, false);
 			heightButton.Padding = shareButton.Margin = Thickness.Zero;
@@ -621,8 +619,6 @@ namespace RD_AAOW
 			{
 			await Task.Delay (500);
 
-			/*entryScroll.HeightRequest = entryScroll.MaximumHeightRequest = logPage.Height - shareButton.Height - 
-				11 * centerButton.Height / 8 - NotificationsSupport.AdditionalLogHeight;*/
 			double height = RDInterface.MasterPage.CurrentPage.Height - RDGenerics.NavigationBarsSize;
 			entryScroll.HeightRequest = entryScroll.MaximumHeightRequest =
 				height - 8 * (shareButton.Height + centerButton.Height) / 10;
@@ -787,7 +783,7 @@ namespace RD_AAOW
 						{
 						if (await RDInterface.ShowMessage (
 							RDLocale.GetDefaultText (RDLDefaultTexts.Message_ReadWritePermission) + "." +
-							RDLocale.RNRN + "Перейти к настройкам разрешений приложения?",
+							RDLocale.RNRN + RDLocale.GetDefaultText (RDLDefaultTexts.Message_GoToPermissions),
 							RDLocale.GetDefaultText (RDLDefaultTexts.Button_Yes),
 							RDLocale.GetDefaultText (RDLDefaultTexts.Button_No)))
 							RDInterface.CallAppSettings ();
@@ -826,24 +822,24 @@ namespace RD_AAOW
 							break;
 						}
 
-					GMJPictureTextColor2 ptk;
-					switch (NotificationsSupport.PicturesTextColor2)
+					GMJPictureTextColor ptk;
+					switch (NotificationsSupport.PicturesTextColor)
 						{
-						case GMJPictureTextColor2.AskUser:
+						case GMJPictureTextColor.AskUser:
 							int res = await RDInterface.ShowList ("Цвет рамки и текста:",
 								RDLocale.GetDefaultText (RDLDefaultTexts.Button_Cancel), pictureTXSelectionVariants);
 							if (res < 0)
 								return;
 
-							ptk = (GMJPictureTextColor2)res;
+							ptk = (GMJPictureTextColor)res;
 							break;
 
-						case GMJPictureTextColor2.Random:
-							ptk = (GMJPictureTextColor2)RDGenerics.RND.Next (GMJPicture.PictureTextColorNames.Length);
+						case GMJPictureTextColor.Random:
+							ptk = (GMJPictureTextColor)RDGenerics.RND.Next (GMJPicture.PictureTextColorNames.Length);
 							break;
 
 						default:
-							ptk = NotificationsSupport.PicturesTextColor2;
+							ptk = NotificationsSupport.PicturesTextColor;
 							break;
 						}
 
@@ -862,17 +858,6 @@ namespace RD_AAOW
 
 			// Завершено
 			}
-
-		/*// Переключение ограничителя высоты журнала
-		private async void SwitchHeight_Click (object sender, EventArgs e)
-			{
-			if (NotificationsSupport.AdditionalLogHeight != 0)
-				NotificationsSupport.AdditionalLogHeight = 0;
-			else
-				NotificationsSupport.AdditionalLogHeight = (uint)centerButton.Height;
-
-			Current_MainDisplayInfoChanged (null, null);
-			}*/
 
 		// Блокировка / разблокировка кнопок
 		private void SetLogState (bool State)
@@ -1191,7 +1176,7 @@ namespace RD_AAOW
 			int res;
 			if (sender == null)
 				{
-				res = (int)NotificationsSupport.PicturesTextColor2;
+				res = (int)NotificationsSupport.PicturesTextColor;
 				}
 			else
 				{
@@ -1200,7 +1185,7 @@ namespace RD_AAOW
 				if (res < 0)
 					return;
 
-				NotificationsSupport.PicturesTextColor2 = (GMJPictureTextColor2) res;
+				NotificationsSupport.PicturesTextColor = (GMJPictureTextColor) res;
 				}
 
 			pictureTextButton.Text = pictureTXVariants[res];
