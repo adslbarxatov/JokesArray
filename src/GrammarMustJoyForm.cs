@@ -104,7 +104,7 @@ namespace RD_AAOW
 			textContextMenu.Items.Add ("Сохранить картинку", null, TextContext_ItemClicked);
 
 			// Окно сохранения картинок
-			SFDialog.Title = "Укажите расположение для сохраняемой картинки";
+			/*SFDialog. Title = "Укажите расположение для сохраняемой картинки";*/
 			SFDialog.Filter = "Portable network graphics (*.png)|*.png";
 
 			// Загрузка категорий верхнего уровня

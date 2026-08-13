@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="RD_AAOW.SettingsPage">
+			xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+			x:Class="RD_AAOW.SettingsPage">
 
 	<ScrollView>
 		<StackLayout>
@@ -16,18 +16,18 @@
 			<Label x:Name="EnablePostSubscriptionTip" />
 
 			<BoxView VerticalOptions="Center" HorizontalOptions="Center" HeightRequest="1" 
-					WidthRequest="100" Color="#505050" Margin="12" />
+				WidthRequest="100" Color="#505050" Margin="12" />
 
-			<StackLayout Orientation="Horizontal" Margin="3">
-				<Label x:Name="GroupSizeFieldLabel" HorizontalOptions="Start" VerticalOptions="Center" />
-
-				<Button x:Name="GroupSizeIncButton" HorizontalOptions="Start" VerticalOptions="Center" />
-				<Button x:Name="GroupSizeDecButton" HorizontalOptions="Start" VerticalOptions="Center" />
+			<Label x:Name="GroupSizeFieldLabel" />
+			<StackLayout Orientation="Horizontal" HorizontalOptions="Center" Margin="3">
+				<Button x:Name="GroupSizeIncButton" VerticalOptions="Center" />
+				<Label x:Name="GroupSizeField" VerticalOptions="Center" />
+				<Button x:Name="GroupSizeDecButton" VerticalOptions="Center" />
 			</StackLayout>
 			<Label x:Name="GroupSizeFieldTip" />
 
 			<BoxView VerticalOptions="Center" HorizontalOptions="Center" HeightRequest="1" 
-					WidthRequest="100" Color="#505050" Margin="12" />
+				WidthRequest="100" Color="#505050" Margin="12" />
 
 			<StackLayout Orientation="Horizontal">
 				<Switch x:Name="OfflineModeSwitch" VerticalOptions="Center" />
@@ -37,22 +37,22 @@
 
 			<!-- Общие интерфейсные настройки -->
 			<BoxView VerticalOptions="Center" HorizontalOptions="Center" HeightRequest="1" 
-					WidthRequest="200" Color="#505050" Margin="9" />
+				WidthRequest="200" Color="#505050" Margin="9" />
 
 			<Label />
 			<Label x:Name="GenericSettingsLabel" />
 			<Label x:Name="RestartTipLabel" />
 
-			<Label x:Name="FontSizeLabel" VerticalOptions="Center" />
-			<StackLayout Orientation="Horizontal" HorizontalOptions="Start" >
-				<Button x:Name="FontSizeInc" VerticalOptions="Center" />
-				<Label x:Name="FontSizeField" VerticalOptions="Center" />
-				<Button x:Name="FontSizeDec" VerticalOptions="Center" />
+			<Label x:Name="InterfaceFontSizeLabel" />
+			<StackLayout Orientation="Horizontal" HorizontalOptions="Center" >
+				<Button x:Name="InterfaceFontSizeInc" VerticalOptions="Center" />
+				<Label x:Name="InterfaceFontSizeField" VerticalOptions="Center" />
+				<Button x:Name="InterfaceFontSizeDec" VerticalOptions="Center" />
 			</StackLayout>
-			<Label x:Name="FontSizeTipLabel" />
+			<Label x:Name="InterfaceFontSizeTipLabel" />
 
 			<BoxView VerticalOptions="Center" HorizontalOptions="Center" HeightRequest="1" 
-					WidthRequest="100" Color="#505050" Margin="12" />
+				WidthRequest="100" Color="#505050" Margin="12" />
 
 			<StackLayout Orientation="Horizontal">
 				<Switch x:Name="KeepScreenOnSwitch" VerticalOptions="Center" />
@@ -62,7 +62,7 @@
 
 			<!-- Настройки журнала -->
 			<BoxView VerticalOptions="Center" HorizontalOptions="Center" HeightRequest="1" 
-					WidthRequest="200" Color="#505050" Margin="12" />
+				WidthRequest="200" Color="#505050" Margin="12" />
 
 			<Label />
 			<Label x:Name="LogSettingsLabel" />
@@ -74,7 +74,7 @@
 			<Label x:Name="LogColorTip" />
 
 			<BoxView VerticalOptions="Center" HorizontalOptions="Center" HeightRequest="1" 
-					WidthRequest="100" Color="#505050" Margin="12" />
+				WidthRequest="100" Color="#505050" Margin="12" />
 
 			<StackLayout Orientation="Horizontal">
 				<Switch x:Name="TranslucencySwitch" VerticalOptions="Center" />
@@ -83,72 +83,66 @@
 			<Label x:Name="TranslucencyTip" />
 
 			<BoxView VerticalOptions="Center" HorizontalOptions="Center" HeightRequest="1" 
-					WidthRequest="100" Color="#505050" Margin="12" />
+				WidthRequest="100" Color="#505050" Margin="12" />
 
-			<StackLayout Orientation="Horizontal">
-				<Label x:Name="LogFontFamilyLabel" VerticalOptions="Center" />
-				<Button x:Name="LogFontFamilyButton" VerticalOptions="Center" />
-			</StackLayout>
+			<Label x:Name="LogFontFamilyLabel" />
+			<Button x:Name="LogFontFamilyButton" HorizontalOptions="Center" />
+			
 			<Label x:Name="LogFontFamilyTip" VerticalOptions="Center" />
 
 			<BoxView VerticalOptions="Center" HorizontalOptions="Center" HeightRequest="1" 
-					WidthRequest="100" Color="#505050" Margin="12" />
+				WidthRequest="100" Color="#505050" Margin="12" />
 
-			<StackLayout Orientation="Horizontal" Margin="3">
-				<Label x:Name="FontSizeFieldLabel" HorizontalOptions="Start" VerticalOptions="Center" />
-
-				<Button x:Name="FontSizeIncButton" HorizontalOptions="Start" VerticalOptions="Center" />
-				<Button x:Name="FontSizeDecButton" HorizontalOptions="Start" VerticalOptions="Center" />
+			<Label x:Name="LogFontSizeFieldLabel" />
+			<StackLayout Orientation="Horizontal" HorizontalOptions="Center" Margin="3">
+				<Button x:Name="LogFontSizeIncButton" VerticalOptions="Center" />
+				<Label x:Name="LogFontSizeField" VerticalOptions="Center" />
+				<Button x:Name="LogFontSizeDecButton" VerticalOptions="Center" />
 			</StackLayout>
-			<Label x:Name="FontSizeFieldTip" />
+			<Label x:Name="LogFontSizeFieldTip" />
 
 			<BoxView VerticalOptions="Center" HorizontalOptions="Center" HeightRequest="1" 
-					WidthRequest="100" Color="#505050" Margin="12" />
+				WidthRequest="100" Color="#505050" Margin="12" />
 
-			<StackLayout Orientation="Horizontal">
-				<Label x:Name="CensorshipLabel" VerticalOptions="Center" />
-				<Button x:Name="CensorshipButton" VerticalOptions="Center" />
-			</StackLayout>
+			<Label x:Name="CensorshipLabel" />
+			<Button x:Name="CensorshipButton" HorizontalOptions="Center" />
+
 			<Label x:Name="CensorshipTip" VerticalOptions="Center" />
 
 			<!-- Настройки изображений -->
 			<BoxView VerticalOptions="Center" HorizontalOptions="Center" HeightRequest="1" 
-					WidthRequest="200" Color="#505050" Margin="12" />
+				WidthRequest="200" Color="#505050" Margin="12" />
 
 			<Label />
 			<Label x:Name="PicturesLabel" />
 
-			<StackLayout Orientation="Horizontal">
-				<Label x:Name="PicturesBackLabel" VerticalOptions="Center" />
-				<Button x:Name="PicturesBackButton" VerticalOptions="Center" />
-			</StackLayout>
+			<Label x:Name="PicturesBackLabel" />
+			<Button x:Name="PicturesBackButton" HorizontalOptions="Center" />
+
 			<Label x:Name="PicturesBackTip" />
 
 			<BoxView VerticalOptions="Center" HorizontalOptions="Center" HeightRequest="1" 
-					WidthRequest="100" Color="#505050" Margin="12" />
+				WidthRequest="100" Color="#505050" Margin="12" />
 
-			<StackLayout Orientation="Horizontal">
-				<Label x:Name="PicturesTextLabel" VerticalOptions="Center" />
-				<Button x:Name="PicturesTextButton" VerticalOptions="Center" />
-			</StackLayout>
+			<Label x:Name="PicturesTextLabel" />
+			<Button x:Name="PicturesTextButton" HorizontalOptions="Center" />
+
 			<Label x:Name="PicturesTextTip" />
 
 			<BoxView VerticalOptions="Center" HorizontalOptions="Center" HeightRequest="1" 
-					WidthRequest="100" Color="#505050" Margin="12" />
+				WidthRequest="100" Color="#505050" Margin="12" />
 
-			<StackLayout Orientation="Horizontal">
-				<Label x:Name="PTextLeftLabel" VerticalOptions="Center" />
-				<Button x:Name="PTextLeftButton" VerticalOptions="Center" />
-			</StackLayout>
+			<Label x:Name="PTextLeftLabel" />
+			<Button x:Name="PTextLeftButton" HorizontalOptions="Center" />
+
 			<Label x:Name="PTextLeftTip" />
 
 			<BoxView VerticalOptions="Center" HorizontalOptions="Center" HeightRequest="1" 
-					WidthRequest="100" Color="#505050" Margin="12" />
+				WidthRequest="100" Color="#505050" Margin="12" />
 
-			<StackLayout Orientation="Horizontal">
-				<Label x:Name="PSubsLabel" VerticalOptions="Center" />
-				<Button x:Name="PSubsButton" VerticalOptions="Center" />
-			</StackLayout>
+			<Label x:Name="PSubsLabel" />
+			<Button x:Name="PSubsButton" HorizontalOptions="Center" />
+
 			<Label x:Name="PSubsTip" />
 
 			<Label />

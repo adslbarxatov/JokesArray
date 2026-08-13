@@ -72,9 +72,9 @@ namespace RD_AAOW
 
 		private ContentPage settingsPage, aboutPage, logPage, categoryPage;
 
-		private Label fontSizeFieldLabel, groupSizeFieldLabel, aboutFontSizeField,
+		private Label /*fontSizeFieldLabel2, groupSizeFieldLabel2,*/ interfaceFontSizeField,
 			genCategoryEmpty, genCategoryLabel, genCatCurrentPage, topCategoryLabel,
-			entryHeader, entryText, entrySign;
+			entryHeader, entryText, entrySign, groupSizeField, logFontSizeField;
 
 		private Switch keepScreenOnSwitch, enableCopySubscriptionSwitch,
 			translucencySwitch, offlineModeSwitch;
@@ -155,16 +155,16 @@ namespace RD_AAOW
 				RDLocale.GetDefaultText (RDLDefaultTexts.Message_RestartRequired),
 				RDLabelTypes.TipCenter);
 
-			RDInterface.ApplyLabelSettings (settingsPage, "FontSizeLabel",
+			RDInterface.ApplyLabelSettings (settingsPage, "InterfaceFontSizeLabel",
 				RDLocale.GetDefaultText (RDLDefaultTexts.Control_InterfaceFontSize),
 				RDLabelTypes.DefaultLeft);
-			RDInterface.ApplyButtonSettings (settingsPage, "FontSizeInc",
+			RDInterface.ApplyButtonSettings (settingsPage, "InterfaceFontSizeInc",
 				RDDefaultButtons.Increase, settingsFieldBackColor, FontSizeButton_Clicked, true);
-			RDInterface.ApplyButtonSettings (settingsPage, "FontSizeDec",
+			RDInterface.ApplyButtonSettings (settingsPage, "InterfaceFontSizeDec",
 				RDDefaultButtons.Decrease, settingsFieldBackColor, FontSizeButton_Clicked, true);
-			aboutFontSizeField = RDInterface.ApplyLabelSettings (settingsPage, "FontSizeField",
+			interfaceFontSizeField = RDInterface.ApplyLabelSettings (settingsPage, "InterfaceFontSizeField",
 				" ", RDLabelTypes.DefaultCenter);
-			RDInterface.ApplyLabelSettings (settingsPage, "FontSizeTipLabel",
+			RDInterface.ApplyLabelSettings (settingsPage, "InterfaceFontSizeTipLabel",
 				"Эта настройка задаёт размер шрифта во всех разделах приложения, кроме журнала. " +
 				"Измените её, если она не соответствует Вашему устройству",
 				RDLabelTypes.TipJustify);
@@ -337,11 +337,11 @@ namespace RD_AAOW
 			heightButton = RDInterface.ApplyButtonSettings (logPage, "Empty", RDDefaultButtons.UpDownArrow,
 				aboutFieldBackColor, null, false);
 			heightButton.Padding = shareButton.Margin = Thickness.Zero;
-			if (RDGenerics.IsTV)
-				{
-				heightButton.Text = " ";
-				heightButton.IsEnabled = false;
-				}
+			/*if (RDGenerics.IsTV)
+				{*/
+			heightButton.Text = " ";
+			heightButton.IsEnabled = false;
+			/*	}*/
 
 			// Режим полупрозрачности
 			RDInterface.ApplyLabelSettings (settingsPage, "TranslucencyLabel",
@@ -355,24 +355,32 @@ namespace RD_AAOW
 			LogColor_Clicked (null, null);
 
 			// Размер шрифта журнала
-			fontSizeFieldLabel = RDInterface.ApplyLabelSettings (settingsPage, "FontSizeFieldLabel",
-				"", RDLabelTypes.DefaultLeft);
-			fontSizeFieldLabel.TextType = TextType.Html;
+			/*fontSizeFieldLabel2 =*/ RDInterface.ApplyLabelSettings (settingsPage, "LogFontSizeFieldLabel",
+				"Размер шрифта:", RDLabelTypes.DefaultLeft);
+			/*fontSizeField Label.TextType = TextType.Html;*/
 
-			RDInterface.ApplyButtonSettings (settingsPage, "FontSizeIncButton",
+			logFontSizeField = RDInterface.ApplyLabelSettings (settingsPage, "LogFontSizeField",
+				"", RDLabelTypes.DefaultLeft);
+
+			RDInterface.ApplyButtonSettings (settingsPage, "LogFontSizeIncButton",
 				RDDefaultButtons.Increase, settingsFieldBackColor, LogFontSizeChanged, true);
-			RDInterface.ApplyButtonSettings (settingsPage, "FontSizeDecButton",
+			RDInterface.ApplyButtonSettings (settingsPage, "LogFontSizeDecButton",
 				RDDefaultButtons.Decrease, settingsFieldBackColor, LogFontSizeChanged, true);
 
-			RDInterface.ApplyLabelSettings (settingsPage, "FontSizeFieldTip",
+			RDInterface.ApplyLabelSettings (settingsPage, "LogFontSizeFieldTip",
 				NotificationsSupport.FontSizeFieldTip, RDLabelTypes.TipJustify);
 
 			LogFontSizeChanged (null, null);
 
 			// Размер группы запрашиваемых записей
-			groupSizeFieldLabel = RDInterface.ApplyLabelSettings (settingsPage, "GroupSizeFieldLabel",
+			/*groupSizeFieldLabel2 =*/ RDInterface.ApplyLabelSettings (settingsPage, "GroupSizeFieldLabel",
+				"Длина серии:", RDLabelTypes.DefaultLeft);
+			/*groupSizeFieldLabel.TextType = TextType.Html;*/
+
+			groupSizeField = RDInterface.ApplyLabelSettings (settingsPage, "GroupSizeField",
 				"", RDLabelTypes.DefaultLeft);
-			groupSizeFieldLabel.TextType = TextType.Html;
+			groupSizeField.FontSize *= 1.25;
+			groupSizeField.FontAttributes = FontAttributes.Bold;
 
 			RDInterface.ApplyButtonSettings (settingsPage, "GroupSizeIncButton",
 				RDDefaultButtons.Increase, settingsFieldBackColor, GroupSizeChanged, true);
@@ -1086,7 +1094,9 @@ namespace RD_AAOW
 				}
 
 			// Принудительное обновление
-			fontSizeFieldLabel.Text = string.Format ("Размер шрифта: <b>{0:D}</b>", fontSize.ToString ());
+			/*fontSizeField Label.Text = string.Format ("Размер шрифта: <b>{0:D}</b>", fontSize.ToString ());*/
+			logFontSizeField.Text = "   " + fontSize.ToString () + "   ";
+			logFontSizeField.FontSize = fontSize;
 
 			// Применение к журналу
 			entrySign.FontSize = NotificationsSupport.LogFontSize * 0.7;
@@ -1110,7 +1120,8 @@ namespace RD_AAOW
 				}
 
 			// Принудительное обновление
-			groupSizeFieldLabel.Text = string.Format ("Длина серии: <b>{0:D}</b>", groupSize.ToString ());
+			/*groupSizeField Label.Text = string.Format ("Длина серии: <b>{0:D}</b>", groupSize.ToString ());*/
+			groupSizeField.Text = "   " + groupSize.ToString () + "   ";
 			}
 
 		// Включение / выключение подписи
@@ -1481,8 +1492,8 @@ namespace RD_AAOW
 					RDInterface.MasterFontSize -= 0.5;
 				}
 
-			aboutFontSizeField.Text = RDInterface.MasterFontSize.ToString ("F1");
-			aboutFontSizeField.FontSize = RDInterface.MasterFontSize;
+			interfaceFontSizeField.Text = "   " + RDInterface.MasterFontSize.ToString ("F1") + "   ";
+			interfaceFontSizeField.FontSize = RDInterface.MasterFontSize;
 			}
 
 		// Отображение статистики архива
