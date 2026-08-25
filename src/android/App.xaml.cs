@@ -72,7 +72,7 @@ namespace RD_AAOW
 
 		private ContentPage settingsPage, aboutPage, logPage, categoryPage;
 
-		private Label /*fontSizeFieldLabel2, groupSizeFieldLabel2,*/ interfaceFontSizeField,
+		private Label interfaceFontSizeField,
 			genCategoryEmpty, genCategoryLabel, genCatCurrentPage, topCategoryLabel,
 			entryHeader, entryText, entrySign, groupSizeField, logFontSizeField;
 
@@ -337,11 +337,8 @@ namespace RD_AAOW
 			heightButton = RDInterface.ApplyButtonSettings (logPage, "Empty", RDDefaultButtons.UpDownArrow,
 				aboutFieldBackColor, null, false);
 			heightButton.Padding = shareButton.Margin = Thickness.Zero;
-			/*if (RDGenerics.IsTV)
-				{*/
 			heightButton.Text = " ";
 			heightButton.IsEnabled = false;
-			/*	}*/
 
 			// Режим полупрозрачности
 			RDInterface.ApplyLabelSettings (settingsPage, "TranslucencyLabel",
@@ -355,9 +352,8 @@ namespace RD_AAOW
 			LogColor_Clicked (null, null);
 
 			// Размер шрифта журнала
-			/*fontSizeFieldLabel2 =*/ RDInterface.ApplyLabelSettings (settingsPage, "LogFontSizeFieldLabel",
+			RDInterface.ApplyLabelSettings (settingsPage, "LogFontSizeFieldLabel",
 				"Размер шрифта:", RDLabelTypes.DefaultLeft);
-			/*fontSizeField Label.TextType = TextType.Html;*/
 
 			logFontSizeField = RDInterface.ApplyLabelSettings (settingsPage, "LogFontSizeField",
 				"", RDLabelTypes.DefaultLeft);
@@ -373,9 +369,8 @@ namespace RD_AAOW
 			LogFontSizeChanged (null, null);
 
 			// Размер группы запрашиваемых записей
-			/*groupSizeFieldLabel2 =*/ RDInterface.ApplyLabelSettings (settingsPage, "GroupSizeFieldLabel",
+			RDInterface.ApplyLabelSettings (settingsPage, "GroupSizeFieldLabel",
 				"Длина серии:", RDLabelTypes.DefaultLeft);
-			/*groupSizeFieldLabel.TextType = TextType.Html;*/
 
 			groupSizeField = RDInterface.ApplyLabelSettings (settingsPage, "GroupSizeField",
 				"", RDLabelTypes.DefaultLeft);
@@ -1094,7 +1089,6 @@ namespace RD_AAOW
 				}
 
 			// Принудительное обновление
-			/*fontSizeField Label.Text = string.Format ("Размер шрифта: <b>{0:D}</b>", fontSize.ToString ());*/
 			logFontSizeField.Text = "   " + fontSize.ToString () + "   ";
 			logFontSizeField.FontSize = fontSize;
 
@@ -1120,7 +1114,6 @@ namespace RD_AAOW
 				}
 
 			// Принудительное обновление
-			/*groupSizeField Label.Text = string.Format ("Длина серии: <b>{0:D}</b>", groupSize.ToString ());*/
 			groupSizeField.Text = "   " + groupSize.ToString () + "   ";
 			}
 
