@@ -10,12 +10,13 @@ namespace RD_AAOW
 	/// <summary>
 	/// Класс описывает загрузчик приложения
 	/// </summary>
-	[Activity (Label = "JokesArray",
+	/*[Activity (Label = "JokesArray",
 		Icon = "@drawable/icon",
 		Theme = "@style/SplashTheme",
 		MainLauncher = true,
 		Name = "com.RD_AAOW.MainActivity",
-		ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
+		ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]*/
+	[Activity (Name = "RD_AAOW.MainActivity")]
 	public class MainActivity: MauiAppCompatActivity
 		{
 		/// <summary>

@@ -284,7 +284,7 @@ namespace RD_AAOW
 			// Поле подписи
 			entrySign = RDInterface.ApplyLabelSettings (logPage, "Sign", " ", RDLabelTypes.DefaultLeft);
 			entrySign.HorizontalTextAlignment = TextAlignment.Center;
-			entrySign.Margin = new Thickness (6);
+			entrySign.Margin = entrySign.Padding = new Thickness (6);
 
 			// Управление
 			centerButton = RDInterface.ApplyButtonSettings (logPage, "CenterButton", "Ещё!",
