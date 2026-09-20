@@ -109,7 +109,6 @@ namespace RD_AAOW
 			// Загрузка категорий верхнего уровня
 #if TGB
 			LastCategoryButton.Enabled = false;
-			/*this.Top Most = true;*/
 #else
 			string[] topCat = GMJ.GetTopCategories ();
 			topCategories = new ContextMenuStrip ();
@@ -475,9 +474,7 @@ namespace RD_AAOW
 		private void SelectTopCategory_Clicked (object sender, EventArgs e)
 			{
 #if TGB
-			/*this.Top Most = false;*/
 			GMJ.AddNewIndexes ();
-			/*this.Top Most = true;*/
 #else
 			topCategories.Show (LastCategoryButton, Point.Empty);
 #endif
