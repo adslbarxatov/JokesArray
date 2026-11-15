@@ -937,7 +937,10 @@ namespace RD_AAOW
 				newText = await Task.Run<string> (GMJ.GetRandomRecord);
 				if (newText == "")
 					{
-					RDInterface.ShowBalloon (GMJ.NoConnectionPattern, false);
+					if (GMJ.EnableOfflineMode)
+						RDInterface.ShowBalloon (GMJ.RecordRemovedPattern, false);
+					else
+						RDInterface.ShowBalloon (GMJ.NoConnectionPattern, false);
 					}
 				else if (newText.Contains (GMJ.SourceNoReturnPattern))
 					{

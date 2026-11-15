@@ -265,7 +265,10 @@ namespace RD_AAOW
 
 			if (values.Length < 1)
 				{
-				AddTextToLayout (GMJ.NoConnectionPattern);
+				if (GMJ.EnableOfflineMode)
+					AddTextToLayout (GMJ.RecordRemovedPattern);
+				else
+					AddTextToLayout (GMJ.NoConnectionPattern);
 				}
 			else
 				{
@@ -281,7 +284,8 @@ namespace RD_AAOW
 			// Формирование контрола
 			Label l = new Label ();
 			l.AutoSize = false;
-			bool err = Text.StartsWith (GMJ.NoConnectionPattern) || Text.StartsWith (GMJ.SourceNoReturnPattern);
+			bool err = Text.StartsWith (GMJ.NoConnectionPattern) || Text.StartsWith (GMJ.RecordRemovedPattern) ||
+				Text.StartsWith (GMJ.SourceNoReturnPattern);
 
 			int amount = NotificationsSupport.TranslucentLogItems ? translucencyAmount : 0;
 			if (err)
@@ -324,7 +328,8 @@ namespace RD_AAOW
 
 			// Контроль возможности формирования картинки
 			textContextMenu.Items[1].Enabled = !l.Text.Contains (GMJ.SourceNoReturnPattern) &&
-				!l.Text.Contains (GMJ.NoConnectionPattern) && (GMJPicture.AlignString (l.Text) != null);
+				!l.Text.Contains (GMJ.NoConnectionPattern) && !l.Text.Contains (GMJ.RecordRemovedPattern) &&
+				(GMJPicture.AlignString (l.Text) != null);
 
 			textContextMenu.Show (l, e.Location);
 			}
